@@ -48,5 +48,96 @@
       "assessment": "I played the eight bars twice and kept the beat through every change.",
       "quiz": {"question": "Can this tuner's single-note detector reliably grade a full strummed chord?", "options": ["Yes, every time", "No; check the individual strings and self-assess", "Only if you play louder"], "answer": 1, "explanation": "Several notes at once confuse a single-pitch detector. Playto intentionally uses honest self-assessment for chords."}
     }
+    ,
+    {
+      "id": "guitar-c-g-d", "title": "Open up C, G and D", "stage": "Intermediate", "kind": "lesson", "minutes": 12,
+      "goal": "Build three clear major chord shapes and use the correct starting string.",
+      "steps": ["C major is x 3 2 0 1 0: ring on A3, middle on D2, index on B1. Start from string 5. Pick each note before strumming.", "G major is 3 2 0 0 0 3: middle on low E3, index on A2, ring on high E3. Strum all six strings.", "D major is x x 0 2 3 2: index on G2, ring on B3, middle on high E2. Start from string 4.", "At 40 BPM play C-G-D-G, four beats each. Let the fingertips curve so neighbouring strings ring; move as a group without gripping the neck."],
+      "tip": "Shape notation always runs thickest to thinnest. A fret number in the instructions belongs to the named string, not a pitch octave.",
+      "targetNotes": [48,52,55,60,64], "pattern": "C: x32010 · G: 320003 · D: xx0232", "chord": "C major", "chords": ["C major", "G major", "D major"],
+      "assessment": "I played clear C, G and D shapes and skipped the correct low strings.",
+      "quiz": {"question": "Start the open D major strum on...", "options": ["String 6", "String 4", "String 1 only"], "answer": 1, "explanation": "Open D major skips strings 6 and 5; D on string 4 is the root."}
+    },
+    {
+      "id": "guitar-eighth-strum", "title": "Down, up, keep moving", "stage": "Intermediate", "kind": "lesson", "minutes": 12,
+      "goal": "Strum even eighth notes and omit strokes without losing time.",
+      "steps": ["Mute the strings gently and count 1 & 2 & 3 & 4 & at 50 BPM. Downstrokes go on numbers, upstrokes on '&'.", "Play eight muted strokes per bar using a loose wrist and small motion. An upstroke need not hit every bass string.", "On Em, play down on 1, down on 2, up on 2&, down on 3, down on 4, up on 4&. Keep the arm moving through the silent 1& and 3&.", "Change Em to Am after two bars. Start at 40 BPM if necessary and work back to 60 without tightening the pick grip."],
+      "tip": "The missing strokes are deliberate rests; the hand's continuous motion preserves the subdivision.",
+      "targetNotes": [40,45,40,45], "pattern": "| D - D U D - D U | · count 1 & 2 & 3 & 4 &",
+      "assessment": "I kept even down/up motion through the omitted strokes and chord changes.",
+      "quiz": {"question": "During an omitted upstroke, your strumming hand should...", "options": ["Keep moving but miss the strings", "Stop for an extra beat", "Change the chord immediately"], "answer": 0, "explanation": "Continuous motion supports timing even when a stroke is silent."}
+    },
+    {
+      "id": "guitar-pentatonic", "title": "A minor pentatonic map", "stage": "Intermediate", "kind": "lesson", "minutes": 12,
+      "goal": "Play and hear the five notes of A minor pentatonic.",
+      "steps": ["Use the open-position notes A2 (string 5 open), C3 (string 5 fret 3), D3 (string 4 open), E3 (string 4 fret 2), G3 (string 3 open), A3 (string 3 fret 2).", "Play A C D E G A at 45 BPM, then descend. Use fingertips close to the fret wires and mute the previous string as you move.", "Hum A-C and A-E to hear a minor third and perfect fifth. Compare these with the ear-training tool's major third and fifth.", "Make a three-note phrase using A C D, leave two beats of rest, then answer using E G A. Finish on A to hear the home note."],
+      "tip": "The on-screen fretboard is a sounding-note map. Conventional guitar treble notation is written one octave higher.",
+      "targetNotes": [45,48,50,52,55,57,55,52,50,48,45], "pattern": "A C D E G A · A-string 0,3; D-string 0,2; G-string 0,2",
+      "assessment": "I played the pentatonic pattern and invented a short question-and-answer phrase.",
+      "quiz": {"question": "Which note is not in A minor pentatonic?", "options": ["C", "F", "G"], "answer": 1, "explanation": "A minor pentatonic is A C D E G; F is not in this five-note set."}
+    },
+    {
+      "id": "guitar-reading", "title": "Tab, rhythm and melody", "stage": "Intermediate", "kind": "lesson", "minutes": 10,
+      "goal": "Combine fret numbers with musical duration and interval listening.",
+      "steps": ["Tab gives a string and fret, but plain text tab does not fully encode timing. Read the note counts as well as the fret numbers.", "On high E play frets 0, 3, 1, 0: E4 for one beat, G4 for one beat, F4 for two beats, then E4 for four beats in the next bar.", "In standard guitar notation this sounds E4-G4-F4-E4 but is written E5-G5-F5-E5. Follow the staff pitch guide and compare the contour with tab.", "Play the two bars at 50 BPM without shortening the held notes. Hum the E-G minor third before you play it."],
+      "tip": "Tab and staff notation solve different problems: tab shows a location; staff notation shows pitch and, in a full score, rhythm.",
+      "targetNotes": [64,67,65,64], "pattern": "e|--0(1)--3(1)--1(2)--|--0(4)--|",
+      "assessment": "I read the fret positions and kept the full duration of each note.",
+      "quiz": {"question": "A plain tab number tells you...", "options": ["A fret position, not the complete rhythm", "The exact volume", "The name of a chord only"], "answer": 0, "explanation": "You need separate timing information to know when and how long to play a plain tab number."}
+    },
+    {
+      "id": "guitar-intermediate-check", "title": "Checkpoint: open road", "stage": "Intermediate", "kind": "checkpoint", "minutes": 15,
+      "goal": "Perform an original eight-bar chord accompaniment.",
+      "steps": ["Use | G | D | Em | C | repeated twice, four beats per bar. Learn each change slowly, checking the bass string for D and C.", "At 55 BPM use D - D U D - D U as the eighth-note strum. Prepare the next chord during the last upstroke without adding a beat.", "Play once quietly and once with a stronger bar-5 entrance, then return to quiet at the end. Keep volume changes relaxed.", "Pass with two continuous eight-bar takes: correct shapes, steady subdivisions, clean starts, and no extra beats at the changes. Use listening/self-assessment for chords."],
+      "tip": "This progression and exercise are original Playto practice material; no existing song is required.",
+      "targetNotes": [43,50,40,48,43,50,40,48], "pattern": "| G | D | Em | C | ×2 · D - D U D - D U",
+      "assessment": "I performed Open Road twice with clean changes and a steady strum.",
+      "quiz": {"question": "What should stay consistent during a chord change?", "options": ["The strumming subdivision", "Every chord's lowest string", "Only the volume"], "answer": 0, "explanation": "Chords have different shapes and bass strings; the pulse and subdivision connect them."}
+    },
+    {
+      "id": "guitar-barre", "title": "A small barre, not a squeeze", "stage": "Advanced", "kind": "lesson", "minutes": 14,
+      "goal": "Play a four-string F major shape with a relaxed partial barre.",
+      "steps": ["Use x x 3 2 1 1: ring on D string fret 3, middle on G fret 2, index covering B and high E at fret 1. Play strings 4 to 1 only.", "Start with the two thin strings and rotate the index slightly towards its firmer side. Position it just behind the fret; do not force a flat finger.", "Pick F3 A3 C4 F4 individually, then strum once per four beats at 40 BPM. Rest and release the hand between repetitions.", "Change C to this F shape for four bars. If painful or persistently hard, use separate fingers or seek an instrument setup check; do not push through pain."],
+      "tip": "A barre is coordinated support, not maximum grip. Low action and a well-set-up guitar help.",
+      "targetNotes": [53,57,60,65], "pattern": "F: x x 3 2 1 1 · four strings only", "chord": "F major",
+      "assessment": "I played the four-string F shape clearly, or used a comfortable adaptation without pain.",
+      "quiz": {"question": "Which strings does this partial barre cover?", "options": ["Strings 6 and 5", "Strings 2 and 1 at fret 1", "All strings at fret 3"], "answer": 1, "explanation": "The index covers B and high E at fret 1; the other fingers complete F major."}
+    },
+    {
+      "id": "guitar-fingerstyle", "title": "Thumb and fingers in conversation", "stage": "Advanced", "kind": "lesson", "minutes": 14,
+      "goal": "Keep a bass pulse while fingerpicking upper chord tones.",
+      "steps": ["Hold C major. Use thumb p on string 5, index i on string 3, middle m on string 2, ring a on string 1. Keep the picking hand loose.", "At 45 BPM play p-i-m-a, one note per beat: C3 G3 C4 E4. Reset with a full-bar rest before repeating.", "Next divide each beat: p i m a p i m a across 1 & 2 & 3 & 4 &. Keep the bass notes controlled and the upper notes lighter.", "Change to Am using the same string assignments. On Em put the thumb on string 6. Pick slowly enough that no adjacent string is accidentally pulled."],
+      "tip": "Classical finger labels are p (thumb), i (index), m (middle), a (ring). Nails are optional.",
+      "targetNotes": [48,55,60,64,48,55,60,64], "pattern": "C: strings 5 3 2 1 · p i m a · then eight notes per bar",
+      "assessment": "I fingerpicked two chords with a steady bass and clear upper notes.",
+      "quiz": {"question": "In p-i-m-a notation, p is...", "options": ["The little finger", "The thumb", "The pick"], "answer": 1, "explanation": "p stands for the thumb, which often handles bass strings."}
+    },
+    {
+      "id": "guitar-triads", "title": "Small triads, smooth movement", "stage": "Advanced", "kind": "lesson", "minutes": 14,
+      "goal": "Find C, F and G triads on the top three strings.",
+      "steps": ["Play only strings 3-2-1. C major uses frets 5-5-3 (C4 E4 G4); F uses 5-6-5 (C4 F4 A4); G uses 4-3-3 (B3 D4 G4).", "Use the sounding-note map or find the named frets on your instrument. Pick each shape note by note to verify it before strumming.", "Play C-F-G-C with one triad per bar at 45 BPM. Compare the smaller movement with full open chords.", "Describe which notes stay or move a step. Hum one inner voice, E-F-D-E, while you change the shapes."],
+      "tip": "Triads are three-note chords. These shapes are inversions, so the lowest played note is not always the root.",
+      "targetNotes": [60,64,67,60,65,69,59,62,67,60,64,67], "pattern": "Strings G-B-e: C=5-5-3 · F=5-6-5 · G=4-3-3",
+      "assessment": "I found the three triad shapes and heard their smooth voice leading.",
+      "quiz": {"question": "A triad contains...", "options": ["Three chord tones", "Six unrelated notes", "Only one bass note"], "answer": 0, "explanation": "A basic major triad has root, third and fifth, in any order."}
+    },
+    {
+      "id": "guitar-improv", "title": "A melody with space", "stage": "Advanced", "kind": "lesson", "minutes": 15,
+      "goal": "Develop a pentatonic motif with articulation and intentional rests.",
+      "steps": ["Over a slow Am chord, use A C D E G. Invent a three-note idea lasting two beats, then rest for two beats.", "Repeat the idea, change its final note, and repeat again. Aim to end every other phrase on A.", "On the D string, try a gentle hammer-on from open D to fret 2 E: pluck D, then place the finger firmly enough for E to speak. Do not strike harder than needed.", "Mix plucked notes and one hammer-on into the motif at 50 BPM. Keep both notes audible, mute unused strings, and do not trade timing for speed."],
+      "tip": "Use an Am chord on your own instrument or a practice partner; the studio's guitar backing is Em/Am, so use A phrases in its Am bars.",
+      "targetNotes": [45,48,50,52,55,52,50,48,45], "pattern": "A minor pentatonic · 2-beat motif + 2-beat rest · D0→D2 hammer-on",
+      "assessment": "I played three variations with intentional rests and one controlled hammer-on.",
+      "quiz": {"question": "A hammer-on makes the second note by...", "options": ["Picking twice", "Placing a fretting finger after the first pluck", "Turning the tuning peg"], "answer": 1, "explanation": "The fretting finger starts the higher note without another pick stroke."}
+    },
+    {
+      "id": "guitar-advanced-check", "title": "Level test: campfire arrangement", "stage": "Advanced", "kind": "checkpoint", "minutes": 20,
+      "goal": "Arrange an original progression with fingerstyle, strumming and a melodic ending.",
+      "steps": ["Use | C | Am | F | G | twice at 60 BPM. F may use the four-string partial barre; play the correct bass string for each chord.", "Fingerpick the first four bars, p-i-m-a twice per bar. For F use thumb on string 4, and for G use string 6.", "Strum the second four bars with an even eighth-note pattern. Finish by playing a short C-D-E-G-C melody and allowing a final C chord to ring.", "Pass with two complete takes: clean individual notes, continuous time, intentional contrast between the sections, and a quiet controlled ending. Adapt difficult shapes rather than playing through pain."],
+      "tip": "This is an arranging foundation. More advanced guitar studies include larger barre shapes, harmonics and stylistic phrasing with a teacher.",
+      "targetNotes": [48,45,53,43,60,62,64,67,60], "pattern": "C Am F G ×2 · fingerpick, then strum · ending C D E G C",
+      "assessment": "I played two complete arrangements with steady time and clear contrast between sections.",
+      "quiz": {"question": "What is a sensible response to pain during a barre?", "options": ["Squeeze harder", "Stop, adapt the shape, and check technique/setup", "Play faster to finish"], "answer": 1, "explanation": "Pain is a signal to stop and review technique or setup, not an obstacle to push through."}
+    }
   ]
 }

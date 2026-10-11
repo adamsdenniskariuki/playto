@@ -3,9 +3,10 @@ import { createRoot } from 'react-dom/client';
 import '@fontsource/opendyslexic/400.css';
 import './styles.css';
 import { courses, lessonAvailable } from './courses';
-import { addPractice, badges, completeLesson, freshProgress, parseProgress, reviewLesson, STORAGE_KEY } from './progress';
+import { addPractice, badges, completeLesson, currentStreak, freshProgress, parseProgress, reviewLesson, STORAGE_KEY } from './progress';
 import { InstrumentMark } from './Visuals';
 import { Practice } from './Practice';
+import { EarTraining } from './EarTraining';
 import type { Course, Font, Lesson, Progress, Theme } from './types';
 
 type Page = 'learn' | 'practice' | 'review' | 'progress' | 'settings';
@@ -30,6 +31,7 @@ function LessonView({ course, lesson, completed, due, onComplete, onReview, onSa
     <div className="lesson-title"><span className="eyebrow">{course.name} / {lesson.stage} / {lesson.kind}</span><h1>{lesson.title}</h1><p>{lesson.goal}</p><span className="pill">Suggested {lesson.minutes} min · go at your own pace</span></div>
     <section className="panel"><h2>Let's play</h2><ol className="steps">{lesson.steps.map(step => <li key={step}>{step}</li>)}</ol><aside className="tip"><strong>A small tip</strong><p>{lesson.tip}</p></aside><div className="pattern"><strong>Your pattern</strong><p>{lesson.pattern}</p></div></section>
     <Practice course={course} lesson={lesson} onSave={onSave} report={report}/>
+    <EarTraining report={report}/>
     <section className="panel"><h2>A quick check</h2><fieldset><legend>{lesson.quiz.question}</legend>{lesson.quiz.options.map((option, index) => <label className={`quiz-option ${answer === index ? 'selected' : ''}`} key={option}><input type="radio" name="quiz" checked={answer === index} onChange={() => setAnswer(index)}/>{option}</label>)}</fieldset>
       {answer !== null && <p role="status" className="tip">{correct ? 'Exactly. ' : 'Try again. '}{lesson.quiz.explanation}</p>}
       <label className="check"><input type="checkbox" checked={checked} onChange={event => setChecked(event.target.checked)}/>{lesson.assessment}</label>
@@ -62,11 +64,17 @@ function App() {
   const due = course.lessons.filter(lesson => record.lessons[lesson.id] && Date.parse(record.lessons[lesson.id].reviewAt) <= Date.now());
   const next = course.lessons.find(lesson => !record.lessons[lesson.id]);
   const level = Math.floor(progress.xp / 250) + 1;
-  function save(value: Progress) {
-    setProgress(value);
-    if (storageBlocked) { setMessage('Progress is in memory only until you import a valid backup. Export your current session before closing.'); return; }
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(value)); }
-    catch (error) { setMessage(`Progress could not be saved on this device: ${error instanceof Error ? error.message : String(error)}. Export a backup before closing.`); }
+  const streak = currentStreak(progress);
+  function save(value: Progress | ((current: Progress) => Progress)) {
+    setProgress(current => {
+      const next = typeof value === 'function' ? value(current) : value;
+      if (storageBlocked) setMessage('Progress is in memory only until you import a valid backup. Export your current session before closing.');
+      else {
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(next)); }
+        catch (error) { setMessage(`Progress could not be saved on this device: ${error instanceof Error ? error.message : String(error)}. Export a backup before closing.`); }
+      }
+      return next;
+    });
   }
   function navigate(value: Page) { setPage(value); setSelected(null); window.scrollTo({ top: 0 }); }
   useEffect(() => {
@@ -115,14 +123,14 @@ function App() {
     } catch (error) { setMessage(`Import failed: ${error instanceof Error ? error.message : String(error)}. Your current progress is unchanged.`); }
     if (importInput.current) importInput.current.value = '';
   }
-  const onSave = (seconds: number, hits: number, tempo: number) => { save(addPractice(progress, course.id, seconds, hits, tempo)); setMessage(`Saved ${Math.floor(seconds / 60)}m ${seconds % 60}s of ${course.name} practice and ${hits} matched notes.`); };
+  const onSave = (seconds: number, hits: number, tempo: number) => { save(current => addPractice(current, course.id, seconds, hits, tempo)); setMessage(`Saved ${Math.floor(seconds / 60)}m ${seconds % 60}s of ${course.name} practice and ${hits} matched notes.`); };
   const endTour = () => { setTour(false); save({ ...progress, settings: { ...progress.settings, tourSeen: true } }); };
   const totalMinutes = Object.values(progress.instruments).reduce((sum, item) => sum + item.minutes, 0);
   return <>
     <a className="skip-link" href="#main">Skip to content</a>
     <header className="site-header"><a className="brand" href="/" onClick={event => { event.preventDefault(); navigate('learn'); }}><span className="brand-icon">♪</span>playto<span className="brand-dot">.</span></a>
       <span className="header-tag">A little practice. A lot of music.</span>
-      <div className="header-stats"><span title="All instruments combined">{progress.xp} XP</span><span>{progress.streak} day streak</span><span className="level">Level {level}</span></div>
+      <div className="header-stats"><span title="All instruments combined">{progress.xp} XP</span><span>{streak} day streak</span><span className="level">Level {level}</span></div>
     </header>
     <div className="app-layout">
       <aside className="sidebar"><div className="sidebar-top"><span className="eyebrow">YOUR MUSIC, YOUR PACE</span><nav aria-label="Main navigation">
@@ -135,8 +143,8 @@ function App() {
         {message && <div className="notice" role="status"><span>{message}</span><button aria-label="Dismiss notification" onClick={() => setMessage('')}>×</button></div>}
         {update && <div className="notice"><span>A new Playto version is ready. Save your practice session before updating.</span><button onClick={() => { navigator.serviceWorker.addEventListener('controllerchange', () => location.reload(), { once: true }); update.postMessage('SKIP_WAITING'); }}>Update & reload</button></div>}
         {selected ? <LessonView key={`${course.id}-${selected.id}`} course={course} lesson={selected} close={() => setSelected(null)} completed={Boolean(record.lessons[selected.id])} due={due.some(lesson => lesson.id === selected.id)} report={setMessage} onSave={onSave}
-          onComplete={() => { save(completeLesson(progress, course.id, selected)); setMessage('Lesson complete. A new step is ready, and your first review is tomorrow.'); setSelected(null); }}
-          onReview={easy => { save(reviewLesson(progress, course.id, selected.id, easy)); setMessage('Review saved. Your next review is scheduled.'); setSelected(null); }}/>
+          onComplete={() => { save(current => completeLesson(current, course.id, selected)); setMessage('Lesson complete. A new step is ready, and your first review is tomorrow.'); setSelected(null); }}
+          onReview={easy => { save(current => reviewLesson(current, course.id, selected.id, easy)); setMessage('Review saved. Your next review is scheduled.'); setSelected(null); }}/>
         : page === 'learn' ? <>
           <div className="page-heading"><div><span className="eyebrow">WELCOME TO YOUR NEXT NOTE</span><h1>Let's make music<span className="accent">.</span></h1><p className="muted">Small steps. Real instruments. A rhythm that works for you.</p></div><button className="quiet" onClick={() => { setTourStep(0); setTour(true); }}>How Playto works ↗</button></div>
           <section className="hero"><div className="hero-copy"><span className="pill">{course.subtitle}</span><h2>{completed.length === 0 ? 'Every musician starts\nwith one note.' : next ? 'Your next little\nbreakthrough awaits.' : 'Look how far\nyou have come.'}</h2><p>{course.description}</p><button className="primary" onClick={() => next ? setSelected(next) : navigate('review')}>{completed.length === 0 ? 'Play your first lesson' : next ? 'Continue learning' : 'Keep it fresh with review'} <span aria-hidden="true">→</span></button><span className="small muted">{next ? `${next.title} · ${next.minutes} min` : 'Revisit a lesson or try another instrument'}</span></div>
@@ -152,15 +160,15 @@ function App() {
               })}</div></div>;
             })}
           </section><aside className="encouragement"><span aria-hidden="true">♫</span><div><strong>You don't have to be good to start.</strong><p className="muted">You just have to start to get better. Five minutes counts.</p></div></aside>
-        </> : page === 'practice' ? <><div className="page-heading"><div><span className="eyebrow">NO PERFECT PERFORMANCE REQUIRED</span><h1>Your practice studio</h1><p className="muted">{course.tuning}</p></div></div><Practice key={course.id} course={course} onSave={onSave} report={setMessage}/></>
+        </> : page === 'practice' ? <><div className="page-heading"><div><span className="eyebrow">NO PERFECT PERFORMANCE REQUIRED</span><h1>Your practice studio</h1><p className="muted">{course.tuning}</p></div></div><Practice key={course.id} course={course} onSave={onSave} report={setMessage}/><EarTraining key={`ear-${course.id}`} report={setMessage}/></>
         : page === 'review' ? <><span className="eyebrow">KEEP THE GOOD THINGS FRESH</span><h1>Spaced review</h1><p className="muted">Reviews start one day after a lesson. Confident reviews double the interval, up to 60 days; tricky ones return tomorrow. +15 XP per due review.</p>{due.length ? due.map(lesson => <button className="review-card panel" key={lesson.id} onClick={() => setSelected(lesson)}><strong>{lesson.title}</strong><span>Ready to revisit →</span></button>) : <div className="empty panel"><span className="accent">↻</span><h2>{completed.length ? 'You are all caught up.' : 'Your first notes come first.'}</h2><p>Complete a lesson and come back tomorrow for a short review. You can replay completed lessons any time.</p><button onClick={() => navigate('learn')}>Back to learning</button></div>}</>
-        : page === 'progress' ? <><span className="eyebrow">LITTLE STEPS ADD UP</span><h1>Your musical journey</h1><div className="stats-grid"><div className="panel"><strong>{progress.xp}</strong><span>Total XP · level {level}</span><progress value={progress.xp % 250} max={250} aria-label="Progress to next level"/><span className="small muted">{250 - progress.xp % 250} XP to next level</span></div><div className="panel"><strong>{Math.floor(totalMinutes)}</strong><span>Minutes practised</span></div><div className="panel"><strong>{progress.streak}</strong><span>Day streak · {progress.freezes} freeze(s)</span><span className="small muted">One missed day is covered automatically. Earn a freeze every 7 streak days, up to 2.</span></div></div>
+        : page === 'progress' ? <><span className="eyebrow">LITTLE STEPS ADD UP</span><h1>Your musical journey</h1><div className="stats-grid"><div className="panel"><strong>{progress.xp}</strong><span>Total XP · level {level}</span><progress value={progress.xp % 250} max={250} aria-label="Progress to next level"/><span className="small muted">{250 - progress.xp % 250} XP to next level</span></div><div className="panel"><strong>{Math.floor(totalMinutes)}</strong><span>Minutes practised</span></div><div className="panel"><strong>{streak}</strong><span>Day streak · {progress.freezes} freeze(s)</span><span className="small muted">One missed day is covered automatically. Earn a freeze every 7 streak days, up to 2.</span></div></div>
           <h2>By instrument</h2><div className="progress-courses">{courses.map(item => { const data = progress.instruments[item.id]; return <section className="panel" key={item.id}><h3>{item.name}</h3><p>{Object.keys(data.lessons).length} / {item.lessons.length} lessons · {Math.floor(data.minutes)} minutes · {data.notes} notes matched</p><p className="small muted">Tempo milestone: {data.tempo ? `${data.tempo} BPM (self-assessed)` : 'not set yet'} · Chords learned: {data.chords.length ? data.chords.join(', ') : 'none yet'}</p><progress value={Object.keys(data.lessons).length} max={item.lessons.length} aria-label={`${item.name} progress`}/></section>; })}</div>
           <h2>Small celebrations</h2><div className="badge-grid">{badges(progress).map(badge => <div className={`panel badge ${badge.earned ? 'earned' : ''}`} key={badge.name}><span aria-hidden="true">{badge.earned ? '★' : '☆'}</span><strong>{badge.name}</strong><p>{badge.detail}</p><span className="small">{badge.earned ? 'Earned' : 'Keep playing'}</span></div>)}</div></>
         : <><span className="eyebrow">MAKE YOURSELF AT HOME</span><h1>Settings</h1><section className="panel settings"><h2>A space that suits you</h2><label htmlFor="theme">Theme</label><select id="theme" value={progress.settings.theme} onChange={event => save({ ...progress, settings: { ...progress.settings, theme: event.target.value as Theme } })}><option value="system">Follow system (default)</option><option value="light">Light</option><option value="dark">Dark</option><option value="sepia">Sepia reading</option><option value="contrast">High contrast</option></select><label htmlFor="font">Reading font</label><select id="font" value={progress.settings.font} onChange={event => save({ ...progress, settings: { ...progress.settings, font: event.target.value as Font } })}><option value="default">Segoe UI / native sans serif</option><option value="serif">Georgia / serif</option><option value="dyslexic">OpenDyslexic (dyslexia-friendly)</option></select><p className="muted">Choose what feels easiest to read. OpenDyslexic is bundled for offline use; font preferences are personal, not a treatment.</p><button onClick={() => { setTourStep(0); setTour(true); }}>Replay welcome tour</button></section>
           <section className="panel"><h2>Your progress belongs to you</h2><p>Nothing is sent to a server. Progress is saved in this browser, separately for every instrument. Clearing browser storage removes it, so keep a backup.</p><div className="button-row"><button className="primary" onClick={() => exportBackup()}>Export progress JSON</button><button onClick={() => importInput.current?.click()}>Import progress JSON</button>{storageBlocked && <button onClick={() => exportBackup(true)}>Export original stored data</button>}</div><input ref={importInput} type="file" accept="application/json,.json" hidden onChange={event => void importBackup(event.target.files?.[0])}/><p className="small muted">Import validates the entire file and asks before replacing anything. You can move your backup between devices.</p></section>
           <section className="panel"><h2>Take Playto with you</h2><p>{offlineReady ? 'All lessons, instruments, fonts and sounds are ready offline after this first visit.' : 'Visit online once and let offline preparation finish.'} On iPhone/iPad use Safari's Share menu → Add to Home Screen. On Android or desktop use the browser's Install app option.</p>{install && <button onClick={() => { void install.prompt().then(() => install.userChoice).then(choice => { setMessage(choice.outcome === 'accepted' ? 'Playto installation accepted.' : 'Installation dismissed. You can install later.'); setInstall(null); }).catch(error => setMessage(`Installation failed: ${String(error)}`)); }}>Install Playto</button>}<p className="small muted">Microphone and MIDI support depends on your browser. Both are optional. Audio processing happens on your device, with no recordings or uploads.</p></section>
-          <section className="panel"><h2>About the music</h2><p>All lesson pieces and synthesized backing patterns are original Playto exercises. Start slow, keep your body relaxed, and stop if you feel pain. These courses support practice; an instrument teacher can help with posture, setup and feedback.</p><a href="https://github.com/adamsdenniskariuki/playto">Source & curriculum ↗</a></section></>}
+          <section className="panel"><h2>About the music</h2><p>All lesson pieces and synthesized backing patterns are original Playto exercises. Start slow, keep your body relaxed, and stop if you feel pain. These courses support practice; an instrument teacher can help with posture, setup and feedback.</p><a href="https://github.com/adamsdenniskariuki/playto">Source & curriculum ↗</a><p className="small"><a href="/font-license.txt">OpenDyslexic font licence</a> · SIL Open Font License 1.1</p></section></>}
         <footer>Made for the joy of playing. <span>playto · no pressure, just progress</span></footer>
       </main>
     </div>

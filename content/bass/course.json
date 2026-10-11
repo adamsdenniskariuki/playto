@@ -48,5 +48,96 @@
       "assessment": "I played Steady Ground twice with clean muting and steady time.",
       "quiz": {"question": "What is the most important first job of this bass line?", "options": ["Play as many notes as possible", "Support the harmony and steady pulse", "Always play louder than everyone"], "answer": 1, "explanation": "A simple bass line with strong time makes the whole group feel secure."}
     }
+    ,
+    {
+      "id": "bass-c-scale", "title": "Build a major scale", "stage": "Intermediate", "kind": "lesson", "minutes": 12,
+      "goal": "Play one octave of C major and locate its half steps.",
+      "steps": ["Find C2-D2-E2-F2-G2-A2-B2-C3 using A-string frets 3,5,7; D-string frets 3,5,7; G-string frets 4,5. Shift the whole hand rather than over-stretch.", "At 40 BPM play ascending, one note per beat, alternating index and middle plucking fingers.", "Reverse the pattern. Mute strings as you leave them and make every note equal in volume.", "Listen for the half steps E-F and B-C. Hum the scale, then find a different fingering for one note using the fretboard."],
+      "tip": "This shifting route avoids forcing a wide low-position stretch. The fretboard shows frets 0-7; every note in this route is available.",
+      "targetNotes": [36,38,40,41,43,45,47,48,47,45,43,41,40,38,36], "pattern": "A:3,5,7 · D:3,5,7 · G:4,5 · reverse",
+      "assessment": "I played the scale both ways with clean shifts and even plucking.",
+      "quiz": {"question": "C major's half steps are...", "options": ["C-D and G-A", "E-F and B-C", "D-E and F-G"], "answer": 1, "explanation": "A major scale follows whole-whole-half-whole-whole-whole-half steps."}
+    },
+    {
+      "id": "bass-root-fifth", "title": "Root, fifth, octave", "stage": "Intermediate", "kind": "lesson", "minutes": 12,
+      "goal": "Create a bass line from stable chord tones.",
+      "steps": ["For C, use C2 (A3), G2 (D5) and C3 (G5). For F use F1 (E1), C2 (A3) and F2 (D3). For G use G1 (E3), D2 (A5) and G2 (D5).", "Play root-fifth-octave-fifth, one note per beat at 45 BPM. Keep the higher octave light rather than accenting it accidentally.", "Connect one bar of C, one F, one G, and one C. Listen for the root on every beat 1.", "Try the C-F-G-C backing. If the string crossings blur, return to two-note root-fifth patterns before adding the octave."],
+      "tip": "A perfect fifth is seven semitones above the root; an octave is twelve.",
+      "targetNotes": [36,43,48,43,29,36,41,36,31,38,43,38,36,43,48,43], "pattern": "Each bar: root fifth octave fifth · C F G C",
+      "assessment": "I connected root-fifth-octave patterns with clean string changes.",
+      "quiz": {"question": "The perfect fifth above C is...", "options": ["E", "F", "G"], "answer": 2, "explanation": "C-D-E-F-G spans five letter names and seven semitones."}
+    },
+    {
+      "id": "bass-offbeats", "title": "The space between beats", "stage": "Intermediate", "kind": "lesson", "minutes": 12,
+      "goal": "Play an eighth-note pickup without rushing the next beat.",
+      "steps": ["Count 1 & 2 & 3 & 4 & at 50 BPM. Clap 1, 3 and the '&' after 4.", "On C2 play a quarter note on 1, a quarter note on 3, then a short eighth note on 4&. Remain silent on the unplayed counts.", "Repeat four bars. The note on 4& leads into the next beat 1, but must not make beat 1 arrive early.", "Apply the same rhythm to C-F-G-C. Use controlled note lengths and mute during rests; try 60 BPM only when all gaps are deliberate."],
+      "tip": "The metronome gives numbered quarter beats. Supply the equal '&' subdivisions yourself.",
+      "targetNotes": [36,36,36,29,29,29,31,31,31,36,36,36], "pattern": "Per bar: root on 1,3,4& · silence elsewhere · C F G C",
+      "assessment": "I placed the 4& pickup evenly and kept the following beat 1 steady.",
+      "quiz": {"question": "The 4& pickup lands...", "options": ["Halfway between beat 4 and the next beat 1", "On beat 3", "After an extra bar"], "answer": 0, "explanation": "It occupies the last eighth-note subdivision of the bar."}
+    },
+    {
+      "id": "bass-staff", "title": "Read the low register", "stage": "Intermediate", "kind": "lesson", "minutes": 10,
+      "goal": "Understand bass clef and the bass guitar's octave convention.",
+      "steps": ["Bass clef lines from bottom are G2 B2 D3 F3 A3; spaces are A2 C3 E3 G3. The two dots of the clef surround the F3 line.", "Bass guitar music is normally written one octave above sounding pitch. Open E1 sounds low, but is written E2 on a ledger line below the staff.", "Play sounding C2 E2 G2 C3 while the guide shows written C3 E3 G3 C4. Name each pitch before playing it.", "Use the ear tool to compare major thirds, fifths and octaves. Hum the interval before moving to the next note on the bass."],
+      "tip": "Tab and the fretboard use sounding pitch here. The staff uses the standard written octave for bass guitar.",
+      "targetNotes": [36,40,43,48], "pattern": "Sounding C2 E2 G2 C3 · written C3 E3 G3 C4",
+      "assessment": "I read the pitch guide and explained why written and sounding octaves differ.",
+      "quiz": {"question": "A bass guitar's open E1 is normally written as...", "options": ["E1", "E2", "E4"], "answer": 1, "explanation": "Bass guitar notation sounds one octave lower than written."}
+    },
+    {
+      "id": "bass-intermediate-check", "title": "Checkpoint: pocket steps", "stage": "Intermediate", "kind": "checkpoint", "minutes": 15,
+      "goal": "Combine roots, fifths and controlled eighth-note pickups.",
+      "steps": ["Use C-F-G-C for four bars, repeated twice, at 60 BPM. Start each bar on its root.", "Play root on 1, fifth on 3, and root on 4&. For C use C2/G2; F uses F1/C2; G uses G1/D2.", "Keep the note on 4& short so the next root lands clearly. Play along with the original backing and listen for unwanted ringing.", "Pass with two uninterrupted eight-bar takes: correct harmony, even subdivisions, and quiet unused strings. Use self-assessment for groove, not the single-note pitch score."],
+      "tip": "Being in the pocket means stable time and intentional note length, not simply playing every available beat.",
+      "targetNotes": [36,43,36,29,36,29,31,38,31,36,43,36], "pattern": "Root(1), fifth(3), root(4&) · C F G C ×2",
+      "assessment": "I played Pocket Steps twice with clean note lengths and reliable pickups.",
+      "quiz": {"question": "What can make an otherwise correct bass line sound untidy?", "options": ["Intentional silence", "Unused strings ringing through changes", "A slow tempo"], "answer": 1, "explanation": "Muting and note length are part of the groove, even when the chosen pitches are correct."}
+    },
+    {
+      "id": "bass-arpeggios", "title": "Hear the chord inside the line", "stage": "Advanced", "kind": "lesson", "minutes": 14,
+      "goal": "Outline major and minor harmony with thirds and sevenths.",
+      "steps": ["Play C major arpeggio C2-E2-G2-C3. Compare C minor C2-Eb2-G2-C3; lower only the third by one semitone.", "For C dominant seventh, use C2-E2-G2-Bb2. Find Bb2 on the G string fret 3. The lowered seventh gives a different pull.", "At 45 BPM play one note per beat up and down, keeping the hand shifts quiet. Do not let the first string ring under later notes.", "Sing the third before playing it and explain whether the chord is major or minor. Try the ear-training major-third challenge for comparison."],
+      "tip": "Chord tones make a line describe harmony even when no full chord is played.",
+      "targetNotes": [36,40,43,48,36,39,43,48,36,40,43,46], "pattern": "C major: C E G C · C minor: C Eb G C · C7: C E G Bb",
+      "assessment": "I outlined major, minor and dominant-seventh colours with distinct thirds.",
+      "quiz": {"question": "What changes C major into C minor?", "options": ["Lower E to Eb", "Raise G to G#", "Remove C"], "answer": 0, "explanation": "The minor third is one semitone lower than the major third."}
+    },
+    {
+      "id": "bass-walking", "title": "Walk from one chord to the next", "stage": "Advanced", "kind": "lesson", "minutes": 15,
+      "goal": "Build a quarter-note walking line with chord tones and approach notes.",
+      "steps": ["At 50 BPM play | C2 E2 G2 E2 | F2 A2 C3 F#2 | G2 B2 D3 B1 | C2 E2 G2 C3 |, one quarter note per beat.", "The first note of every bar is its chord root. E leads by a half step to F, F# leads to G, and B1 leads to C2.", "Learn each bar separately. D3 is G-string fret 7, F#2 is D-string fret 4, and B1 is A-string fret 2.", "Join four bars over C-F-G-C backing. Keep chromatic approaches short and purposeful; listen for the arrival on beat 1 rather than lingering on the approach."],
+      "tip": "An approach note can be outside the chord if it resolves clearly. Strong-beat roots keep the harmony grounded.",
+      "targetNotes": [36,40,43,40,41,45,48,42,43,47,50,35,36,40,43,48], "pattern": "| C E G E | F A C F# | G B D B1 | C E G C |",
+      "assessment": "I walked through the progression and resolved each approach on the next root.",
+      "quiz": {"question": "Why does F# work just before a G chord?", "options": ["It is the root of C", "It approaches G by a semitone", "It replaces the need for time"], "answer": 1, "explanation": "The chromatic approach gains meaning by resolving to G on the next strong beat."}
+    },
+    {
+      "id": "bass-subdivisions", "title": "Sixteenths without the rush", "stage": "Advanced", "kind": "lesson", "minutes": 14,
+      "goal": "Count sixteenth-note subdivisions and keep a sparse groove.",
+      "steps": ["At 40 BPM count 1 e & a 2 e & a 3 e & a 4 e & a. Each beat contains four equally spaced counts.", "Mute the strings and tap or pluck once on 1, once on 2&, once on 3, and once on 4a. Count every subdivision, including silence.", "Use C2 for the same pattern, alternating fingers only where necessary. Keep the 4a note short before the next beat 1.", "Play four clean bars, then change roots C-F-G-C without changing the rhythm. Return to clapping whenever you lose where the numbered beat falls."],
+      "tip": "Four notes spread across a bar can be harder than sixteen continuous notes. The rests reveal your internal time.",
+      "targetNotes": [36,36,36,36,29,29,29,29,31,31,31,31], "pattern": "Attacks: 1, 2&, 3, 4a · count 1 e & a...",
+      "assessment": "I kept the sparse sixteenth-note groove without rushing the final pickup.",
+      "quiz": {"question": "How many equal sixteenth notes fit in one quarter-note beat?", "options": ["Two", "Four", "Eight"], "answer": 1, "explanation": "The counts number-e-&-a divide one beat into four parts."}
+    },
+    {
+      "id": "bass-improv", "title": "A fill that still supports the song", "stage": "Advanced", "kind": "lesson", "minutes": 15,
+      "goal": "Place a short fill without losing the next chord's root.",
+      "steps": ["Play three bars of C-F-G roots at 55 BPM. Keep the first two beats of the final C bar simple.", "On beats 3, 3&, 4 and 4& play E2 G2 A2 B1, then resolve to C2 on the next beat 1. Learn the fill separately first.", "Make a second fill with C major scale notes, ending on a note one step from the next root. Limit it to four eighth notes.", "Alternate two cycles with no fill and one cycle with a fill. Listen for whether the fill helps the phrase; reduce notes if the pulse or harmony becomes unclear."],
+      "tip": "A fill is a response to a musical space, not a requirement at every bar line.",
+      "targetNotes": [36,29,31,36,40,43,45,35,36], "pattern": "C F G C · final bar fill E G A B1 → C2 on next beat 1",
+      "assessment": "I played two different short fills and returned to the root exactly on time.",
+      "quiz": {"question": "A useful fill should...", "options": ["Make the next chord arrive late", "Lead back to the groove and next root", "Use every fret"], "answer": 1, "explanation": "A fill supports the arrangement when it resolves cleanly into the ongoing pulse."}
+    },
+    {
+      "id": "bass-advanced-check", "title": "Level test: build the pocket", "stage": "Advanced", "kind": "checkpoint", "minutes": 20,
+      "goal": "Perform a three-section original bass arrangement with consistent time.",
+      "steps": ["Use C-F-G-C for twelve bars at 65 BPM: three four-bar cycles. In cycle 1 play roots on beats 1 and 3.", "In cycle 2 use root-fifth patterns with a 4& pickup. In cycle 3 use the quarter-note walking line from the walking lesson.", "Add one short fill at the end only if the next C lands on time. Match note length and volume between sections.", "Pass with two full twelve-bar takes: steady pulse, deliberate rests, clean muting, correct chord roots, and an unambiguous final C. Explain which section best supports a quiet melody and why."],
+      "tip": "These advanced foundations introduce arranging and walking; style-specific time, slap and extended techniques need further focused study.",
+      "targetNotes": [36,29,31,36,36,43,36,29,36,29,31,38,31,36], "pattern": "12 bars: roots / root-fifth / walking · C F G C ×3",
+      "assessment": "I performed two complete bass arrangements without losing time or clarity.",
+      "quiz": {"question": "When a melody is quiet and spacious, which bass choice may support it best?", "options": ["A constant busy fill", "A simple, controlled root pattern", "Random loud notes"], "answer": 1, "explanation": "The best line serves the arrangement, which often means leaving room."}
+    }
   ]
 }

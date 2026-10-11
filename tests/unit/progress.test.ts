@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { addPractice, completeLesson, dayKey, freshProgress, parseProgress, practiceDay, reviewLesson } from '../../src/progress';
+import { addPractice, completeLesson, currentStreak, dayKey, freshProgress, parseProgress, practiceDay, reviewLesson } from '../../src/progress';
 import { courses, lessonAvailable } from '../../src/courses';
 
 describe('local progress', () => {
@@ -21,12 +21,28 @@ describe('local progress', () => {
     expect(progress.instruments.guitar).toMatchObject({ minutes: 1.5, notes: 12, tempo: 60 });
     expect(progress.instruments.keyboard.minutes).toBe(0);
   });
+  it('does not award a streak for an empty zero-second session', () => {
+    expect(addPractice(freshProgress(), 'keyboard', 0, 0, 0).streak).toBe(0);
+  });
+  it('tracks each introduced chord once', () => {
+    const chordsLesson = courses[0].lessons.find(item => item.chords)!;
+    const progress = completeLesson(freshProgress(), 'keyboard', chordsLesson, date);
+    expect(progress.instruments.keyboard.chords).toEqual(['C major', 'F major', 'G major']);
+    expect(completeLesson(progress, 'keyboard', chordsLesson, date).instruments.keyboard.chords).toHaveLength(3);
+  });
   it('covers one missed day with a freeze and resets a longer gap', () => {
     const first = practiceDay(freshProgress(), date);
     const frozen = practiceDay(first, new Date('2026-10-12T12:00:00'));
     expect(frozen.streak).toBe(2); expect(frozen.freezes).toBe(0);
     expect(practiceDay(frozen, new Date('2026-10-16T12:00:00')).streak).toBe(1);
     expect(practiceDay(first, date).streak).toBe(1);
+  });
+  it('displays an expired streak as zero without pretending today was practised', () => {
+    const progress = practiceDay(freshProgress(), date);
+    expect(currentStreak(progress, new Date('2026-10-11T12:00:00'))).toBe(1);
+    expect(currentStreak(progress, new Date('2026-10-12T12:00:00'))).toBe(1);
+    expect(currentStreak(progress, new Date('2026-10-13T12:00:00'))).toBe(0);
+    expect(progress.lastPractice).toBe('2026-10-10');
   });
   it('uses calendar days across a daylight-saving transition', () => {
     const progress = freshProgress(); progress.lastPractice = '2026-10-31'; progress.streak = 3;
@@ -62,6 +78,7 @@ describe('local progress', () => {
     expect(() => parseProgress(JSON.stringify(raw))).toThrow();
     expect(() => parseProgress('{"version":1}')).toThrow();
     expect(() => parseProgress('not JSON')).toThrow();
+    expect(() => parseProgress(JSON.stringify({ ...freshProgress(), lastPractice: '2026-02-31' }))).toThrow();
   });
   it('unlocks lessons sequentially and permits completed replays', () => {
     expect(lessonAvailable(courses[0].lessons, 0, {})).toBe(true);
@@ -71,6 +88,11 @@ describe('local progress', () => {
 });
 describe('curriculum integrity', () => {
   for (const course of courses) it(`${course.name} has complete, valid lessons`, () => {
+    expect(course.lessons).toHaveLength(15);
+    for (const stage of ['Beginner', 'Intermediate', 'Advanced']) {
+      expect(course.lessons.filter(lesson => lesson.stage === stage)).toHaveLength(5);
+      expect(course.lessons.some(lesson => lesson.stage === stage && lesson.kind === 'checkpoint')).toBe(true);
+    }
     expect(new Set(course.lessons.map(lesson => lesson.id)).size).toBe(course.lessons.length);
     for (const lesson of course.lessons) {
       expect(lesson.steps.length).toBeGreaterThanOrEqual(3);

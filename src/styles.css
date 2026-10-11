@@ -156,6 +156,8 @@ footer { border-top: 1px solid var(--cp-border); margin-top: 48px; padding: 20px
 .settings label { display: block; margin-bottom: 8px; }
 .settings select { display: block; width: 100%; margin-bottom: 24px; }
 .button-row { display: flex; flex-wrap: wrap; gap: 12px; margin: 16px 0; }
+.interval-options { display: flex; flex-wrap: wrap; gap: 8px; }
+.interval-options [aria-pressed="true"] { background: var(--cp-accent-soft); border-color: var(--cp-accent); }
 .review-card { display: flex; justify-content: space-between; gap: 16px; width: 100%; text-align: left; }
 .empty { text-align: center; padding: 56px 28px; }
 .empty > span { font-size: 48px; }
@@ -211,7 +213,7 @@ input[type="checkbox"],input[type="radio"] { min-width: 20px; height: 20px; acce
 .fretboard td button { padding: 4px; min-width: 44px; border-color: transparent; background: var(--cp-surface-soft); }
 .fretboard .target { border-color: var(--cp-accent); background: var(--cp-accent-soft); color: var(--cp-accent); font-weight: bold; }
 .staff-scroll { margin: 24px 0; padding: 12px 8px; border: 1px solid var(--cp-border); border-radius: 10px; color: var(--cp-text-muted); }
-.staff-scroll svg { display: block; min-width: 350px; width: 100%; height: 140px; }
+.staff-scroll svg { display: block; min-width: 350px; width: 100%; height: 190px; }
 .staff-scroll p { margin: 4px 0 0; }
 .tool-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; }
 .tool-card { min-width: 0; padding: 20px; border: 1px solid var(--cp-border); border-radius: 16px; background: var(--cp-surface); }
@@ -230,6 +232,7 @@ input[type="checkbox"],input[type="radio"] { min-width: 20px; height: 20px; acce
 .loop-inputs > label { min-width: 0; flex: 1; }
 .loop-inputs input { width: 100%; }
 .chord-diagram { margin-bottom: 20px; }
+.chord-picker { display: flex; align-items: center; gap: 12px; margin: 12px 0 20px; font-size: 13px; }
 .chord-strings { display: flex; gap: 8px; margin: 12px 0; }
 .chord-strings > div { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 10px; }
 .chord-strings b { font-size: 24px; border: 1px solid var(--cp-border); width: 36px; height: 44px; text-align: center; border-radius: 10px; color: var(--cp-accent); }

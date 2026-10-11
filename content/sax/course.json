@@ -48,5 +48,96 @@
       "assessment": "I played First Breeze twice with relaxed tone and a planned breath.",
       "quiz": {"question": "Why plan a breath during the rest?", "options": ["To make the phrase longer than four bars", "To keep the melody flowing comfortably", "To avoid ever breathing again"], "answer": 1, "explanation": "Breathing at a musical rest supports the next phrase without adding an accidental pause."}
     }
+    ,
+    {
+      "id": "sax-low-stack", "title": "Add your right hand: F, E, D", "stage": "Intermediate", "kind": "lesson", "minutes": 12,
+      "goal": "Play the lower main-key stack with supported tone.",
+      "steps": ["Keep left index, middle and ring down for G4. Add right index for F4, right middle as well for E4, and right ring as well for D4. No octave key for these written notes.", "Play G-F-E-D, each held for two beats at 45 BPM. Let the air stay steady and keep the jaw comfortable as notes descend.", "Reverse D-E-F-G. If a low note jumps an octave, relax the bite and check the keys are fully closed; ask a teacher if the problem persists.", "Join G-F-E-D-E-F-G, rest a full bar, and repeat. Keep right fingertips close to their pearl keys."],
+      "tip": "Lower notes need supported, unforced air and a good key seal, not a harder bite.",
+      "targetNotes": [67,65,64,62,64,65,67], "pattern": "Written G F E D E F G · 2 beats each",
+      "assessment": "I played the lower stack with clean finger changes and stable tone.",
+      "quiz": {"question": "For written low D4, which main keys are closed?", "options": ["All six", "Only left index", "Only right index"], "answer": 0, "explanation": "Low D closes left 1-2-3 and right 4-5-6, with the octave key released."}
+    },
+    {
+      "id": "sax-octave", "title": "The octave key, a lighter touch", "stage": "Intermediate", "kind": "lesson", "minutes": 12,
+      "goal": "Move written D4-G4 patterns up an octave with a stable embouchure.",
+      "steps": ["Finger written D4 with all six main keys. While keeping the same fingers down, press the left-thumb octave key to play D5.", "Alternate D4 and D5, two beats each at 45 BPM, with a two-beat rest between pairs. Keep the jaw steady; do not bite to force the upper note.", "Repeat E4/E5, F4/F5 and G4/G5 using the same main-key shapes and changing only the octave key.", "Play written D5 E5 F5 G5 F5 E5 D5. Keep the octave key pressed throughout this phrase and use clear, gentle starts."],
+      "tip": "The octave mechanism changes vents automatically around A. Use the thumb key rather than touching the neck vent directly.",
+      "targetNotes": [62,74,64,76,65,77,67,79,77,76,74], "pattern": "D4 D5 · E4 E5 · F4 F5 · G4 G5 · octave-key pairs",
+      "assessment": "I changed octaves without changing the main-key shape or biting.",
+      "quiz": {"question": "To go from written E4 to E5 with this basic fingering, change...", "options": ["The main-key shape completely", "The octave key while keeping the main keys", "The reed"], "answer": 1, "explanation": "Basic second-register D through C use the octave key with the corresponding main-key shapes."}
+    },
+    {
+      "id": "sax-g-scale", "title": "A G major scale, one sharp", "stage": "Intermediate", "kind": "lesson", "minutes": 12,
+      "goal": "Play written G major across the register break.",
+      "steps": ["Written G major is G4 A4 B4 C5 D5 E5 F#5 G5. For F# use left 1-2-3 plus right middle (key 5); in this octave press the octave key.", "At 40 BPM play one note per beat. Practise C5-D5 separately: change from left middle only to all six main keys plus octave.", "Descend G5 F#5 E5 D5 C5 B4 A4 G4. Release the octave key as you return to C5.", "Repeat with two-beat notes and focus on even tone. Written G major sounds concert Bb major on alto sax; your tuner labels will differ."],
+      "tip": "F# uses the right middle finger in this basic fingering, not the F fingering's right index.",
+      "targetNotes": [67,69,71,72,74,76,78,79,78,76,74,72,71,69,67], "pattern": "Written G A B C D E F# G · reverse",
+      "assessment": "I played G major both ways with a clean C-D register change.",
+      "quiz": {"question": "Which note is sharp in written G major?", "options": ["C", "F", "B"], "answer": 1, "explanation": "G major has one sharp: F#."}
+    },
+    {
+      "id": "sax-reading-phrasing", "title": "Read, slur and breathe", "stage": "Intermediate", "kind": "lesson", "minutes": 12,
+      "goal": "Distinguish tongued starts from connected slurs in a phrase.",
+      "steps": ["Treble staff lines are E4 G4 B4 D5 F5; spaces F4 A4 C5 E5. Sax notation uses written pitch, not the tuner's concert pitch.", "Play written G4 A4 B4 D5, one quarter note each. First tongue each note gently while keeping air supported.", "Now tongue only the first note and connect the other three with finger changes and continuous air. This is a slur; it does not mean slide between pitches.", "Play two bars of the phrase, then a bar with G4 held for two beats and two beats of rest for a breath. Keep the same pulse through articulation changes."],
+      "tip": "Slurs are musical connections. Smooth fingers and steady air matter more than playing the phrase fast.",
+      "targetNotes": [67,69,71,74,67,69,71,74,67], "pattern": "| G A B D5 | G A B D5 | G(2) rest(2) |",
+      "assessment": "I played both tongued and slurred versions with a planned breath.",
+      "quiz": {"question": "A slur between different sax pitches means...", "options": ["Tongue every note strongly", "Connect with air and fingers after the first start", "Stop air between notes"], "answer": 1, "explanation": "A slur connects the notes without separate tongue attacks on each one."}
+    },
+    {
+      "id": "sax-intermediate-check", "title": "Checkpoint: bright horizon", "stage": "Intermediate", "kind": "checkpoint", "minutes": 15,
+      "goal": "Perform an original melody crossing the register break.",
+      "steps": ["At 55 BPM play written | G A B D5 | E5 D5 B A | G B D5 F#5 | G5(2) rest(2) |.", "Use quarter notes in the first three bars, then a half note and half rest. Plan the breath at the rest; add a breath earlier if needed.", "Slur the first two notes of each bar, then gently tongue the remaining notes. Practise the C/D-area changes separately if they squeak.", "Pass with two connected four-bar takes: correct F#, a stable upper register, an even pulse and relaxed breathing. The reference is pitch-only, so use the written counts."],
+      "tip": "A breath is not a failure. Gradually lengthen the connected phrase without forcing air or becoming dizzy.",
+      "targetNotes": [67,69,71,74,76,74,71,69,67,71,74,78,79], "pattern": "| G A B D5 | E5 D5 B A | G B D5 F#5 | G5(2) rest(2) |",
+      "assessment": "I performed Bright Horizon twice with clean register changes and planned breathing.",
+      "quiz": {"question": "Written F#5 on alto sax sounds concert...", "options": ["A4", "F#5", "C5"], "answer": 0, "explanation": "Alto sounds nine semitones below written F#5, which is concert A4."}
+    },
+    {
+      "id": "sax-chromatic", "title": "The colours between the notes", "stage": "Advanced", "kind": "lesson", "minutes": 14,
+      "goal": "Play a slow chromatic pattern using Eb, F#, G#, Bb and C#.",
+      "steps": ["Learn one new fingering at a time: Eb4 uses all six main keys plus right little-finger Eb; G#4 uses left 1-2-3 plus left little-finger G#; Bb4 uses left index plus the small bis key; C#5 has all six main keys open.", "Play written D4 Eb4 E4 F4 F#4 G4 G#4 A4 Bb4 B4 C5 C#5 D5. F# uses left 1-2-3 and right middle; D5 adds octave to all six.", "At 35-40 BPM hold each note for two beats. Stop at the unfamiliar key and verify it rather than guessing through the line.", "Descend slowly and compare adjacent pitches by ear. Use a teacher or a maker's full fingering chart to confirm side and little-finger key locations on your sax."],
+      "tip": "The schematic highlights six main keys; extra-key instructions are written beside it. Enharmonic notes such as Eb may appear as D# in the pitch guide.",
+      "targetNotes": [62,63,64,65,66,67,68,69,70,71,72,73,74,73,72,71,70,69,68,67,66,65,64,63,62], "pattern": "Written D Eb E F F# G G# A Bb B C C# D5 · 2 beats each",
+      "assessment": "I located the extra keys and played the chromatic notes slowly without guessing.",
+      "quiz": {"question": "A chromatic scale moves in...", "options": ["Whole steps only", "Semitone steps", "Only fifths"], "answer": 1, "explanation": "A chromatic scale includes each adjacent semitone, including sharps or flats."}
+    },
+    {
+      "id": "sax-arpeggios", "title": "Outline the harmony", "stage": "Advanced", "kind": "lesson", "minutes": 14,
+      "goal": "Play written G and C major arpeggios and hear chord tones.",
+      "steps": ["G major arpeggio is written G4 B4 D5 G5. C major is C5 E5 G5 C6. On upper C6 use left middle plus octave, following the basic chart.", "At 45 BPM play each arpeggio up and down with two-beat notes. Keep the upper register steady without tightening the jaw.", "Slur ascending and gently tongue descending. Compare a full scale with the arpeggio: the arpeggio skips non-chord tones.", "Hum root-to-third and root-to-fifth. Use the ear-training tool's major third and perfect fifth examples, then reproduce those distances on the sax."],
+      "tip": "Written G major sounds concert Bb major; written C major sounds concert Eb major.",
+      "targetNotes": [67,71,74,79,74,71,67,72,76,79,84,79,76,72], "pattern": "Written G B D G · C E G C6 · ascend and descend",
+      "assessment": "I played both arpeggios and identified their root, third and fifth.",
+      "quiz": {"question": "An arpeggio plays...", "options": ["Chord tones one after another", "Every chromatic note", "Only repeated notes"], "answer": 0, "explanation": "An arpeggio is a chord spread into successive notes instead of sounding together."}
+    },
+    {
+      "id": "sax-expression", "title": "Shape a phrase, not just a note", "stage": "Advanced", "kind": "lesson", "minutes": 14,
+      "goal": "Use dynamics and articulation without losing pitch or tone.",
+      "steps": ["Play written G4 as a four-beat long tone, growing from soft to medium for two beats and returning to soft for two. Keep air supported and the jaw stable.", "Watch the concert-pitch tuner for a stable centre. If the pitch drifts markedly, reduce the dynamic range and ask a teacher about breath/voicing.", "Play | G A B D5 | E5 D5 B A | G(2) rest(2) |. Make E5 the phrase's high point and let the final G settle gently.", "Try two versions: a smooth slurred phrase and a lightly articulated phrase. Explain which character each creates. Do not force vibrato; a stable straight tone comes first."],
+      "tip": "Louder does not mean biting or blasting. Change energy while retaining a supported tone.",
+      "targetNotes": [67,69,71,74,76,74,71,69,67], "pattern": "G long tone soft→medium→soft · shaped 3-bar phrase",
+      "assessment": "I shaped a dynamic phrase while keeping a stable tone and clear ending.",
+      "quiz": {"question": "A good first response to pitch drifting with dynamics is...", "options": ["Bite harder", "Use a smaller dynamic range and check air/voicing", "Ignore it and blow louder"], "answer": 1, "explanation": "Controlled air and voicing keep pitch centred as volume changes."}
+    },
+    {
+      "id": "sax-improv", "title": "Your first melodic conversation", "stage": "Advanced", "kind": "lesson", "minutes": 15,
+      "goal": "Create a pentatonic motif over concert C-F-G-C backing.",
+      "steps": ["To fit the studio's concert C major backing on Eb alto, use written A major pentatonic: A4 B4 C#5 E5 F#5. These sound concert C4 D4 E4 G4 A4.", "At 50 BPM choose a two-beat three-note motif and leave two beats of silence. Repeat it, then vary one note while keeping the rhythm recognisable.", "Over the concert F bar aim for written F# (concert A); over G aim for written E or B (concert G or D); over C settle on written A or C# (concert C or E).", "Plan a breath between phrases and use light articulation. Make three variations and end intentionally rather than filling every beat."],
+      "tip": "Transposition matters when playing with other instruments. Concert C major is written A major on Eb alto.",
+      "targetNotes": [69,71,73,76,78,76,73,71,69], "pattern": "Written A B C# E F# = concert C D E G A · short motifs + rests",
+      "assessment": "I improvised three recognisable variations that fit the concert backing.",
+      "quiz": {"question": "Concert C major corresponds to which written major key on Eb alto?", "options": ["C major", "A major", "F major"], "answer": 1, "explanation": "Written A sounds concert C, so concert C major is written A major on alto sax."}
+    },
+    {
+      "id": "sax-advanced-check", "title": "Level test: air and story", "stage": "Advanced", "kind": "checkpoint", "minutes": 20,
+      "goal": "Perform an original transposed melody and an improvised response.",
+      "steps": ["Over concert C-F-G-C at 60 BPM, play written | A B C# E5 | F#5 E5 C# B | E5 F#5 E5 B | A(2) rest(2) |.", "These are concert | C D E G | A G E D | G A G D | C(2) rest(2) |. Practise the written notes first without backing, then align bar 1 with its C chord.", "Repeat the four bars with your own A-pentatonic response. Use at least one intentional rest, a planned breath and a clear soft ending on written A.", "Pass with two eight-bar takes: stable tone, clean extra-key/register changes, correct transposition, steady rhythm and recognisable phrasing. Consult a teacher for further advanced tone, altissimo and style studies."],
+      "tip": "These advanced foundations introduce phrasing, transposition and improvisation, not the entire advanced sax repertoire.",
+      "targetNotes": [69,71,73,76,78,76,73,71,76,78,76,71,69], "pattern": "Written | A B C# E5 | F#5 E5 C# B | E5 F#5 E5 B | A(2) rest(2) |",
+      "assessment": "I performed the melody and response twice with stable tone and correct concert harmony.",
+      "quiz": {"question": "To end on concert C with Eb alto, play written...", "options": ["A", "C", "Eb"], "answer": 0, "explanation": "Written A on alto sounds nine semitones lower, concert C in the octave below."}
+    }
   ]
 }

@@ -1,12 +1,15 @@
 import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 
 function offlineWorker(): Plugin {
   return {
     name: 'playto-offline',
     generateBundle(_, bundle) {
-      const assets = ['/', '/index.html', '/manifest.webmanifest', '/icon.svg', '/CNAME',
-        ...Object.keys(bundle).map(file => `/${file}`)];
+      this.emitFile({ type: 'asset', fileName: 'font-license.txt', source: readFileSync(resolve('node_modules', '@fontsource', 'opendyslexic', 'LICENSE'), 'utf8') });
+      const assets = [...new Set(['/', '/index.html', '/manifest.webmanifest', '/icon.svg', '/icon-192.png', '/icon-512.png', '/font-license.txt', '/CNAME',
+        ...Object.keys(bundle).map(file => `/${file}`)])];
       this.emitFile({
         type: 'asset', fileName: 'sw.js',
         source: `const CACHE='playto-${Date.now()}';

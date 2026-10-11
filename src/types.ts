@@ -15,6 +15,7 @@ export interface Lesson {
   assessment: string;
   quiz: { question: string; options: string[]; answer: number; explanation: string };
   chord?: string;
+  chords?: string[];
 }
 export interface Course {
   id: InstrumentId;

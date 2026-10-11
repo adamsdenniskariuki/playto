@@ -1,7 +1,7 @@
-import keyboard from '../content/keyboard/course.json';
-import guitar from '../content/guitar/course.json';
-import bass from '../content/bass/course.json';
-import sax from '../content/sax/course.json';
+import keyboard from '../content/keyboard/course.json' with { type: 'json' };
+import guitar from '../content/guitar/course.json' with { type: 'json' };
+import bass from '../content/bass/course.json' with { type: 'json' };
+import sax from '../content/sax/course.json' with { type: 'json' };
 import type { Course, Lesson } from './types';
 
 function validateCourse(raw: unknown): Course {

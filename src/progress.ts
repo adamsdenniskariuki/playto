@@ -21,6 +21,11 @@ function dayNumber(day: string): number {
   const [year, month, date] = day.split('-').map(Number);
   return Date.UTC(year, month - 1, date) / 86400000;
 }
+export function currentStreak(progress: Progress, date = new Date()): number {
+  if (!progress.lastPractice) return 0;
+  const gap = dayNumber(dayKey(date)) - dayNumber(progress.lastPractice);
+  return gap <= 1 || (gap === 2 && progress.freezes > 0) ? progress.streak : 0;
+}
 export function practiceDay(progress: Progress, date = new Date()): Progress {
   const next = structuredClone(progress);
   const today = dayKey(date);
@@ -40,8 +45,8 @@ export function completeLesson(progress: Progress, instrument: InstrumentId, les
     completedAt: date.toISOString(), reviewAt: new Date(date.getTime() + 86400000).toISOString(),
     interval: 1, reviews: 0
   };
-  if (lesson.chord && !next.instruments[instrument].chords.includes(lesson.chord)) {
-    next.instruments[instrument].chords.push(lesson.chord);
+  for (const chord of [...(lesson.chords ?? []), ...(lesson.chord ? [lesson.chord] : [])]) {
+    if (!next.instruments[instrument].chords.includes(chord)) next.instruments[instrument].chords.push(chord);
   }
   next.xp += lesson.kind === 'checkpoint' ? 75 : 50;
   return next;
@@ -58,6 +63,7 @@ export function reviewLesson(progress: Progress, instrument: InstrumentId, lesso
   return next;
 }
 export function addPractice(progress: Progress, instrument: InstrumentId, seconds: number, notes: number, tempo: number): Progress {
+  if (seconds < 1 && notes < 1) return structuredClone(progress);
   const next = practiceDay(progress);
   const item = next.instruments[instrument];
   item.minutes += Math.max(0, seconds) / 60;
@@ -75,7 +81,7 @@ export function parseProgress(text: string): Progress {
   const raw: unknown = JSON.parse(text);
   if (!object(raw) || raw.version !== 1 || !integer(raw.xp) || !integer(raw.streak) ||
       !integer(raw.freezes) || raw.freezes > 2 || !instrumentIds.includes(raw.instrument as InstrumentId) ||
-      !(raw.lastPractice === null || (typeof raw.lastPractice === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(raw.lastPractice) && validDate(raw.lastPractice))) ||
+      !(raw.lastPractice === null || (typeof raw.lastPractice === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(raw.lastPractice) && validDate(raw.lastPractice) && dayKey(new Date(`${raw.lastPractice}T12:00:00`)) === raw.lastPractice)) ||
       !object(raw.settings) || !['system', 'light', 'dark', 'sepia', 'contrast'].includes(String(raw.settings.theme)) ||
       !['default', 'serif', 'dyslexic'].includes(String(raw.settings.font)) || typeof raw.settings.tourSeen !== 'boolean' ||
       !object(raw.instruments)) throw new Error('This is not a valid Playto v1 backup.');

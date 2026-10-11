@@ -76,12 +76,12 @@ export function SaxChart({ target, play }: { target: number; play: (midi: number
     </div>
   </div>;
 }
-export function Staff({ notes, bass = false }: { notes: number[]; bass?: boolean }) {
-  const bottom = bass ? 26 : 64; // bottom staff lines: G2 or E4
+export function Staff({ notes, bass = false, octaveShift = 0 }: { notes: number[]; bass?: boolean; octaveShift?: number }) {
+  const bottom = bass ? 43 : 64;
   const diatonic = (midi: number) => Math.floor(midi / 12) * 7 + [0,0,1,1,2,3,3,4,4,5,5,6][midi % 12];
-  const shown = notes.slice(0, 12);
-  return <div className="staff-scroll"><svg viewBox={`0 0 ${Math.max(350, shown.length * 38 + 70)} 140`} role="img"
-    aria-label={`${bass ? 'Bass' : 'Treble'} clef pitch guide: ${shown.map(noteName).join(', ')}. Rhythm is described in the lesson.`}>
+  const shown = notes.slice(0, 12).map(note => note + octaveShift * 12);
+  return <div className="staff-scroll"><svg viewBox={`0 0 ${Math.max(350, shown.length * 38 + 70)} 190`} role="img"
+    aria-label={`${bass ? 'Bass' : 'Treble'} clef pitch guide: ${shown.map(noteName).join(', ')}.${octaveShift ? ' Sounds one octave lower than written.' : ''} Rhythm is described in the lesson.`}>
     {[0,1,2,3,4].map(line => <line key={line} x1="20" y1={35 + line * 12} x2={Math.max(330, shown.length * 38 + 50)} y2={35 + line * 12} stroke="currentColor"/>)}
     <text x="12" y="30" fill="currentColor" fontSize="13">{bass ? 'Bass clef' : 'Treble clef'}</text>
     {shown.map((midi, index) => {
@@ -92,7 +92,7 @@ export function Staff({ notes, bass = false }: { notes: number[]; bass?: boolean
         <line x1={x + 6} y1={y} x2={x + 6} y2={y - 28} stroke="currentColor"/>
         {ledgers.map(ledger => <line key={ledger} x1={x - 11} x2={x + 11} y1={ledger} y2={ledger} stroke="currentColor"/>)}
         {[1,3,6,8,10].includes(midi % 12) && <text x={x - 19} y={y + 5} fill="currentColor">#</text>}
-        <text x={x} y="128" textAnchor="middle" fill="currentColor" fontSize="11">{noteName(midi)}</text></g>;
+        <text x={x} y="178" textAnchor="middle" fill="currentColor" fontSize="11">{noteName(midi)}</text></g>;
     })}
-  </svg><p className="small muted">Pitch guide, not a full score. Follow the lesson's counts and rhythm; accidentals are shown as sharps.</p></div>;
+  </svg><p className="small muted">Pitch guide, not a full score. {notes.length > 12 ? 'First 12 notes shown. ' : ''}{octaveShift ? 'Guitar/bass notation is written one octave higher than it sounds. ' : ''}Follow the lesson's counts and rhythm; accidentals are shown as sharps.</p></div>;
 }

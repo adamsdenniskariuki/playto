@@ -51,5 +51,96 @@
       "assessment": "I played Little Sunrise twice without stopping, with an even beat.",
       "quiz": {"question": "If a bar keeps going wrong, what helps most?", "options": ["Play the whole piece faster", "Practise that bar slowly, then reconnect it", "Ignore the beat"], "answer": 1, "explanation": "Small, slow repetitions make the difficult movement easier to remember."}
     }
+    ,
+    {
+      "id": "keys-c-scale", "title": "Cross the thumb: C major scale", "stage": "Intermediate", "kind": "lesson", "minutes": 10,
+      "goal": "Play one octave of C major with smooth fingering.",
+      "steps": ["Right hand ascending: C D E F G A B C with fingers 1 2 3 1 2 3 4 5. After E, move the thumb gently under to F without twisting the wrist.", "Descending use 5 4 3 2 1 3 2 1. Move the middle finger over the thumb from F to E.", "At 40 BPM play one note per beat. Separate the crossing into E-F-G and G-F-E mini-patterns before joining the scale.", "Play three even scales at 50 BPM, then try 60 only when the crossing is quiet and relaxed. Sing the notes as you go."],
+      "tip": "C major has no sharps or flats. The half steps are E-F and B-C.",
+      "targetNotes": [60,62,64,65,67,69,71,72,71,69,67,65,64,62,60], "pattern": "C D E F G A B C · 1 2 3 1 2 3 4 5 · reverse",
+      "assessment": "I played the scale up and down with a relaxed thumb crossing.",
+      "quiz": {"question": "The right-hand fingering ascending through C-D-E-F is...", "options": ["1-2-3-1", "1-2-3-4", "5-4-3-2"], "answer": 0, "explanation": "The thumb crosses to F after fingers 1-2-3 on C-D-E."}
+    },
+    {
+      "id": "keys-two-hands", "title": "Two hands, different jobs", "stage": "Intermediate", "kind": "lesson", "minutes": 12,
+      "goal": "Keep left-hand whole notes underneath a right-hand melody.",
+      "steps": ["Learn each hand alone. Right hand: | C D E G | E D C C |. Left hand: C3 held for four beats in each bar.", "At 40 BPM play both hands on beat 1, then keep the left hand down while the right hand continues on beats 2, 3 and 4.", "Release the left-hand C just before the next bar, then begin both hands together again. Practise the bar line separately.", "Repeat four bars without the left hand following every right-hand note. Add the metronome only when the coordination feels calm."],
+      "tip": "You are teaching two independent motions. Short, slow loops beat long, tense repetitions.",
+      "targetNotes": [60,62,64,67,64,62,60,60], "pattern": "RH: | C D E G | E D C C | · LH: | C3(4) | C3(4) |",
+      "assessment": "I held the bass notes while the melody continued independently.",
+      "quiz": {"question": "When the right hand changes on beat 2, the left hand should...", "options": ["Repeat its note", "Keep holding its four-beat note", "Move to the next bar early"], "answer": 1, "explanation": "Different note durations let the hands perform different musical roles."}
+    },
+    {
+      "id": "keys-read-staff", "title": "Read the staff, hear the interval", "stage": "Intermediate", "kind": "lesson", "minutes": 10,
+      "goal": "Read simple treble notes and recognise steps, thirds and fifths.",
+      "steps": ["Treble staff lines from bottom to top are E4 G4 B4 D5 F5; the spaces are F4 A4 C5 E5. Middle C4 sits on one ledger line below the staff.", "Use the labelled pitch guide to find C4 E4 G4 A4 G4 E4. A step moves to the next letter, a third skips one letter, and a fifth spans five letter names.", "Play C-E and C-G. Hum both notes and compare their distances. Try the ear-training tool below without looking at the keys.", "Cover the guide labels and name the note positions. Then play the six-note phrase at 50 BPM, one quarter note per beat."],
+      "tip": "Read the contour and intervals as well as letter names. That is faster than decoding every note separately.",
+      "targetNotes": [60,64,67,69,67,64], "pattern": "C E G A G E · thirds, fifth and steps",
+      "assessment": "I named the treble notes and heard the difference between a third and a fifth.",
+      "quiz": {"question": "The bottom line of the treble staff is...", "options": ["C4", "E4", "G4"], "answer": 1, "explanation": "Treble lines are E G B D F; C4 is below on a ledger line."}
+    },
+    {
+      "id": "keys-three-chords", "title": "C, F, G: the home chords", "stage": "Intermediate", "kind": "lesson", "minutes": 12,
+      "goal": "Play I-IV-V-I in C major and hear the return home.",
+      "steps": ["Build C major (C E G), F major (F A C) and G major (G B D). Play each as separate notes before pressing it together.", "Use comfortable right-hand fingers 1-3-5 for root-position chords, shifting the whole hand between shapes.", "Play each chord for four beats at 50 BPM: C-F-G-C. Add the corresponding left-hand roots C3-F3-G3-C3.", "Listen to how G feels unfinished and C feels settled. Use the backing tool to practise landing each chord on beat 1."],
+      "tip": "In C major these chords are I, IV and V. Roman numerals describe their place in the scale.",
+      "targetNotes": [60,64,67,65,69,72,67,71,74,60,64,67], "pattern": "| C(4) | F(4) | G(4) | C(4) |", "chord": "F major", "chords": ["C major", "F major", "G major"],
+      "assessment": "I played C-F-G-C with the correct chord tones and a steady pulse.",
+      "quiz": {"question": "The IV chord in C major is...", "options": ["F major", "G major", "A minor"], "answer": 0, "explanation": "The fourth scale degree is F, so IV is F major."}
+    },
+    {
+      "id": "keys-intermediate-check", "title": "Checkpoint: river steps", "stage": "Intermediate", "kind": "checkpoint", "minutes": 15,
+      "goal": "Combine a melody, bass roots and clear phrasing in an original piece.",
+      "steps": ["Learn the original melody: | E G C5 G | F A C5 A | G B D5 B | E D C(2) |. All notes are quarters except the last C, a half note.", "Use a left-hand root held for each bar: C3, F3, G3, C3. Practise the hands separately at 45 BPM.", "Join one bar at a time. Breathe with the phrase and make the last C quieter than the highest D5.", "Pass by playing the four bars twice at a comfortable 60 BPM, without losing the pulse or restarting at each chord change."],
+      "tip": "The highest note can be the phrase's high point, not necessarily the loudest possible key strike.",
+      "targetNotes": [64,67,72,67,65,69,72,69,67,71,74,71,64,62,60], "pattern": "| E G C5 G | F A C5 A | G B D5 B | E D C(2) |",
+      "assessment": "I played River Steps twice with independent bass roots and shaped the ending.",
+      "quiz": {"question": "How many beats does the last C fill here?", "options": ["One", "Two", "Three"], "answer": 1, "explanation": "The final bar has E for one beat, D for one and C for two: four beats total."}
+    },
+    {
+      "id": "keys-inversions", "title": "Smooth chords with inversions", "stage": "Advanced", "kind": "lesson", "minutes": 14,
+      "goal": "Connect C-F-G-C with less hand movement using inversions.",
+      "steps": ["C major can be C E G, E G C, or G C E. The notes are the same; the lowest note determines the inversion.", "Try right-hand C E G → C F A → B D G → C E G. F is second inversion, G is first inversion.", "Play one chord per four beats at 50 BPM. Keep common notes near the same fingers; choose comfortable fingering without stretching.", "Add left-hand roots C3 F3 G3 C3. Compare the smooth version with root-position chords and listen for the moving inner voices."],
+      "tip": "An inversion changes the order, not the chord's identity. A C chord does not become E major just because E is lowest.",
+      "targetNotes": [60,64,67,60,65,69,59,62,67,60,64,67], "pattern": "C E G → C F A → B D G → C E G",
+      "assessment": "I connected the progression smoothly and named its inversions.",
+      "quiz": {"question": "E-G-C is which chord and inversion?", "options": ["E minor, root position", "C major, first inversion", "G major, second inversion"], "answer": 1, "explanation": "E is the third of C major. Putting the third lowest creates first inversion."}
+    },
+    {
+      "id": "keys-pedal-dynamics", "title": "Pedal, colour and release", "stage": "Advanced", "kind": "lesson", "minutes": 12,
+      "goal": "Use clean pedal changes and a deliberate dynamic phrase.",
+      "steps": ["On an acoustic/digital piano with a sustain pedal, play a C chord, then press the pedal just after the keys sound. Lift your hand and hear the sustain. Without a pedal, practise finger legato instead.", "Change C to F: play F, release the pedal briefly to clear C, then press it again. Repeat slowly. The app's short reference tones do not simulate pedal behaviour.", "Play C-F-G-C, four beats each, changing pedal after each chord attack. Listen for a clean harmony, not a cloudy wash.", "Shape the progression from soft to moderately loud and back to soft. Use arm weight, not a stiff downward jab, and release tension after every phrase."],
+      "tip": "Pedal follows listening. Use less in a resonant room, and never use it to hide unclear rhythm.",
+      "targetNotes": [60,64,67,65,69,72,67,71,74,60,64,67], "pattern": "C → F → G → C · change pedal after each new chord",
+      "assessment": "I cleared old harmonies with pedal changes, or used clean finger legato without a pedal.",
+      "quiz": {"question": "Why briefly release the pedal at a chord change?", "options": ["To clear the previous harmony", "To make the piano sharper", "To stop counting beats"], "answer": 0, "explanation": "Clearing the previous notes prevents unwanted harmonic overlap."}
+    },
+    {
+      "id": "keys-syncopation", "title": "Let the offbeat speak", "stage": "Advanced", "kind": "lesson", "minutes": 14,
+      "goal": "Maintain bass beats while the right hand plays on offbeats.",
+      "steps": ["Count 1 & 2 & 3 & 4 & at 50 BPM. Clap only on the '&' after each beat, keeping the numbered beats silent.", "Left hand plays C3 on beats 1 and 3. Right hand plays an E4-G4 dyad on each '&'. Practise each hand alone, then combine two beats at a time.", "Repeat one bar four times. Keep the metronome at quarter-note beats; do not let the offbeat pull it faster.", "Move the bass to F3 with right-hand F4-A4, then G3 with G4-B4, then back to C. Use light right-hand attacks and a steady low pulse."],
+      "tip": "The reference is an equal-note pitch guide. The written '&' placements are what create syncopation.",
+      "targetNotes": [64,67,65,69,67,71,64,67], "pattern": "LH on 1,3 · RH dyads on & after 1,2,3,4 · C/F/G/C",
+      "assessment": "I kept bass notes on the beat while placing right-hand dyads off the beat.",
+      "quiz": {"question": "An '&' in 1 & 2 & means...", "options": ["A new bar", "The eighth-note halfway between numbered beats", "A four-beat rest"], "answer": 1, "explanation": "Each quarter-note beat is divided into two equal eighth notes."}
+    },
+    {
+      "id": "keys-improv", "title": "Improvise a conversation", "stage": "Advanced", "kind": "lesson", "minutes": 15,
+      "goal": "Create and develop a short motif over a chord progression.",
+      "steps": ["Use C major pentatonic: C D E G A. Play the five notes and notice there are no half steps within this set.", "Over the C-F-G-C backing, invent a two-beat idea using only C D E. Repeat it, then change its last note. Leave a full beat of silence between answers.", "On F bars, aim for A or C; on G bars, aim for G or D; on the final C bar, settle on C or E. These tones connect the idea to the chord.", "Record the motif on paper using letter names and beat counts. Perform three variations while keeping the same opening rhythm. Try identifying intervals in the ear tool before playing them."],
+      "tip": "Improvisation is making choices, not filling every space. A recognisable idea is more memorable than a fast scale.",
+      "targetNotes": [60,62,64,67,69,67,64,62,60], "pattern": "C D E G A · motif → repeat → vary → leave space",
+      "assessment": "I played three motif variations and landed on chord tones at the changes.",
+      "quiz": {"question": "Which set is C major pentatonic?", "options": ["C D E G A", "C Db Eb Gb Ab", "C D F B C"], "answer": 0, "explanation": "The major pentatonic uses scale degrees 1, 2, 3, 5 and 6."}
+    },
+    {
+      "id": "keys-advanced-check", "title": "Level test: your own arrangement", "stage": "Advanced", "kind": "checkpoint", "minutes": 20,
+      "goal": "Arrange an original eight-bar piece using melody, harmony and expression.",
+      "steps": ["Use two cycles of C-F-G-C, one four-beat bar each. For the first cycle play River Steps with left-hand roots and smooth right-hand melody at 65 BPM.", "For the second cycle replace the melody with your own pentatonic motif. Use inversions to reduce movement, and add a brief offbeat response only if you can keep time.", "Choose a dynamic high point in bar 7 and a quiet, clear ending in bar 8. Add clean pedal changes if available.", "Pass with two uninterrupted takes: clear chord changes, independent hands, audible phrase shape, and an ending on C harmony. Write one thing to improve next; do not increase tempo until both takes feel controlled."],
+      "tip": "Advanced work here is an introduction to arranging and independence, not a claim of concert-pianist mastery. Revisit techniques with a teacher.",
+      "targetNotes": [64,67,72,67,65,69,72,69,67,71,74,71,64,62,60], "pattern": "8 bars: C F G C | C F G C · melody, then original variation",
+      "assessment": "I performed two complete arrangements with clean harmony, steady time and intentional expression.",
+      "quiz": {"question": "Which makes this arrangement most musical?", "options": ["Maximum notes in every beat", "Clear time, connected harmony, and intentional phrasing", "Pedal held through every chord"], "answer": 1, "explanation": "A controlled musical idea is more important than density or speed."}
+    }
   ]
 }

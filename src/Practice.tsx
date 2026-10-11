@@ -25,17 +25,23 @@ export function Practice({ course, lesson, onSave, report }: {
   const [sessionStart, setSessionStart] = useState<number | null>(null);
   const [elapsed, setElapsed] = useState(0);
   const [steady, setSteady] = useState(false);
+  const [chord, setChord] = useState(lesson?.chord ?? 'E minor');
   const [micStatus, setMicStatus] = useState('Not connected - microphone is off');
   const [micOn, setMicOn] = useState(false);
   const [micPending, setMicPending] = useState(false);
   const [reading, setReading] = useState<ReturnType<typeof pitchInfo> | null>(null);
   const [midiStatus, setMidiStatus] = useState('MIDI not connected');
   const stream = useRef<MediaStream | null>(null);
+  const sourceNode = useRef<MediaStreamAudioSourceNode | null>(null);
   const frame = useRef(0);
   const micGeneration = useRef(0);
   const midiGeneration = useRef(0);
   const midi = useRef<MidiAccess | null>(null);
   const mounted = useRef(true);
+  const saveRef = useRef(onSave);
+  saveRef.current = onSave;
+  const sessionRef = useRef({ start: sessionStart, hits, tempo, steady });
+  sessionRef.current = { start: sessionStart, hits, tempo, steady };
   const target = targets[index % targets.length];
   const targetRef = useRef(target);
   const runningRef = useRef(sessionStart !== null);
@@ -55,6 +61,7 @@ export function Practice({ course, lesson, onSave, report }: {
     micGeneration.current++;
     cancelAnimationFrame(frame.current);
     stream.current?.getTracks().forEach(track => track.stop());
+    sourceNode.current?.disconnect(); sourceNode.current = null;
     stream.current = null;
     setMicOn(false); setMicPending(false); setReading(null); setMicStatus('Not connected - microphone is off');
   }
@@ -71,6 +78,7 @@ export function Practice({ course, lesson, onSave, report }: {
       const context = await audio.ready();
       if (!mounted.current || generation !== micGeneration.current) return;
       const source = context.createMediaStreamSource(acquired);
+      sourceNode.current = source;
       const analyser = context.createAnalyser();
       analyser.fftSize = 4096;
       source.connect(analyser);
@@ -104,6 +112,7 @@ export function Practice({ course, lesson, onSave, report }: {
       }; });
     } catch (error) {
       acquired?.getTracks().forEach(track => track.stop()); stream.current = null;
+      sourceNode.current?.disconnect(); sourceNode.current = null;
       if (!mounted.current || generation !== micGeneration.current) return;
       setMicPending(false); setMicOn(false);
       const reason = error instanceof Error ? error.name : '';
@@ -144,8 +153,15 @@ export function Practice({ course, lesson, onSave, report }: {
     return () => {
       mounted.current = false; micGeneration.current++; midiGeneration.current++;
       cancelAnimationFrame(frame.current); stream.current?.getTracks().forEach(track => track.stop());
+      sourceNode.current?.disconnect(); sourceNode.current = null;
       if (midi.current) { midi.current.inputs.forEach(input => { input.onmidimessage = null; }); midi.current.onstatechange = null; }
       audio.stop();
+      const session = sessionRef.current;
+      if (session.start !== null) {
+        const seconds = Math.floor((performance.now() - session.start) / 1000);
+        sessionRef.current.start = null;
+        saveRef.current(seconds, session.hits, session.steady && seconds >= 30 ? session.tempo : 0);
+      }
     };
   }, []);
   useEffect(() => {
@@ -180,6 +196,7 @@ export function Practice({ course, lesson, onSave, report }: {
   function finish() {
     if (sessionStart === null) return;
     const seconds = Math.floor((performance.now() - sessionStart) / 1000);
+    sessionRef.current.start = null;
     onSave(seconds, hits, steady && seconds >= 30 ? tempo : 0);
     setSessionStart(null); setElapsed(0); setHits(0); setIndex(0); setSteady(false);
     setLoop(false); setMetronome(false); setBacking(false); stopMic(); disconnectMidi(); audio.stop();
@@ -187,16 +204,19 @@ export function Practice({ course, lesson, onSave, report }: {
   return <div className="practice">
     <div className="practice-heading"><div><span className="eyebrow">YOUR PRACTICE SPACE</span><h3>Make a little music</h3></div>
       <span className="pill">{Math.floor(elapsed / 60)}:{String(elapsed % 60).padStart(2, '0')} · {hits} notes matched</span></div>
-    <p className="muted">Start a session to track actual practice time. Match notes on screen, with your mic, or with MIDI. Chords and rhythm use self-assessment.</p>
+    <p className="muted">Start a session to track actual practice time. Sessions save when you finish or leave this practice space. Save before closing the browser. Chords and rhythm use self-assessment.</p>
     <div className="button-row">{sessionStart === null ? <button className="primary" onClick={() => { setSessionStart(performance.now()); setIndex(0); setHits(0); }}>Start practice</button>
       : <button className="primary" onClick={finish}>Save practice session</button>}
       <button onClick={() => safeAudio(audio.pattern(targets.map(concert), tempo * speed))}>Hear pitch pattern</button>
       <button onClick={() => { setLoop(false); setMetronome(false); setBacking(false); audio.stop(); }}>Stop sound</button></div>
     <div className="target-note"><span>Next note</span><strong>{noteName(target)}</strong><span>{sessionStart === null ? 'Start practice to match notes' : 'Play, then release before repeating'}</span></div>
+    {course.id === 'guitar' && <label className="chord-picker">Chord diagram <select aria-label="Chord diagram" value={chord} onChange={event => setChord(event.target.value)}>
+      {['E minor','A minor','C major','G major','D major','F major'].map(name => <option key={name}>{name}</option>)}
+    </select></label>}
     {course.id === 'keyboard' ? <Piano target={target} play={play}/>
       : course.id === 'sax' ? <SaxChart target={target} play={play}/>
-      : <Fretboard instrument={course.id} target={target} play={play} chord={lesson?.chord}/>}
-    <Staff notes={targets} bass={course.id === 'bass'}/>
+      : <Fretboard instrument={course.id} target={target} play={play} chord={chord}/>}
+    <Staff notes={targets} bass={course.id === 'bass'} octaveShift={course.id === 'guitar' || course.id === 'bass' ? 1 : 0}/>
     <div className="tool-grid">
       <section className="tool-card"><h3>Listen & tune</h3><p className="small">One note at a time, in a quiet space. Use headphones to avoid detecting Playto's sounds. Range: about 35-1600 Hz; chords are not graded.</p>
         <button disabled={micPending} onClick={micOn ? stopMic : startMic}>{micPending ? 'Requesting permission...' : micOn ? 'Disconnect microphone' : 'Connect microphone'}</button>
