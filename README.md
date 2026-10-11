@@ -6,10 +6,10 @@ A little practice. A lot of music.
 
 ## Learn and practise
 
-The first release includes step-by-step beginner keyboard and acoustic guitar lessons with original checkpoint pieces. Bass and alto saxophone, followed by intermediate and advanced courses, are the next delivery increments.
+Step-by-step beginner keyboard, acoustic guitar, bass guitar and alto saxophone lessons include original checkpoint pieces. Intermediate and advanced courses are the next delivery increment.
 
 - Sequential lesson paths, playing goals and short knowledge checks.
-- On-screen keyboard, guitar fretboard/tab and chord shapes, and staff pitch guides.
+- On-screen keyboard, guitar and bass fretboard/tab, guitar chord shapes, alto sax main-key fingering charts, and staff pitch guides. Alto sax lessons/charts use written pitch; microphone matching accounts for the nine-semitone Eb transposition and the tuner shows concert pitch. Bass pitch guides show sounding notes; conventional bass guitar scores are written one octave higher.
 - Optional microphone tuner and single-note practice using local YIN pitch detection. Tap **Connect microphone** to request permission directly. No recording or audio upload; headphones avoid feedback. Polyphonic chords and rhythm use explicit self-assessment, not pretend automated grading.
 - Optional Web MIDI keyboard input (Chrome/Edge over HTTPS), metronome, original synthesized backing, adjustable tempo and selected-note pitch loops at half/full speed. Pattern playback uses equal-duration notes; written lesson counts specify actual musical rhythm.
 - XP, levels, badges, daily streaks with an automatic one-day freeze, and spaced reviews. Every seven streak days earns a freeze (maximum two). Reviews begin after one day, double when confident (maximum 60 days), and return tomorrow when difficult.

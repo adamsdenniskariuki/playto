@@ -1,0 +1,52 @@
+{
+  "id": "bass", "name": "Bass guitar", "subtitle": "Be the heartbeat", "symbol": "bass",
+  "description": "Lock in the pulse, connect the chords, and give every song its foundation.",
+  "tuning": "Four-string standard tuning, thickest to thinnest: E1 A1 D2 G2. Bass notation sounds one octave lower than written.",
+  "lessons": [
+    {
+      "id": "bass-first-pulse", "title": "One note, a whole groove", "stage": "Beginner", "kind": "lesson", "minutes": 6,
+      "goal": "Play four relaxed open E notes and mute the space between them.",
+      "steps": ["Support the bass with a strap, sitting or standing. Keep the neck slightly raised and both wrists comfortable. Tune E1 A1 D2 G2, thickest to thinnest.", "Rest your picking thumb on the pickup or a lower string. Pull your index fingertip gently across the thick E string, rather than snapping it away from the instrument.", "At 60 BPM play four E1 notes, one per beat. Stop each note just before the next with your picking hand.", "Repeat with the middle finger. Aim for equal volume and a clear pulse, not speed. Turn the amplifier down before plugging in or unplugging."],
+      "tip": "E1 is about 41 Hz. Phone microphones may struggle with it; try the 12th fret E2, or use on-screen practice and self-assessment.",
+      "targetNotes": [28,28,28,28], "pattern": "E|--0--0--0--0--| · four quarter notes",
+      "assessment": "I played four even low E notes and controlled the ringing.",
+      "quiz": {"question": "The bass's thickest open string in standard tuning is...", "options": ["E1", "E4", "G3"], "answer": 0, "explanation": "A four-string bass is E1 A1 D2 G2, from thickest to thinnest."}
+    },
+    {
+      "id": "bass-alternate", "title": "Two fingers, one pulse", "stage": "Beginner", "kind": "lesson", "minutes": 7,
+      "goal": "Alternate index and middle fingers with consistent tone.",
+      "steps": ["Play open A1 with index, middle, index, middle. Let the plucking finger land gently on the adjacent lower string.", "At 50 BPM play eight notes, one per beat. Listen for equal volume between fingers.", "Move to D2 and repeat. Rest the thumb on the A string to mute it, while another part of the hand controls the E string.", "Play A1 four times, then D2 four times. Stop if your hand tenses and rebuild the motion slowly."],
+      "tip": "Muting is a musical skill: unused strings should stay quiet, even when your fretting hand is moving.",
+      "targetNotes": [33,33,33,33,38,38,38,38], "pattern": "A: 0 0 0 0 · D: 0 0 0 0 · alternate i m",
+      "assessment": "I alternated both plucking fingers and kept unused strings quiet.",
+      "quiz": {"question": "What does muting do?", "options": ["Raises the pitch", "Keeps unwanted strings from ringing", "Makes the amp louder"], "answer": 1, "explanation": "Both hands help stop strings you are not intentionally playing."}
+    },
+    {
+      "id": "bass-frets", "title": "Find the notes on the neck", "stage": "Beginner", "kind": "lesson", "minutes": 8,
+      "goal": "Read bass tab and play E-F-G without squeezing.",
+      "steps": ["On the thick E string, fret 1 is F1 and fret 3 is G1. Place the fingertip just behind the wire, not on top of it.", "Use index for fret 1 and little finger for fret 3 if that is comfortable. Shift the hand slightly rather than forcing a wide stretch.", "Read E|0-1-3-1-0| and play one note per beat at 45 BPM. The number is the fret; 0 is open.", "Use minimal pressure. A buzzing note often means your fingertip should move closer to the fret wire, not press harder."],
+      "tip": "Bass frets are wide. Smaller hands can shift; a forced one-finger-per-fret stretch is not required in low positions.",
+      "targetNotes": [28,29,31,29,28], "pattern": "E|--0--1--3--1--0--|",
+      "assessment": "I read the tab and played the five notes with a relaxed fretting hand.",
+      "quiz": {"question": "Moving one fret higher raises pitch by...", "options": ["One octave", "One semitone", "A whole chord"], "answer": 1, "explanation": "Each fret is one semitone; twelve frets make an octave."}
+    },
+    {
+      "id": "bass-roots", "title": "Follow the root", "stage": "Beginner", "kind": "lesson", "minutes": 8,
+      "goal": "Support a C-F-G-C progression with bass roots.",
+      "steps": ["Find C2 on the A string fret 3, F1 on the E string fret 1, and G1 on the E string fret 3.", "Play C for four beats, F for four, G for four, and C for four. A root is the note a chord is named after.", "Start with one note per bar; next try four quarter notes per bar. Use 50 BPM and mute when changing strings.", "Try the original C-F-G-C backing in the studio. Listen for the moment the chord changes, then place your root on beat 1."],
+      "tip": "The root is enough. Supporting the chord and time is more important than adding extra notes.",
+      "targetNotes": [36,29,31,36], "pattern": "| C2 / / / | F1 / / / | G1 / / / | C2 / / / |",
+      "assessment": "I followed C-F-G-C and landed each root on beat 1.",
+      "quiz": {"question": "The root of an F major chord is...", "options": ["C", "A", "F"], "answer": 2, "explanation": "The root gives the chord its letter name: F for F major."}
+    },
+    {
+      "id": "bass-beginner-check", "title": "Checkpoint: steady ground", "stage": "Beginner", "kind": "checkpoint", "minutes": 10,
+      "goal": "Play an original root-note groove for eight bars.",
+      "steps": ["Use C2 F1 G1 C2, one bar each, repeated twice. Set the metronome to 55 BPM.", "Play the root on beats 1 and 3, holding each for nearly two beats. Count 1-2-3-4 without rushing.", "Mute before the next bar and change to its root. Repeat the eight bars twice without stopping.", "Pass when you can keep the pulse, make clean string changes, and keep unplayed strings quiet. Use a teacher or your own listening for rhythm feedback."],
+      "tip": "The reference demonstrates pitches, not the two-beat holds. Use the written counts to shape the groove.",
+      "targetNotes": [36,36,29,29,31,31,36,36], "pattern": "C C | F F | G G | C C · each note lasts 2 beats · repeat",
+      "assessment": "I played Steady Ground twice with clean muting and steady time.",
+      "quiz": {"question": "What is the most important first job of this bass line?", "options": ["Play as many notes as possible", "Support the harmony and steady pulse", "Always play louder than everyone"], "answer": 1, "explanation": "A simple bass line with strong time makes the whole group feel secure."}
+    }
+  ]
+}

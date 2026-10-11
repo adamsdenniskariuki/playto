@@ -1,5 +1,7 @@
 import keyboard from '../content/keyboard/course.json';
 import guitar from '../content/guitar/course.json';
+import bass from '../content/bass/course.json';
+import sax from '../content/sax/course.json';
 import type { Course, Lesson } from './types';
 
 function validateCourse(raw: unknown): Course {
@@ -16,6 +18,6 @@ function validateCourse(raw: unknown): Course {
   }
   return course;
 }
-export const courses: Course[] = [keyboard, guitar].map(validateCourse);
+export const courses: Course[] = [keyboard, guitar, bass, sax].map(validateCourse);
 export const lessonAvailable = (lessons: Lesson[], index: number, completed: Record<string, unknown>) =>
   index === 0 || Boolean(completed[lessons[index - 1].id]);

@@ -1,0 +1,52 @@
+{
+  "id": "sax", "name": "Alto saxophone", "subtitle": "Find your voice in the air", "symbol": "sax",
+  "description": "Build a comfortable sound, learn your fingerings, and turn breath into melody.",
+  "tuning": "Alto saxophone is in Eb: written C4 sounds concert Eb3 (9 semitones lower). Charts and lesson notes are written pitch; the tuner shows concert pitch.",
+  "lessons": [
+    {
+      "id": "sax-first-breath", "title": "A breath becomes a note", "stage": "Beginner", "kind": "lesson", "minutes": 7,
+      "goal": "Set up safely and make a relaxed written B4 long tone.",
+      "steps": ["Moisten the reed with clean water, align its tip with the mouthpiece tip, and secure the ligature gently. Put the neck strap on before supporting the sax; adjust it so the mouthpiece meets you without bending your neck.", "Rest upper teeth lightly on the mouthpiece and cushion the reed with the lower lip. Seal the corners without biting. A teacher can help find the right mouthpiece position.", "For written B4, close left index key only; keep the other five main keys and octave key open. Take a comfortable breath and blow a steady 'too' for four beats at 60 BPM.", "Rest four beats between attempts. Repeat three times at a comfortable volume. If dizzy, stop, sit and breathe normally."],
+      "tip": "Written B4 sounds concert D4 on alto sax. That is the note your microphone tuner should show.",
+      "targetNotes": [71,71,71], "pattern": "Written B4: hold 4 beats, rest 4 · repeat 3 times",
+      "assessment": "I supported the instrument with the strap and made three comfortable B long tones.",
+      "quiz": {"question": "Written B4 on alto sax should appear on a concert-pitch tuner as...", "options": ["B4", "D4", "C4"], "answer": 1, "explanation": "Eb alto sax sounds nine semitones lower: written B4 sounds concert D4."}
+    },
+    {
+      "id": "sax-bag", "title": "Your first three notes", "stage": "Beginner", "kind": "lesson", "minutes": 8,
+      "goal": "Move smoothly between written B4, A4 and G4.",
+      "steps": ["For B4 close left index. For A4 add left middle. For G4 add left ring. Leave the octave key open for all three.", "Play B A G, each held for two beats at 50 BPM. Keep fingertips near the keys rather than lifting high.", "Reverse the pattern: G A B. Keep your air moving through each change.", "Join B A G A B as two-beat notes. Listen for clean changes and a stable, unforced sound."],
+      "tip": "The numbered fingering chart shows closed main keys. Numbers 1-3 are the left hand; 4-6 are the right hand.",
+      "targetNotes": [71,69,67,69,71], "pattern": "Written B A G A B · 2 beats each",
+      "assessment": "I played B-A-G-A-B smoothly without interrupting the air at each key change.",
+      "quiz": {"question": "To go from A4 to G4, you add...", "options": ["The left ring finger", "The right thumb", "The octave key"], "answer": 0, "explanation": "G4 closes left index, middle and ring; A4 closes just index and middle."}
+    },
+    {
+      "id": "sax-articulation", "title": "Say it with your tongue", "stage": "Beginner", "kind": "lesson", "minutes": 7,
+      "goal": "Start repeated notes gently while keeping steady air.",
+      "steps": ["Play a long written A4 with steady air. Imagine saying 'too' or 'doo', gently touching the reed tip with the tongue to begin the note.", "At 50 BPM play four separate A quarter notes on one breath. Keep air pressure steady; the tongue briefly releases each note.", "Rest a full bar, then repeat. Do not jab the reed or clamp down with the jaw.", "Compare a connected A-G-A-B phrase with a gently tongued version. Both should have similar tone and volume."],
+      "tip": "Air carries the sound; the tongue shapes its start. Ask a teacher if the reed feels uncomfortable.",
+      "targetNotes": [69,69,69,69,69,67,69,71], "pattern": "A A A A · rest 4 beats · A G A B",
+      "assessment": "I started four notes gently without stopping the airflow completely.",
+      "quiz": {"question": "In gentle sax articulation, what keeps the sound supported?", "options": ["Biting the reed", "Steady air", "Lifting every finger"], "answer": 1, "explanation": "The air remains steady while a light tongue motion separates the notes."}
+    },
+    {
+      "id": "sax-c-and-care", "title": "Add C, then care for your sax", "stage": "Beginner", "kind": "lesson", "minutes": 8,
+      "goal": "Play written C5 and build a safe after-practice routine.",
+      "steps": ["For written C5 close only the left middle finger main key. Release the left index used for B4; leave the octave key open.", "At 45 BPM practise B-C-B-A, two beats each. Move index and middle together for a clean B-C change.", "Play G-A-B-C-B-A-G as a slow melody. Rest between phrases and listen for even tone.", "After playing, remove the reed and let it dry in a ventilated holder. Swab the body and neck with instrument-specific swabs; do not force a swab that sticks. Wipe the mouthpiece as recommended by its maker."],
+      "tip": "Never leave a wet reed clamped on the mouthpiece in a closed case. Handle the thin reed tip carefully.",
+      "targetNotes": [71,72,71,69,67,69,71,72,71,69,67], "pattern": "Written B C B A | G A B C B A G · 2 beats each",
+      "assessment": "I changed B to C smoothly and followed the cleaning routine.",
+      "quiz": {"question": "For this basic C5 fingering, which main key is closed?", "options": ["Left index only", "Left middle only", "All six"], "answer": 1, "explanation": "The standard written C5 fingering closes the left middle main key only."}
+    },
+    {
+      "id": "sax-beginner-check", "title": "Checkpoint: first breeze", "stage": "Beginner", "kind": "checkpoint", "minutes": 10,
+      "goal": "Play an original four-bar phrase with clear tone and planned breaths.",
+      "steps": ["Use written G A B C. At 50 BPM play | G A B B | A G A A | B C B A | G(2) rest(2) |.", "The first three bars use quarter notes. Hold the last G for two beats and rest for two. Breathe at the last rest.", "Practise each bar, then join four bars twice. Keep tone steady through both finger changes and repeated notes.", "Pass when the full phrase has clean starts, smooth changes, and comfortable breathing. Tuner readings are concert pitch; assess phrasing and tone by listening."],
+      "tip": "Do not push beyond a comfortable breath. Take an extra breath if needed, then gradually connect the phrase.",
+      "targetNotes": [67,69,71,71,69,67,69,69,71,72,71,69,67], "pattern": "| G A B B | A G A A | B C B A | G(2) rest(2) | · written pitches",
+      "assessment": "I played First Breeze twice with relaxed tone and a planned breath.",
+      "quiz": {"question": "Why plan a breath during the rest?", "options": ["To make the phrase longer than four bars", "To keep the melody flowing comfortably", "To avoid ever breathing again"], "answer": 1, "explanation": "Breathing at a musical rest supports the next phrase without adding an accidental pause."}
+    }
+  ]
+}
