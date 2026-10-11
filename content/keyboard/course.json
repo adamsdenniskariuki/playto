@@ -1,0 +1,55 @@
+{
+  "id": "keyboard",
+  "name": "Keyboard",
+  "subtitle": "Piano & digital keys",
+  "symbol": "keys",
+  "description": "Find your first notes, build two-hand confidence, and make the keys your own.",
+  "tuning": "Middle C is C4 (MIDI 60). A4 = 440 Hz. Use headphones with the microphone.",
+  "lessons": [
+    {
+      "id": "keys-first-sound", "title": "Hello, middle C", "stage": "Beginner", "kind": "lesson", "minutes": 5,
+      "goal": "Find middle C and play four relaxed, even notes.",
+      "steps": ["Sit near the front of a stable seat, feet supported. Keep shoulders loose and forearms roughly level with the keys.", "Find a group of two black keys near the centre. The white key just left of that pair is C; middle C is C4.", "Place your right thumb on C4. Let your arm's weight press the key, then release. Play C four times, counting 1, 2, 3, 4 at 60 BPM.", "Use the on-screen keyboard to hear C4, then try your own instrument. Stop if anything hurts."],
+      "tip": "A curved hand is helpful, but do not force a shape. A relaxed wrist matters more than a perfect-looking hand.",
+      "targetNotes": [60,60,60,60], "pattern": "C4 C4 C4 C4 · one note per beat",
+      "assessment": "I found middle C and played four even notes without tension.",
+      "quiz": {"question": "Where is C on the keyboard?", "options": ["Just left of a group of two black keys", "Just right of three black keys", "Any black key"], "answer": 0, "explanation": "Every C is the white key immediately left of a pair of black keys."}
+    },
+    {
+      "id": "keys-five-fingers", "title": "Five notes, five fingers", "stage": "Beginner", "kind": "lesson", "minutes": 7,
+      "goal": "Play C-D-E-F-G and back using right-hand fingers 1-2-3-4-5.",
+      "steps": ["Put your right thumb (1) on C4, index (2) on D4, middle (3) on E4, ring (4) on F4 and little finger (5) on G4.", "At 60 BPM play C D E F G F E D C, one note per beat. Keep unused fingers near the keys instead of lifting high.", "Repeat three times, then count aloud while you play. Slow to 40 BPM if the notes are uneven.", "Listen for separate, clear notes. Let go of the previous note as you play the next, without gripping."],
+      "tip": "Practise one accurate repetition before trying to go faster.",
+      "targetNotes": [60,62,64,65,67,65,64,62,60], "pattern": "C D E F G F E D C · fingers 1 2 3 4 5 4 3 2 1",
+      "assessment": "I played the five-note pattern three times with an even pulse.",
+      "quiz": {"question": "Which number means your thumb in piano fingering?", "options": ["5", "1", "3"], "answer": 1, "explanation": "For both hands, the thumb is 1 and the little finger is 5."}
+    },
+    {
+      "id": "keys-rhythm", "title": "Make room for rhythm", "stage": "Beginner", "kind": "lesson", "minutes": 6,
+      "goal": "Distinguish one-beat quarter notes, two-beat half notes and silence.",
+      "steps": ["Set the metronome to 60 BPM and count four beats per bar. Clap once on every click for two bars.", "Play C4 on beats 1 and 2, then hold E4 across beats 3 and 4. A quarter note lasts one beat; a half note lasts two in this exercise.", "In the next bar, play G4 on 1, stay silent on 2, play E4 on 3 and C4 on 4. Keep counting during the rest.", "Repeat both bars without adding a beat at the bar line. The reference below is a pitch guide; follow these counts for duration."],
+      "tip": "Silence is part of the music, not a pause in your counting.",
+      "targetNotes": [60,60,64,67,64,60], "pattern": "| C(1) C(1) E(2) | G(1) rest(1) E(1) C(1) |",
+      "assessment": "I kept counting through the held note and the rest.",
+      "quiz": {"question": "In this 4/4 exercise, a half note lasts...", "options": ["One beat", "Two beats", "Four bars"], "answer": 1, "explanation": "With the quarter note as the beat, a half note occupies two beats."}
+    },
+    {
+      "id": "keys-first-chord", "title": "Your first C chord", "stage": "Beginner", "kind": "lesson", "minutes": 8,
+      "goal": "Play C major and hear its root, third and fifth.",
+      "steps": ["Place right-hand fingers 1, 3 and 5 on C4, E4 and G4. Play each note separately first.", "Press C-E-G together, gently, and hold for four beats. Release all three together.", "Repeat four times with a four-beat rest between chords. Check that every note speaks clearly.", "Play C4 with the left hand while the right hand plays the chord. Start slowly and keep both wrists loose."],
+      "tip": "The pitch reference plays chord tones in sequence. On your instrument, play them together.",
+      "targetNotes": [60,64,67], "pattern": "C major = C E G · hold 4 beats, rest 4", "chord": "C major",
+      "assessment": "I played all three chord tones clearly and released them together.",
+      "quiz": {"question": "Which notes make C major?", "options": ["C D F", "C E G", "C Eb G"], "answer": 1, "explanation": "C major uses the root C, major third E and perfect fifth G."}
+    },
+    {
+      "id": "keys-beginner-check", "title": "Checkpoint: little sunrise", "stage": "Beginner", "kind": "checkpoint", "minutes": 10,
+      "goal": "Play an original four-bar melody with a steady pulse.",
+      "steps": ["This original Playto melody uses C-D-E-G. Start at 50 BPM, right hand only.", "Play | C D E G | E D C C | D E G E | D C C C |, one quarter note per beat. Use fingers 1-2-3-5 as needed.", "Practise each bar twice, then join the four bars. Keep the beat through repeated notes.", "For a challenge, hold left-hand C3 for each four-beat bar. Pass when you can play the whole piece twice without stopping; accuracy matters more than speed."],
+      "tip": "A checkpoint is a chance to find what needs practice, not a penalty. Repeat freely.",
+      "targetNotes": [60,62,64,67,64,62,60,60,62,64,67,64,62,60,60,60], "pattern": "| C D E G | E D C C | D E G E | D C C C |",
+      "assessment": "I played Little Sunrise twice without stopping, with an even beat.",
+      "quiz": {"question": "If a bar keeps going wrong, what helps most?", "options": ["Play the whole piece faster", "Practise that bar slowly, then reconnect it", "Ignore the beat"], "answer": 1, "explanation": "Small, slow repetitions make the difficult movement easier to remember."}
+    }
+  ]
+}

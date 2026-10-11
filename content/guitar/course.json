@@ -1,0 +1,52 @@
+{
+  "id": "guitar", "name": "Acoustic guitar", "subtitle": "Six strings, endless stories", "symbol": "guitar",
+  "description": "From your first clean string to chords and songs you can play anywhere.",
+  "tuning": "Standard tuning, thickest to thinnest: E2 A2 D3 G3 B3 E4. Fret 0 means an open string.",
+  "lessons": [
+    {
+      "id": "guitar-first-string", "title": "Meet your six strings", "stage": "Beginner", "kind": "lesson", "minutes": 6,
+      "goal": "Hold the guitar comfortably and pluck a clean open high E.",
+      "steps": ["Sit on a stable chair with the guitar supported on your leg. Keep the neck slightly raised and the fretting wrist relaxed.", "The thinnest string is string 1 (high E4). The thickest is string 6 (low E2). Tune one string at a time with the tuner.", "With no fretting fingers down, pluck the thin high E four times. Use a small pick motion or your index fingertip.", "Count 1-2-3-4 at 60 BPM and pluck once per beat. Let each note ring, then mute gently with the picking hand."],
+      "tip": "Turn tuning pegs slowly. If unsure which peg controls a string, follow the string to its peg before turning.",
+      "targetNotes": [64,64,64,64], "pattern": "e|--0--0--0--0--| · string 1, one pluck per beat",
+      "assessment": "I identified all six strings and played four clear open high E notes.",
+      "quiz": {"question": "String 1 is...", "options": ["The thickest low E string", "The thinnest high E string", "The A string"], "answer": 1, "explanation": "Guitar string numbers go from 1 (thinnest) to 6 (thickest)."}
+    },
+    {
+      "id": "guitar-frets-tab", "title": "A fret is a little step", "stage": "Beginner", "kind": "lesson", "minutes": 7,
+      "goal": "Read a simple tab and fret notes without buzz.",
+      "steps": ["Place your index fingertip on string 1 just behind fret 1, not on the metal wire. Pluck F4. Use only enough pressure for a clean sound.", "Play string 1 at frets 0, 1, 3, 1, 0. Use index for fret 1 and ring finger for fret 3.", "Tab numbers tell you the fret, not the finger. A 0 means play without pressing a fret; the top tab line is the thin high E.", "Play at 50 BPM. If a note buzzes, move closer to the fret wire before pressing harder. Stop and rest if your wrist hurts."],
+      "tip": "Each fret raises the note by one semitone: open E, fret 1 F, fret 2 F#, fret 3 G.",
+      "targetNotes": [64,65,67,65,64], "pattern": "e|--0--1--3--1--0--|",
+      "assessment": "I read the five tab numbers and played them clearly.",
+      "quiz": {"question": "What does 0 in tablature mean?", "options": ["Mute the string", "Play the open string", "Use your thumb"], "answer": 1, "explanation": "0 is the open string. Other numbers are fret positions."}
+    },
+    {
+      "id": "guitar-em", "title": "Two fingers, E minor", "stage": "Beginner", "kind": "lesson", "minutes": 8,
+      "goal": "Make an E minor chord with all six strings ringing.",
+      "steps": ["Place middle finger on string 5 fret 2 (B2), and ring finger on string 4 fret 2 (E3). Leave the other strings open.", "Pick all six strings one at a time, thickest first. The notes are E B E G B E.", "If a neighbour string is muted, arch your fingertips and move the thumb comfortably behind the neck; avoid squeezing.", "Strum all six strings once on beat 1, let them ring for four beats, and repeat four times at 60 BPM."],
+      "tip": "The chord shape is written thickest to thinnest: 0 2 2 0 0 0.",
+      "targetNotes": [40,47,52,55,59,64], "pattern": "Em: 0 2 2 0 0 0 · one downstrum per bar", "chord": "E minor",
+      "assessment": "I checked each string and played E minor with a relaxed hand.",
+      "quiz": {"question": "Which strings are fretted for this E minor shape?", "options": ["Strings 5 and 4 at fret 2", "Strings 1 and 2 at fret 1", "All strings at fret 3"], "answer": 0, "explanation": "The simple open E minor shape frets only A and D strings at fret 2."}
+    },
+    {
+      "id": "guitar-am", "title": "Change to A minor", "stage": "Beginner", "kind": "lesson", "minutes": 8,
+      "goal": "Switch between E minor and A minor without losing the beat.",
+      "steps": ["For A minor, put index on string 2 fret 1, middle on string 4 fret 2, ring on string 3 fret 2. Play strings 5 through 1, skipping string 6.", "Pick the five strings individually: A E A C E. Check for clear notes.", "At 40 BPM play one Em downstrum, count four beats, then one Am downstrum and count four. Prepare the next shape during the last beat.", "Repeat eight changes. If late, allow eight beats per chord and return to four when comfortable."],
+      "tip": "x means do not play that string. Am is x 0 2 2 1 0.",
+      "targetNotes": [45,52,57,60,64], "pattern": "| Em / / / | Am / / / | · repeat", "chord": "A minor",
+      "assessment": "I changed Em to Am eight times while keeping a slow pulse.",
+      "quiz": {"question": "Which string do you skip for this A minor shape?", "options": ["String 1", "String 6", "String 3"], "answer": 1, "explanation": "Start the A minor strum on string 5 (A); skip the low E string."}
+    },
+    {
+      "id": "guitar-beginner-check", "title": "Checkpoint: evening walk", "stage": "Beginner", "kind": "checkpoint", "minutes": 10,
+      "goal": "Play an original eight-bar accompaniment with steady downstrums.",
+      "steps": ["Tune first. This original Playto progression alternates two bars of Em and two bars of Am, repeated twice.", "At 50 BPM strum down on beats 1 and 3: | Em / Em / | Em / Em / | Am / Am / | Am / Am / |.", "Keep the strumming arm moving gently through all four beats. Count aloud; do not rush the chord change.", "Play eight bars twice without stopping, with the correct bass string for each chord. The mic checks single notes only; assess chord clarity by picking each string."],
+      "tip": "Record yourself with your own device if you like, then listen for rhythm rather than loudness. Playto does not record audio.",
+      "targetNotes": [40,45,40,45], "pattern": "Em (2 bars) · Am (2 bars) · repeat · downstrums on 1 & 3",
+      "assessment": "I played the eight bars twice and kept the beat through every change.",
+      "quiz": {"question": "Can this tuner's single-note detector reliably grade a full strummed chord?", "options": ["Yes, every time", "No; check the individual strings and self-assess", "Only if you play louder"], "answer": 1, "explanation": "Several notes at once confuse a single-pitch detector. Playto intentionally uses honest self-assessment for chords."}
+    }
+  ]
+}

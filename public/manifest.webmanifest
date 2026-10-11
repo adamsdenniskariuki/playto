@@ -1,0 +1,14 @@
+{
+  "id": "/",
+  "name": "Playto - Learn to play",
+  "short_name": "Playto",
+  "description": "A little practice. A lot of music. Four instruments, one musical journey.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f7f4ef",
+  "theme_color": "#b11f4b",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
