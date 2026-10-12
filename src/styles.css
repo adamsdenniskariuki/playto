@@ -131,7 +131,10 @@ svg { max-width: 100%; }
 .brand-dot { color: var(--cp-accent); }
 .header-tag { color: var(--cp-text-muted); font-size: 13px; }
 .header-stats { margin-left: auto; display: flex; align-items: center; gap: 24px; font-size: 13px; white-space: nowrap; }
-.level { background: var(--cp-accent-soft); color: var(--cp-accent); padding: 7px 12px; border-radius: 8px; font-weight: 650; }
+.stat-chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border: 1px solid var(--cp-border); border-radius: 999px; background: var(--cp-surface); }
+.chip-icon { color: var(--cp-accent); font-size: 14px; line-height: 1; }
+.level { display: inline-flex; flex-direction: column; gap: 4px; min-width: 84px; background: var(--cp-accent-soft); color: var(--cp-accent); padding: 6px 12px; border-radius: 8px; font-weight: 650; }
+.level-progress { height: 4px; }
 .app-layout { display: grid; grid-template-columns: 250px minmax(0, 1fr); max-width: 1600px; margin: auto; }
 .sidebar { border-right: 1px solid var(--cp-border); padding: 36px 24px 28px; display: flex; flex-direction: column; justify-content: space-between; min-height: calc(100vh - 88px); gap: 60px; }
 nav { display: grid; gap: 4px; margin-top: 20px; margin-bottom: 36px; }
@@ -171,12 +174,12 @@ main { padding: 40px 48px 16px; min-width: 0; }
 .section-heading { margin-bottom: 20px; }
 .section-heading h2 { margin: 4px 0 0; }
 .instrument-section { margin-bottom: 40px; }
-.instrument-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(155px,1fr)); gap: 16px; }
-.instrument-card { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; border-radius: 16px; padding: 20px; text-align: left; }
-.instrument-card svg { width: 52px; height: 52px; margin-bottom: 16px; color: var(--cp-text-muted); }
+.instrument-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(200px,1fr)); gap: 12px; }
+.instrument-card { display: grid; grid-template-columns: 40px minmax(0,1fr); column-gap: 12px; row-gap: 2px; align-items: center; border-radius: 14px; padding: 12px 14px; text-align: left; }
+.instrument-card svg { grid-row: span 3; width: 40px; height: 40px; color: var(--cp-text-muted); }
 .instrument-card strong { font-size: 16px; }
 .instrument-card > span { font-size: 12px; color: var(--cp-text-muted); }
-.instrument-card > .small { margin-top: 12px; font-size: 11px; }
+.instrument-card > .small { font-size: 11px; }
 .instrument-card.chosen { border-color: var(--cp-accent); background: var(--cp-accent-soft); }
 .instrument-card.chosen svg { color: var(--cp-accent); }
 .path-stage { margin-bottom: 28px; }
@@ -310,8 +313,10 @@ input[type="checkbox"],input[type="radio"] { min-width: 20px; height: 20px; acce
   .app-layout { display: block; }
   .sidebar { min-height: auto; border-right: none; border-bottom: 1px solid var(--cp-border); padding: 12px 20px; }
   .sidebar-top > .eyebrow,.sidebar-course,.sidebar-bottom { display: none; }
-  nav { display: flex; gap: 4px; margin: 0 0 12px; }
-  .nav-item { flex: 1; justify-content: center; font-size: 12px; padding: 8px 4px; gap: 6px; }
+  nav { display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; background: var(--cp-bg-elevated); border-top: 1px solid var(--cp-border); padding: 6px 8px calc(6px + env(safe-area-inset-bottom)); margin: 0; gap: 2px; }
+  .nav-item { flex: 1; flex-direction: column; justify-content: center; font-size: 11px; padding: 6px 2px; gap: 2px; position: relative; text-align: center; }
+  .nav-item b { position: absolute; top: 2px; right: calc(50% - 24px); margin: 0; font-size: 10px; }
+  body { padding-bottom: calc(72px + env(safe-area-inset-bottom)); }
   .nav-item > span { min-width: auto; }
   .instrument-label { display: inline-block; margin-right: 12px; }
   .sidebar select { width: auto; max-width: 100%; }
@@ -327,10 +332,12 @@ input[type="checkbox"],input[type="radio"] { min-width: 20px; height: 20px; acce
   .brand-icon { font-size: 32px; }
   .site-header { padding: 0 16px; gap: 12px; }
   .header-stats { gap: 8px; }
-  .header-stats > span:nth-child(2) { display: none; }
+  .header-stats > .stat-chip:nth-child(2) { display: none; }
+  .stat-chip { padding: 4px 8px; }
+  .level { min-width: 64px; }
   .level { padding: 5px 8px; }
   .sidebar { padding: 12px; }
-  .nav-item { flex-direction: column; line-height: 1.25; font-size: 10px; }
+  .nav-item { font-size: 10px; }
   .nav-item > span { font-size: 20px; }
   .nav-item b { margin: 0; }
   .instrument-label { font-size: 10px; margin-left: 4px; }
@@ -343,7 +350,7 @@ input[type="checkbox"],input[type="radio"] { min-width: 20px; height: 20px; acce
   .section-heading { align-items: flex-start; }
   .section-heading > .small { max-width: 140px; text-align: right; }
   .instrument-grid { gap: 12px; }
-  .instrument-card { padding: 16px; }
+  .instrument-card { padding: 10px 12px; }
   .instrument-card strong { font-size: 14px; }
   .path-stage > h3 { flex-direction: column; align-items: flex-start; gap: 2px; }
   .lesson-node { padding: 14px 12px; gap: 12px; }

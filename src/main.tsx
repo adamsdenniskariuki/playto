@@ -168,7 +168,7 @@ function App() {
     <a className="skip-link" href="#main">Skip to content</a>
     <header className="site-header"><a className="brand" href="/" onClick={event => { event.preventDefault(); navigate('learn'); }}><span className="brand-icon">♪</span>playto<span className="brand-dot">.</span></a>
       <span className="header-tag">A little practice. A lot of music.</span>
-      <div className="header-stats"><span title="All instruments combined">{progress.xp} XP</span><span>{streak} day streak</span><span className="level">Level {level}</span></div>
+      <div className="header-stats"><span className="stat-chip" title="All instruments combined"><span aria-hidden="true" className="chip-icon">★</span><span>{progress.xp} XP</span></span><span className="stat-chip"><span aria-hidden="true" className="chip-icon">🔥</span><span>{streak} day streak</span></span><span className="level"><span>Level {level}</span><progress className="level-progress" max={250} value={progress.xp % 250} aria-label="Level progress"/></span></div>
     </header>
     <div className="app-layout">
       <aside className="sidebar"><div className="sidebar-top"><span className="eyebrow">YOUR MUSIC, YOUR PACE</span><nav aria-label="Main navigation">
