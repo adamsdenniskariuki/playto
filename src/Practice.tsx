@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { audio, detectPitch, noteName, pitchInfo } from './audio';
 import { CHORD_CONFIDENCE, chordNames, matchChroma, spectrumChroma, type ChordReading } from './chords';
+import { RhythmScoring, type RhythmInput } from './RhythmScoring';
+import { OnsetDetector, type BeatClock } from './rhythm';
 import { chordShapes, Fretboard, Piano, SaxChart, Staff } from './Visuals';
 import type { Course, Lesson, PracticeResult, WeakKind } from './types';
 
@@ -27,6 +29,8 @@ export function Practice({ course, lesson, passedTempos = [], onSave, report }: 
   const [metronome, setMetronome] = useState(false);
   const [backing, setBacking] = useState(false);
   const [beat, setBeat] = useState(0);
+  const beatClock = useRef<BeatClock | null>(null);
+  const rhythmInput = useRef<RhythmInput>(() => {});
   const [sessionStart, setSessionStart] = useState<number | null>(null);
   const [elapsed, setElapsed] = useState(0);
   const [steady, setSteady] = useState(false);
@@ -74,7 +78,7 @@ export function Practice({ course, lesson, passedTempos = [], onSave, report }: 
     setMistakeCount(mistakes.current.length);
     setCleanTakes(false);
   }
-  function play(written: number) { safeAudio(audio.note(concert(written))); matchNote(written); }
+  function play(written: number) { rhythmInput.current('tap', performance.now()); safeAudio(audio.note(concert(written))); matchNote(written); }
   function stopMic() {
     micGeneration.current++;
     cancelAnimationFrame(frame.current);
@@ -103,15 +107,17 @@ export function Practice({ course, lesson, passedTempos = [], onSave, report }: 
       source.connect(analyser);
       const samples = new Float32Array(analyser.fftSize);
       const spectrum = new Float32Array(analyser.frequencyBinCount);
+      const onset = new OnsetDetector();
       let profile = Array<number>(12).fill(0), heldChord: string | null = null, stableChord: string | null = null, chordFrames = 0, quietChordFrames = 0;
       let held: number | null = null, candidate: number | null = null, stable = 0, silence = 0;
       let lastAnalysis = 0;
       setMicOn(true); setMicPending(false); setMicStatus('Connected - listening locally; audio is never uploaded');
       const listen = (time: number) => {
         if (generation !== micGeneration.current) { source.disconnect(); return; }
+        analyser.getFloatTimeDomainData(samples);
+        if (onset.detect(samples, time)) rhythmInput.current('mic', time);
         if (time - lastAnalysis > 70) {
           lastAnalysis = time;
-          analyser.getFloatTimeDomainData(samples);
           if (chordRef.current.enabled) {
             analyser.getFloatFrequencyData(spectrum);
             const current = spectrumChroma(spectrum, context.sampleRate, analyser.fftSize);
@@ -185,7 +191,7 @@ export function Practice({ course, lesson, passedTempos = [], onSave, report }: 
       const bind = () => {
         access.inputs.forEach(input => { input.onmidimessage = event => {
           const [status, note, velocity] = event.data;
-          if ((status & 0xf0) === 0x90 && velocity > 0) matchNote(note);
+          if ((status & 0xf0) === 0x90 && velocity > 0) { rhythmInput.current('midi', performance.now()); matchNote(note); }
         }; });
         setMidiStatus(access.inputs.size ? `MIDI connected - ${access.inputs.size} input(s); play a key` : 'MIDI enabled - connect a USB MIDI keyboard');
       };
@@ -219,20 +225,28 @@ export function Practice({ course, lesson, passedTempos = [], onSave, report }: 
   }, [sessionStart]);
   useEffect(() => {
     if (!metronome && !backing) return;
-    let count = 0;
-    const tick = () => {
-      setBeat(count % 4 + 1);
-      if (metronome) safeAudio(audio.note(count % 4 === 0 ? 96 : 89, 0.07, 0, 0.07));
-      if (backing) {
-        const roots = course.id === 'guitar' ? [40,40,45,45] : [48,53,55,48];
-        const root = roots[Math.floor(count / 4) % 4];
-        safeAudio(audio.note(root + (count % 4 === 2 ? 7 : 0), 60 / tempo * 0.65, 0, 0.08));
-      }
-      count++;
-    };
-    tick();
-    const timer = window.setInterval(tick, 60000 / tempo);
-    return () => { clearInterval(timer); setBeat(0); };
+    let count = 0, timer = 0, cancelled = false;
+    safeAudio(audio.ready().then(() => {
+      if (cancelled) return;
+      const epoch = performance.now() + 150, period = 60000 / tempo;
+      beatClock.current = { epoch, period };
+      const schedule = () => {
+        const now = performance.now();
+        while (epoch + count * period < now + 100) {
+          const delay = Math.max(0, (epoch + count * period - now) / 1000);
+          if (metronome) safeAudio(audio.note(count % 4 === 0 ? 96 : 89, 0.07, delay, 0.07));
+          if (backing) {
+            const roots = course.id === 'guitar' ? [40,40,45,45] : [48,53,55,48];
+            const root = roots[Math.floor(count / 4) % 4];
+            safeAudio(audio.note(root + (count % 4 === 2 ? 7 : 0), 60 / tempo * 0.65, delay, 0.08));
+          }
+          count++;
+        }
+        setBeat(now < epoch ? 0 : Math.floor((now - epoch) / period) % 4 + 1);
+      };
+      schedule(); timer = window.setInterval(schedule, 25);
+    }));
+    return () => { cancelled = true; clearInterval(timer); beatClock.current = null; setBeat(0); };
   }, [metronome, backing, tempo, course.id]);
   useEffect(() => {
     if (!loop) return;
@@ -255,7 +269,7 @@ export function Practice({ course, lesson, passedTempos = [], onSave, report }: 
   return <div className="practice">
     <div className="practice-heading"><div><span className="eyebrow">YOUR PRACTICE SPACE</span><h3>Make a little music</h3></div>
       <span className="pill">{Math.floor(elapsed / 60)}:{String(elapsed % 60).padStart(2, '0')} · {hits} notes matched</span></div>
-    <p className="muted">Start a session to track actual practice time. Sessions save when you finish or leave this practice space. Save before closing the browser. Chord estimates supplement self-assessment; rhythm is self-assessed.</p>
+    <p className="muted">Start a session to track actual practice time. Sessions save when you finish or leave this practice space. Save before closing the browser. Chord estimates and beat-timing drills supplement musical self-assessment.</p>
     <div className="button-row">{sessionStart === null ? <button className="primary" onClick={() => { mistakes.current = []; setMistakeCount(0); setCleanTakes(false); setSessionStart(performance.now()); setIndex(0); setHits(0); setChordHits(0); }}>Start practice</button>
       : <button className="primary" onClick={finish}>Save practice session</button>}
       <button onClick={() => safeAudio(audio.pattern(targets.map(concert), tempo * speed))}>Hear pitch pattern</button>
@@ -307,6 +321,7 @@ export function Practice({ course, lesson, passedTempos = [], onSave, report }: 
           <p className="small muted">Save at least 30 seconds with a steady pulse and two clean takes to pass one target. This is self-assessed; pitch hits alone do not prove rhythm or chord accuracy.</p>
         </section>}
       </section>
+      <RhythmScoring clockVersion={`${tempo}-${metronome}-${backing}`} clock={beatClock} input={rhythmInput} active={metronome || backing} running={sessionStart !== null} onMistake={label => markMistake('rhythm', label)}/>
       <section className="tool-card"><h3>Slow it down</h3>
         <label htmlFor="speed">Pitch pattern speed</label><select id="speed" value={speed} onChange={event => { setSpeed(Number(event.target.value)); setCleanTakes(false); }}><option value="0.5">Half speed</option><option value="0.75">Three-quarter speed</option><option value="1">Full speed</option></select>
         <div className="loop-inputs"><label>From note<input type="number" min="1" max={loopEnd} value={loopStart} onChange={event => setLoopStart(Math.max(1, Math.min(loopEnd, Number(event.target.value) || 1)))}/></label>
