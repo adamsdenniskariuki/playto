@@ -1,11 +1,14 @@
 export type InstrumentId = 'keyboard' | 'guitar' | 'bass' | 'sax';
 export type Theme = 'system' | 'light' | 'dark' | 'sepia' | 'contrast';
 export type Font = 'default' | 'serif' | 'dyslexic';
+export type Stage = 'Beginner' | 'Intermediate' | 'Advanced';
+export type Focus = 'technique' | 'reading' | 'scale' | 'harmony' | 'rhythm' | 'ear' | 'repertoire' | 'creativity';
+export type WeakKind = 'note' | 'chord' | 'rhythm';
 export interface Lesson {
   id: string;
   title: string;
-  stage: 'Beginner' | 'Intermediate' | 'Advanced';
-  kind: 'lesson' | 'checkpoint' | 'piece';
+  stage: Stage;
+  kind: 'lesson' | 'checkpoint' | 'piece' | 'stage-test';
   minutes: number;
   goal: string;
   steps: string[];
@@ -16,6 +19,15 @@ export interface Lesson {
   quiz: { question: string; options: string[]; answer: number; explanation: string };
   chord?: string;
   chords?: string[];
+  unitId?: string;
+  focus?: Focus;
+  style?: string;
+  tempoLadder?: number[];
+  checks?: string[];
+  testQuestions?: Lesson['quiz'][];
+}
+export interface Unit {
+  id: string; title: string; stage: Stage; style: string; lessonIds: string[];
 }
 export interface Course {
   id: InstrumentId;
@@ -25,6 +37,15 @@ export interface Course {
   description: string;
   tuning: string;
   lessons: Lesson[];
+  units?: Unit[];
+}
+export interface LessonDraft {
+  id: string; title: string; focus: Focus; goal: string; steps: string[]; notes: number[];
+  quiz: [string, string, string, string];
+  pattern: string; chord?: string; tempo?: number[];
+}
+export interface Curriculum {
+  units: { id: string; title: string; stage: Stage; style: string; lessons: (string | LessonDraft)[] }[];
 }
 export interface LessonProgress {
   completedAt: string;
@@ -38,9 +59,20 @@ export interface InstrumentProgress {
   notes: number;
   chords: string[];
   tempo: number;
+  weak: Record<string, WeakItem>;
+  ladders: Record<string, number[]>;
+}
+export interface WeakItem {
+  lessonId: string; kind: WeakKind; label: string; notes: number[];
+  mistakes: number; interval: number; reviewAt: string; reviews: number;
+}
+export interface PracticeResult {
+  seconds: number; notes: number; tempo: number;
+  mistakes: { kind: WeakKind; label: string; notes: number[] }[];
+  ladderTempo?: number;
 }
 export interface Progress {
-  version: 1;
+  version: 2;
   xp: number;
   streak: number;
   lastPractice: string | null;

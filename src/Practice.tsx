@@ -1,20 +1,24 @@
 import { useEffect, useRef, useState } from 'react';
 import { audio, detectPitch, noteName, pitchInfo } from './audio';
 import { Fretboard, Piano, SaxChart, Staff } from './Visuals';
-import type { Course, Lesson } from './types';
+import type { Course, Lesson, PracticeResult, WeakKind } from './types';
 
 interface MidiInput extends EventTarget { onmidimessage: ((event: { data: Uint8Array }) => void) | null }
 interface MidiAccess extends EventTarget { inputs: Map<string, MidiInput>; onstatechange: (() => void) | null }
 type MidiNavigator = Navigator & { requestMIDIAccess?: () => Promise<MidiAccess> };
-export function Practice({ course, lesson, onSave, report }: {
-  course: Course; lesson?: Lesson;
-  onSave: (seconds: number, notes: number, tempo: number) => void;
+export function Practice({ course, lesson, passedTempos = [], onSave, report }: {
+  course: Course; lesson?: Lesson; passedTempos?: number[];
+  onSave: (seconds: number, notes: number, tempo: number, detail?: PracticeResult) => void;
   report: (message: string) => void;
 }) {
   const targets = lesson?.targetNotes ?? (course.id === 'sax' ? [71,69,67] : course.id === 'bass' ? [28,33,38,43] : course.id === 'guitar' ? [40,45,50,55,59,64] : [60,62,64,65,67]);
   const [index, setIndex] = useState(0);
   const [hits, setHits] = useState(0);
-  const [tempo, setTempo] = useState(60);
+  const ladderTarget = lesson?.tempoLadder?.find(bpm => !passedTempos.includes(bpm));
+  const [tempo, setTempo] = useState(ladderTarget ?? 60);
+  const [cleanTakes, setCleanTakes] = useState(false);
+  const [mistakeCount, setMistakeCount] = useState(0);
+  const mistakes = useRef<PracticeResult['mistakes']>([]);
   const [speed, setSpeed] = useState(1);
   const [loopStart, setLoopStart] = useState(1);
   const [loopEnd, setLoopEnd] = useState(targets.length);
@@ -40,8 +44,8 @@ export function Practice({ course, lesson, onSave, report }: {
   const mounted = useRef(true);
   const saveRef = useRef(onSave);
   saveRef.current = onSave;
-  const sessionRef = useRef({ start: sessionStart, hits, tempo, steady });
-  sessionRef.current = { start: sessionStart, hits, tempo, steady };
+  const sessionRef = useRef({ start: sessionStart, hits, tempo, steady, cleanTakes, speed, ladderTarget });
+  sessionRef.current = { start: sessionStart, hits, tempo, steady, cleanTakes, speed, ladderTarget };
   const target = targets[index % targets.length];
   const targetRef = useRef(target);
   const runningRef = useRef(sessionStart !== null);
@@ -54,7 +58,15 @@ export function Practice({ course, lesson, onSave, report }: {
     if (runningRef.current && written === targetRef.current) {
       setHits(value => value + 1);
       setIndex(value => (value + 1) % targets.length);
+    } else if (runningRef.current && lesson) {
+      markMistake('note', `Expected ${noteName(targetRef.current)}; played ${noteName(written)}`, [targetRef.current]);
     }
+  }
+  function markMistake(kind: WeakKind, label: string, notes = targets) {
+    if (!runningRef.current || !lesson) return;
+    mistakes.current.push({ kind, label, notes: [...new Set(notes)] });
+    setMistakeCount(mistakes.current.length);
+    setCleanTakes(false);
   }
   function play(written: number) { safeAudio(audio.note(concert(written))); matchNote(written); }
   function stopMic() {
@@ -160,7 +172,11 @@ export function Practice({ course, lesson, onSave, report }: {
       if (session.start !== null) {
         const seconds = Math.floor((performance.now() - session.start) / 1000);
         sessionRef.current.start = null;
-        saveRef.current(seconds, session.hits, session.steady && seconds >= 30 ? session.tempo : 0);
+        const milestone = session.steady && seconds >= 30 ? session.tempo : 0;
+        saveRef.current(seconds, session.hits, milestone, {
+          seconds, notes: session.hits, tempo: milestone, mistakes: mistakes.current,
+          ladderTempo: seconds >= 30 && session.cleanTakes && session.steady && session.speed === 1 && session.tempo === session.ladderTarget ? session.tempo : undefined
+        });
       }
     };
   }, []);
@@ -197,7 +213,10 @@ export function Practice({ course, lesson, onSave, report }: {
     if (sessionStart === null) return;
     const seconds = Math.floor((performance.now() - sessionStart) / 1000);
     sessionRef.current.start = null;
-    onSave(seconds, hits, steady && seconds >= 30 ? tempo : 0);
+    const milestone = steady && seconds >= 30 ? tempo : 0;
+    onSave(seconds, hits, milestone, { seconds, notes: hits, tempo: milestone, mistakes: mistakes.current,
+      ladderTempo: seconds >= 30 && cleanTakes && steady && speed === 1 && tempo === ladderTarget ? tempo : undefined });
+    mistakes.current = []; setMistakeCount(0); setCleanTakes(false);
     setSessionStart(null); setElapsed(0); setHits(0); setIndex(0); setSteady(false);
     setLoop(false); setMetronome(false); setBacking(false); stopMic(); disconnectMidi(); audio.stop();
   }
@@ -205,7 +224,7 @@ export function Practice({ course, lesson, onSave, report }: {
     <div className="practice-heading"><div><span className="eyebrow">YOUR PRACTICE SPACE</span><h3>Make a little music</h3></div>
       <span className="pill">{Math.floor(elapsed / 60)}:{String(elapsed % 60).padStart(2, '0')} · {hits} notes matched</span></div>
     <p className="muted">Start a session to track actual practice time. Sessions save when you finish or leave this practice space. Save before closing the browser. Chords and rhythm use self-assessment.</p>
-    <div className="button-row">{sessionStart === null ? <button className="primary" onClick={() => { setSessionStart(performance.now()); setIndex(0); setHits(0); }}>Start practice</button>
+    <div className="button-row">{sessionStart === null ? <button className="primary" onClick={() => { mistakes.current = []; setMistakeCount(0); setCleanTakes(false); setSessionStart(performance.now()); setIndex(0); setHits(0); }}>Start practice</button>
       : <button className="primary" onClick={finish}>Save practice session</button>}
       <button onClick={() => safeAudio(audio.pattern(targets.map(concert), tempo * speed))}>Hear pitch pattern</button>
       <button onClick={() => { setLoop(false); setMetronome(false); setBacking(false); audio.stop(); }}>Stop sound</button></div>
@@ -217,6 +236,10 @@ export function Practice({ course, lesson, onSave, report }: {
       : course.id === 'sax' ? <SaxChart target={target} play={play}/>
       : <Fretboard instrument={course.id} target={target} play={play} chord={chord}/>}
     <Staff notes={targets} bass={course.id === 'bass'} octaveShift={course.id === 'guitar' || course.id === 'bass' ? 1 : 0}/>
+    {lesson && <section className="tool-card"><h3>Practise the tricky bits</h3>
+      <p className="small">Wrong single notes from mic, MIDI or screen are saved as targeted reviews with this session. Mark chord clarity or rhythm difficulties yourself. {mistakeCount} difficulty report(s) this session.</p>
+      <div className="button-row">{(['note','chord','rhythm'] as const).map(kind => <button key={kind} disabled={sessionStart === null} onClick={() => markMistake(kind, kind === 'note' ? noteName(target) : kind === 'chord' ? lesson.chord ?? `${lesson.title}: harmony` : `${lesson.title}: written rhythm`, kind === 'note' ? [target] : targets)}>Mark weak {kind}</button>)}</div>
+    </section>}
     <div className="tool-grid">
       <section className="tool-card"><h3>Listen & tune</h3><p className="small">One note at a time, in a quiet space. Use headphones to avoid detecting Playto's sounds. Range: about 35-1600 Hz; chords are not graded.</p>
         <button disabled={micPending} onClick={micOn ? stopMic : startMic}>{micPending ? 'Requesting permission...' : micOn ? 'Disconnect microphone' : 'Connect microphone'}</button>
@@ -228,16 +251,21 @@ export function Practice({ course, lesson, onSave, report }: {
         {course.id === 'keyboard' && <><button onClick={midi.current ? disconnectMidi : connectMidi}>{midi.current ? 'Disconnect MIDI' : 'Connect MIDI keyboard'}</button><p role="status" className="small">{midiStatus}</p></>}
       </section>
       <section className="tool-card"><h3>Find your groove</h3>
-        <label htmlFor="tempo">Tempo · {tempo} BPM</label><input id="tempo" type="range" min="40" max="180" step="5" value={tempo} onChange={event => { setTempo(Number(event.target.value)); setSteady(false); }}/>
+        <label htmlFor="tempo">Tempo · {tempo} BPM</label><input id="tempo" type="range" min="40" max="180" step="5" value={tempo} onChange={event => { setTempo(Number(event.target.value)); setSteady(false); setCleanTakes(false); }}/>
         <div className="beat-dots" aria-label={`Beat ${beat || 'stopped'} of four`}>{[1,2,3,4].map(value => <span key={value} className={beat === value ? 'active' : ''}>{value}</span>)}</div>
         <div className="button-row"><button aria-pressed={metronome} onClick={() => { safeAudio(audio.ready().then(() => {})); setMetronome(!metronome); }}>{metronome ? 'Stop metronome' : 'Start metronome'}</button>
           <button aria-pressed={backing} onClick={() => { safeAudio(audio.ready().then(() => {})); setBacking(!backing); }}>{backing ? 'Stop backing' : 'Start backing'}</button></div>
         <p className="small muted">{course.id === 'guitar' ? 'Original Em / Em / Am / Am backing.' : 'Original C / F / G / C backing (concert pitch).'} Four beats per bar, synthesized locally.</p>
         <label className="check"><input type="checkbox" checked={steady} onChange={event => setSteady(event.target.checked)} disabled={sessionStart === null}/>I kept a steady pulse at this tempo for at least 30 seconds.</label>
         <p className="small muted">Tempo milestones are self-assessed and saved only after 30 seconds of practice.</p>
+        {lesson?.tempoLadder && <section><h4>Tempo ladder</h4><p data-testid="tempo-ladder">{lesson.tempoLadder.map(bpm => `${bpm} BPM${passedTempos.includes(bpm) ? ' passed' : bpm === ladderTarget ? ' next' : ''}`).join(' · ')}</p>
+          {ladderTarget ? <><button disabled={sessionStart !== null} onClick={() => { setTempo(ladderTarget); setSpeed(1); }}>Set ladder target · {ladderTarget} BPM</button>
+            <label className="check"><input type="checkbox" disabled={sessionStart === null || tempo !== ladderTarget || speed !== 1 || elapsed < 30} checked={cleanTakes} onChange={event => setCleanTakes(event.target.checked)}/>I played two complete, clean takes of this lesson's written pattern at {ladderTarget} BPM, at full speed.</label></> : <p>All targets passed. Replay for expression and consistency.</p>}
+          <p className="small muted">Save at least 30 seconds with a steady pulse and two clean takes to pass one target. This is self-assessed; pitch hits alone do not prove rhythm or chord accuracy.</p>
+        </section>}
       </section>
       <section className="tool-card"><h3>Slow it down</h3>
-        <label htmlFor="speed">Pitch pattern speed</label><select id="speed" value={speed} onChange={event => setSpeed(Number(event.target.value))}><option value="0.5">Half speed</option><option value="0.75">Three-quarter speed</option><option value="1">Full speed</option></select>
+        <label htmlFor="speed">Pitch pattern speed</label><select id="speed" value={speed} onChange={event => { setSpeed(Number(event.target.value)); setCleanTakes(false); }}><option value="0.5">Half speed</option><option value="0.75">Three-quarter speed</option><option value="1">Full speed</option></select>
         <div className="loop-inputs"><label>From note<input type="number" min="1" max={loopEnd} value={loopStart} onChange={event => setLoopStart(Math.max(1, Math.min(loopEnd, Number(event.target.value) || 1)))}/></label>
           <label>To note<input type="number" min={loopStart} max={targets.length} value={loopEnd} onChange={event => setLoopEnd(Math.max(loopStart, Math.min(targets.length, Number(event.target.value) || targets.length)))}/></label></div>
         <button aria-pressed={loop} onClick={() => setLoop(!loop)}>{loop ? 'Stop loop' : 'Loop selected notes'}</button>

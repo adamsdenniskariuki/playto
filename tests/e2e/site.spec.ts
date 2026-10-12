@@ -23,7 +23,7 @@ test('welcome, lesson completion, sequential unlock and persistent progress', as
   await page.getByLabel('I found middle C and played four even notes without tension.').check();
   await page.getByRole('button', { name: /Complete lesson/ }).click();
   await expect(page.getByText('50 XP', { exact: true })).toBeVisible();
-  await expect(page.getByRole('button', { name: /Five notes, five fingers/ })).toBeEnabled();
+  await expect(page.getByRole('button', { name: /Release is a movement too/ })).toBeEnabled();
   await page.reload();
   await expect(page.getByText('50 XP', { exact: true })).toBeVisible();
   await expect(page.getByRole('dialog')).not.toBeVisible();

@@ -9,7 +9,7 @@ const intervals = [
   { semitones: 7, name: 'Perfect fifth', hint: 'Seven semitones, like C to G.' },
   { semitones: 12, name: 'Octave', hint: 'The same note name, twelve semitones apart.' }
 ];
-export function EarTraining({ report }: { report: (message: string) => void }) {
+export function EarTraining({ report, onMistake }: { report: (message: string) => void; onMistake?: (notes: number[], label: string) => void }) {
   const [challenge, setChallenge] = useState<{ root: number; answer: number } | null>(null);
   const [choice, setChoice] = useState<number | null>(null);
   const [correct, setCorrect] = useState(0);
@@ -26,6 +26,7 @@ export function EarTraining({ report }: { report: (message: string) => void }) {
     }}>New listening challenge</button><button disabled={!challenge} onClick={() => challenge && play(challenge.root, challenge.answer)}>Listen again</button></div>
     {challenge && <><fieldset><legend>Which interval did you hear?</legend><div className="interval-options">{intervals.map((interval, index) => <button key={interval.name} disabled={choice === challenge.answer} aria-pressed={choice === index} onClick={() => {
       setChoice(index); if (index === challenge.answer) setCorrect(value => value + 1);
+      else onMistake?.([challenge.root, challenge.root + intervals[challenge.answer].semitones], `Hear ${intervals[challenge.answer].name.toLowerCase()}`);
     }}>{interval.name}</button>)}</div></fieldset>{choice !== null && <p className="tip" role="status">{choice === challenge.answer ? `Yes - ${intervals[choice].name.toLowerCase()}. ${noteName(challenge.root)} to ${noteName(challenge.root + intervals[choice].semitones)}. ${intervals[choice].hint}` : 'Not quite. Listen again, hum both notes, and try a different distance.'}</p>}</>}
     <p className="small muted">{correct} interval(s) identified in this visit. Ear training is ungraded; lesson XP comes from the playing goal and knowledge check.</p>
   </section>;

@@ -314,4 +314,6 @@ input[type="checkbox"],input[type="radio"] { min-width: 20px; height: 20px; acce
   .tour-footer button { flex: 1; }
   footer { flex-direction: column; }
 }
+.unit-heading { margin: 24px 0 12px; overflow-wrap: anywhere; }
+.review-card { overflow-wrap: anywhere; }
 @media (prefers-reduced-motion: reduce) { *,*::before,*::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; } }

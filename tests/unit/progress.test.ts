@@ -62,7 +62,7 @@ describe('local progress', () => {
     expect(hard.instruments.keyboard.lessons[lesson.id].interval).toBe(1);
   });
   for (const mutation of [
-    (p: Record<string, unknown>) => { p.version = 2; },
+    (p: Record<string, unknown>) => { p.version = 3; },
     (p: Record<string, unknown>) => { p.xp = -1; },
     (p: Record<string, unknown>) => { p.xp = '50'; },
     (p: Record<string, unknown>) => { p.instruments = {}; },
@@ -88,9 +88,9 @@ describe('local progress', () => {
 });
 describe('curriculum integrity', () => {
   for (const course of courses) it(`${course.name} has complete, valid lessons`, () => {
-    expect(course.lessons).toHaveLength(15);
+    expect(course.lessons).toHaveLength(course.units ? 87 : 15);
     for (const stage of ['Beginner', 'Intermediate', 'Advanced']) {
-      expect(course.lessons.filter(lesson => lesson.stage === stage)).toHaveLength(5);
+      expect(course.lessons.filter(lesson => lesson.stage === stage)).toHaveLength(course.units ? 29 : 5);
       expect(course.lessons.some(lesson => lesson.stage === stage && lesson.kind === 'checkpoint')).toBe(true);
     }
     expect(new Set(course.lessons.map(lesson => lesson.id)).size).toBe(course.lessons.length);

@@ -1,16 +1,16 @@
-import type { InstrumentId, Lesson, Progress } from './types';
+import type { InstrumentId, Lesson, PracticeResult, Progress, WeakKind } from './types';
 
 export const STORAGE_KEY = 'playto.progress.v1';
 export const instrumentIds: InstrumentId[] = ['keyboard', 'guitar', 'bass', 'sax'];
 export function freshProgress(): Progress {
   return {
-    version: 1, xp: 0, streak: 0, lastPractice: null, freezes: 1, instrument: 'keyboard',
+    version: 2, xp: 0, streak: 0, lastPractice: null, freezes: 1, instrument: 'keyboard',
     settings: { theme: 'system', font: 'default', tourSeen: false },
     instruments: {
-      keyboard: { lessons: {}, minutes: 0, notes: 0, chords: [], tempo: 0 },
-      guitar: { lessons: {}, minutes: 0, notes: 0, chords: [], tempo: 0 },
-      bass: { lessons: {}, minutes: 0, notes: 0, chords: [], tempo: 0 },
-      sax: { lessons: {}, minutes: 0, notes: 0, chords: [], tempo: 0 }
+      keyboard: { lessons: {}, minutes: 0, notes: 0, chords: [], tempo: 0, weak: {}, ladders: {} },
+      guitar: { lessons: {}, minutes: 0, notes: 0, chords: [], tempo: 0, weak: {}, ladders: {} },
+      bass: { lessons: {}, minutes: 0, notes: 0, chords: [], tempo: 0, weak: {}, ladders: {} },
+      sax: { lessons: {}, minutes: 0, notes: 0, chords: [], tempo: 0, weak: {}, ladders: {} }
     }
   };
 }
@@ -48,7 +48,7 @@ export function completeLesson(progress: Progress, instrument: InstrumentId, les
   for (const chord of [...(lesson.chords ?? []), ...(lesson.chord ? [lesson.chord] : [])]) {
     if (!next.instruments[instrument].chords.includes(chord)) next.instruments[instrument].chords.push(chord);
   }
-  next.xp += lesson.kind === 'checkpoint' ? 75 : 50;
+  next.xp += lesson.kind === 'stage-test' ? 100 : lesson.kind === 'checkpoint' ? 75 : 50;
   return next;
 }
 export function reviewLesson(progress: Progress, instrument: InstrumentId, lessonId: string, easy: boolean, date = new Date()): Progress {
@@ -76,15 +76,16 @@ const validDate = (value: unknown): value is string => typeof value === 'string'
 const count = (value: unknown): value is number => typeof value === 'number' && Number.isFinite(value) && value >= 0 && value <= 1e9;
 const integer = (value: unknown): value is number => count(value) && Number.isInteger(value);
 const object = (value: unknown): value is Record<string, unknown> => typeof value === 'object' && value !== null && !Array.isArray(value);
+const safeKey = (key: string) => /^[a-z0-9-]+$/.test(key) && key !== '__proto__' && key !== 'constructor' && key !== 'prototype';
 export function parseProgress(text: string): Progress {
   if (text.length > 2_000_000) throw new Error('Backup is too large (maximum 2 MB).');
   const raw: unknown = JSON.parse(text);
-  if (!object(raw) || raw.version !== 1 || !integer(raw.xp) || !integer(raw.streak) ||
+  if (!object(raw) || ![1, 2].includes(Number(raw.version)) || typeof raw.version !== 'number' || !integer(raw.xp) || !integer(raw.streak) ||
       !integer(raw.freezes) || raw.freezes > 2 || !instrumentIds.includes(raw.instrument as InstrumentId) ||
       !(raw.lastPractice === null || (typeof raw.lastPractice === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(raw.lastPractice) && validDate(raw.lastPractice) && dayKey(new Date(`${raw.lastPractice}T12:00:00`)) === raw.lastPractice)) ||
       !object(raw.settings) || !['system', 'light', 'dark', 'sepia', 'contrast'].includes(String(raw.settings.theme)) ||
       !['default', 'serif', 'dyslexic'].includes(String(raw.settings.font)) || typeof raw.settings.tourSeen !== 'boolean' ||
-      !object(raw.instruments)) throw new Error('This is not a valid Playto v1 backup.');
+      !object(raw.instruments)) throw new Error('This is not a valid Playto v1/v2 backup.');
   const result = freshProgress();
   result.xp = raw.xp; result.streak = raw.streak; result.freezes = raw.freezes;
   result.instrument = raw.instrument as InstrumentId; result.lastPractice = raw.lastPractice as string | null;
@@ -97,14 +98,65 @@ export function parseProgress(text: string): Progress {
       Object.keys(data.lessons).length > 10000) throw new Error(`Invalid ${id} progress in backup.`);
     const lessons: Progress['instruments']['keyboard']['lessons'] = {};
     for (const [key, record] of Object.entries(data.lessons)) {
-      if (!/^[a-z0-9-]+$/.test(key) || !object(record) || !validDate(record.completedAt) ||
+      if (!safeKey(key) || !object(record) || !validDate(record.completedAt) ||
         !validDate(record.reviewAt) || !integer(record.interval) || record.interval < 1 ||
         record.interval > 60 || !integer(record.reviews)) throw new Error('Invalid lesson review record.');
       lessons[key] = { completedAt: record.completedAt, reviewAt: record.reviewAt, interval: record.interval, reviews: record.reviews };
     }
-    result.instruments[id] = { lessons, minutes: data.minutes, notes: data.notes, chords: [...data.chords] as string[], tempo: data.tempo };
+    const weak: Progress['instruments']['keyboard']['weak'] = {};
+    const ladders: Progress['instruments']['keyboard']['ladders'] = {};
+    if (raw.version === 2) {
+      if (!object(data.weak) || !object(data.ladders) || Object.keys(data.weak).length > 10000) throw new Error('Invalid practice records.');
+      for (const [key, item] of Object.entries(data.weak)) {
+        if (!safeKey(key) || !object(item) || typeof item.lessonId !== 'string' || !safeKey(item.lessonId) ||
+          !['note','chord','rhythm'].includes(String(item.kind)) || typeof item.label !== 'string' || item.label.length > 200 ||
+          !Array.isArray(item.notes) || item.notes.length === 0 || item.notes.length > 128 || !item.notes.every(note => integer(note) && note <= 127) ||
+          !integer(item.mistakes) || !integer(item.interval) || item.interval < 1 || item.interval > 60 ||
+          !integer(item.reviews) || !validDate(item.reviewAt)) throw new Error('Invalid weak-skill record.');
+        weak[key] = { lessonId: item.lessonId, kind: item.kind as WeakKind, label: item.label, notes: item.notes as number[],
+          mistakes: item.mistakes, interval: item.interval, reviews: item.reviews, reviewAt: item.reviewAt };
+      }
+      for (const [key, tempos] of Object.entries(data.ladders)) {
+        if (!safeKey(key) || !Array.isArray(tempos) || tempos.length > 20 || !tempos.every(bpm => integer(bpm) && bpm >= 30 && bpm <= 180) || new Set(tempos).size !== tempos.length) throw new Error('Invalid tempo ladder.');
+        ladders[key] = [...tempos] as number[];
+      }
+    }
+    result.instruments[id] = { lessons, minutes: data.minutes, notes: data.notes, chords: [...data.chords] as string[], tempo: data.tempo, weak, ladders };
   }
   return result;
+}
+export function recordMistake(progress: Progress, instrument: InstrumentId, lessonId: string, kind: WeakKind, label: string, notes: number[], date = new Date()): Progress {
+  const next = structuredClone(progress);
+  const key = `${lessonId}-${kind}-${notes.join('-')}`;
+  const existing = next.instruments[instrument].weak[key];
+  next.instruments[instrument].weak[key] = {
+    lessonId, kind, label, notes, mistakes: (existing?.mistakes ?? 0) + 1,
+    interval: 1, reviews: existing?.reviews ?? 0, reviewAt: date.toISOString()
+  };
+  return next;
+}
+export function reviewWeak(progress: Progress, instrument: InstrumentId, key: string, confident: boolean, date = new Date()): Progress {
+  const next = practiceDay(progress, date);
+  const item = next.instruments[instrument].weak[key];
+  if (!item) throw new Error('This weak-skill review no longer exists.');
+  if (Date.parse(item.reviewAt) > date.getTime()) return next;
+  item.interval = confident ? Math.min(60, item.interval * 2) : 1;
+  item.reviewAt = new Date(date.getTime() + item.interval * 86400000).toISOString();
+  item.reviews++;
+  next.xp += 10;
+  return next;
+}
+export function savePracticeResult(progress: Progress, instrument: InstrumentId, lesson: Lesson | undefined, result: PracticeResult): Progress {
+  let next = addPractice(progress, instrument, result.seconds, result.notes, result.tempo);
+  if (lesson) {
+    for (const mistake of result.mistakes) next = recordMistake(next, instrument, lesson.id, mistake.kind, mistake.label, mistake.notes);
+    if (result.seconds >= 30 && result.ladderTempo && result.tempo === result.ladderTempo && lesson.tempoLadder?.includes(result.ladderTempo)) {
+      const passed = next.instruments[instrument].ladders[lesson.id] ?? [];
+      const target = lesson.tempoLadder.find(bpm => !passed.includes(bpm));
+      if (target === result.ladderTempo) next.instruments[instrument].ladders[lesson.id] = [...passed, target];
+    }
+  }
+  return next;
 }
 export function badges(progress: Progress): { name: string; earned: boolean; detail: string }[] {
   const records = Object.values(progress.instruments);

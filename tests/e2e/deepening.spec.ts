@@ -13,8 +13,8 @@ test('all four advanced level tests and due reviews open with saved prerequisite
   await page.goto('/');
   for (const course of courses) {
     await page.getByLabel('CURRENT INSTRUMENT').selectOption(course.id);
-    await expect(page.getByRole('button', { name: /Level test:/ })).toBeEnabled();
-    await page.getByRole('button', { name: /Level test:/ }).click();
+    await expect(page.getByRole('button', { name: course.lessons.at(-1)!.title, exact: false })).toBeEnabled();
+    await page.getByRole('button', { name: course.lessons.at(-1)!.title, exact: false }).click();
     await expect(page.getByRole('heading', { name: course.lessons.at(-1)!.title })).toBeVisible();
     await expect(page.getByText(course.lessons.at(-1)!.assessment, { exact: true })).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
@@ -22,7 +22,7 @@ test('all four advanced level tests and due reviews open with saved prerequisite
   }
   await page.getByRole('button', { name: 'Spaced review', exact: false }).click();
   await expect(page.getByRole('heading', { name: 'Spaced review' })).toBeVisible();
-  await expect(page.getByRole('button', { name: /Ready to revisit/ })).toHaveCount(15);
+  await expect(page.getByRole('button', { name: /Ready to revisit/ })).toHaveCount(courses.at(-1)!.lessons.length);
 });
 test('ear training plays a random challenge and gives correct feedback', async ({ page }) => {
   await page.addInitScript(() => {
