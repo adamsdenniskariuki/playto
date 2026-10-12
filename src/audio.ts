@@ -34,7 +34,7 @@ export function detectPitch(samples: Float32Array, sampleRate: number): number |
 }
 export class AudioEngine {
   private context: AudioContext | null = null;
-  private voices = new Set<OscillatorNode>();
+  private voices = new Map<OscillatorNode, GainNode>();
   async ready(): Promise<AudioContext> {
     if (!this.context || this.context.state === 'closed') this.context = new AudioContext();
     if (this.context.state === 'suspended') await this.context.resume();
@@ -42,16 +42,20 @@ export class AudioEngine {
   }
   async note(midi: number, seconds = 0.45, delay = 0, volume = 0.12): Promise<void> {
     const context = await this.ready();
+    this.noteAt(midi, seconds, context.currentTime + delay, volume);
+  }
+  noteAt(midi: number, seconds: number, start: number, volume = 0.12): void {
+    const context = this.context;
+    if (!context || context.state === 'closed') throw new Error('Prepare audio before scheduling notes.');
     const oscillator = context.createOscillator();
     const gain = context.createGain();
-    const start = context.currentTime + delay;
     oscillator.type = 'triangle';
     oscillator.frequency.value = frequencyForMidi(midi);
     gain.gain.setValueAtTime(0, start);
     gain.gain.linearRampToValueAtTime(volume, start + 0.012);
     gain.gain.exponentialRampToValueAtTime(0.001, start + seconds);
     oscillator.connect(gain); gain.connect(context.destination);
-    this.voices.add(oscillator);
+    this.voices.set(oscillator, gain);
     oscillator.onended = () => { oscillator.disconnect(); gain.disconnect(); this.voices.delete(oscillator); };
     oscillator.start(start); oscillator.stop(start + seconds + 0.025);
   }
@@ -60,8 +64,14 @@ export class AudioEngine {
     for (const [index, midi] of notes.entries()) await this.note(midi, 60 / tempo * 0.85, index * 60 / tempo);
   }
   stop() {
-    for (const voice of this.voices) { voice.onended = null; voice.stop(); voice.disconnect(); }
+    for (const [voice, gain] of this.voices) { voice.onended = null; voice.stop(); voice.disconnect(); gain.disconnect(); }
     this.voices.clear();
+  }
+  async dispose(): Promise<void> {
+    this.stop();
+    const context = this.context;
+    this.context = null;
+    if (context && context.state !== 'closed') await context.close();
   }
 }
 export const audio = new AudioEngine();

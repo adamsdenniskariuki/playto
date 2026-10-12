@@ -1,0 +1,8 @@
+[
+  {"id":"bass-sidewalk","title":"Sidewalk pocket - original bass groove","tempo":90,"roots":[40,45,47,40],"events":[
+    {"note":40,"beats":1},{"note":null,"beats":0.5},{"note":47,"beats":0.5},{"note":40,"beats":2},
+    {"note":45,"beats":1},{"note":52,"beats":0.5},{"note":45,"beats":0.5},{"note":43,"beats":2},
+    {"note":47,"beats":1},{"note":50,"beats":1},{"note":54,"beats":1},{"note":45,"beats":1},
+    {"note":40,"beats":1},{"note":43,"beats":0.5},{"note":47,"beats":0.5},{"note":40,"beats":2}
+  ]}
+]

@@ -1,0 +1,8 @@
+[
+  {"id":"guitar-woodland","title":"Woodland walk - original fingerstyle melody","tempo":75,"roots":[40,45,47,40],"events":[
+    {"note":40,"beats":1},{"note":55,"beats":1},{"note":59,"beats":1},{"note":64,"beats":1},
+    {"note":45,"beats":1},{"note":60,"beats":0.5},{"note":64,"beats":0.5},{"note":57,"beats":2},
+    {"note":47,"beats":1},{"note":59,"beats":1},{"note":62,"beats":1},{"note":null,"beats":1},
+    {"note":55,"beats":1},{"note":52,"beats":1},{"note":40,"beats":2}
+  ]}
+]

@@ -1,7 +1,7 @@
 import { NOTE_NAMES, noteName } from './audio';
 import type { InstrumentId } from './types';
 
-const tunings = { guitar: [64, 59, 55, 50, 45, 40], bass: [43, 38, 33, 28] };
+export const tunings = { guitar: [64, 59, 55, 50, 45, 40], bass: [43, 38, 33, 28] };
 export const chordShapes: Record<string, (number | null)[]> = {
   'E minor': [0, 2, 2, 0, 0, 0], 'A minor': [null, 0, 2, 2, 1, 0],
   'C major': [null, 3, 2, 0, 1, 0], 'G major': [3, 2, 0, 0, 0, 3],

@@ -3,6 +3,8 @@ import { audio, detectPitch, noteName, pitchInfo } from './audio';
 import { CHORD_CONFIDENCE, chordNames, matchChroma, spectrumChroma, type ChordReading } from './chords';
 import { RhythmScoring, type RhythmInput } from './RhythmScoring';
 import { OnsetDetector, type BeatClock } from './rhythm';
+import { SongMode } from './SongMode';
+import { songs, type ReferenceScore } from './songs';
 import { chordShapes, Fretboard, Piano, SaxChart, Staff } from './Visuals';
 import type { Course, Lesson, PracticeResult, WeakKind } from './types';
 
@@ -31,6 +33,8 @@ export function Practice({ course, lesson, passedTempos = [], onSave, report }: 
   const [beat, setBeat] = useState(0);
   const beatClock = useRef<BeatClock | null>(null);
   const rhythmInput = useRef<RhythmInput>(() => {});
+  const [stopSignal, setStopSignal] = useState(0);
+  const songReference = useRef<ReferenceScore>({ title: songs[course.id][0].title, tempo: 60, countIn: 4, events: songs[course.id][0].events, roots: songs[course.id][0].roots, transposition: course.id === 'sax' ? -9 : 0 });
   const [sessionStart, setSessionStart] = useState<number | null>(null);
   const [elapsed, setElapsed] = useState(0);
   const [steady, setSteady] = useState(false);
@@ -264,7 +268,7 @@ export function Practice({ course, lesson, passedTempos = [], onSave, report }: 
       ladderTempo: seconds >= 30 && cleanTakes && steady && speed === 1 && tempo === ladderTarget ? tempo : undefined });
     mistakes.current = []; setMistakeCount(0); setCleanTakes(false);
     setSessionStart(null); setElapsed(0); setHits(0); setChordHits(0); setIndex(0); setSteady(false);
-    setLoop(false); setMetronome(false); setBacking(false); stopMic(); disconnectMidi(); audio.stop();
+    setStopSignal(value => value + 1); setLoop(false); setMetronome(false); setBacking(false); stopMic(); disconnectMidi(); audio.stop();
   }
   return <div className="practice">
     <div className="practice-heading"><div><span className="eyebrow">YOUR PRACTICE SPACE</span><h3>Make a little music</h3></div>
@@ -273,7 +277,7 @@ export function Practice({ course, lesson, passedTempos = [], onSave, report }: 
     <div className="button-row">{sessionStart === null ? <button className="primary" onClick={() => { mistakes.current = []; setMistakeCount(0); setCleanTakes(false); setSessionStart(performance.now()); setIndex(0); setHits(0); setChordHits(0); }}>Start practice</button>
       : <button className="primary" onClick={finish}>Save practice session</button>}
       <button onClick={() => safeAudio(audio.pattern(targets.map(concert), tempo * speed))}>Hear pitch pattern</button>
-      <button onClick={() => { setLoop(false); setMetronome(false); setBacking(false); audio.stop(); }}>Stop sound</button></div>
+      <button onClick={() => { setStopSignal(value => value + 1); setLoop(false); setMetronome(false); setBacking(false); audio.stop(); }}>Stop sound</button></div>
     <div className="target-note"><span>Next note</span><strong>{noteName(target)}</strong><span>{sessionStart === null ? 'Start practice to match notes' : 'Play, then release before repeating'}</span></div>
     {course.id === 'guitar' && <label className="chord-picker">Chord diagram <select aria-label="Chord diagram" value={chord} onChange={event => setChord(event.target.value)}>
       {Object.keys(chordShapes).map(name => <option key={name}>{name}</option>)}
@@ -282,6 +286,7 @@ export function Practice({ course, lesson, passedTempos = [], onSave, report }: 
       : course.id === 'sax' ? <SaxChart target={target} play={play}/>
       : <Fretboard instrument={course.id} target={target} play={play} chord={chord}/>}
     <Staff notes={targets} bass={course.id === 'bass'} octaveShift={course.id === 'guitar' || course.id === 'bass' ? 1 : 0}/>
+    <SongMode course={course} lesson={lesson} stopSignal={stopSignal} reference={songReference} report={report} onStart={() => { setLoop(false); setMetronome(false); setBacking(false); audio.stop(); }}/>
     {lesson && <section className="tool-card"><h3>Practise the tricky bits</h3>
       <p className="small">Wrong single notes from mic, MIDI or screen are saved as targeted reviews with this session. Mark chord clarity or rhythm difficulties yourself. {mistakeCount} difficulty report(s) this session.</p>
       <div className="button-row">{(['note','chord','rhythm'] as const).map(kind => <button key={kind} disabled={sessionStart === null} onClick={() => markMistake(kind, kind === 'note' ? noteName(target) : kind === 'chord' ? lesson.chord ?? `${lesson.title}: harmony` : `${lesson.title}: written rhythm`, kind === 'note' ? [target] : targets)}>Mark weak {kind}</button>)}</div>

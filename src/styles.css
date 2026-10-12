@@ -365,3 +365,9 @@ input[type="checkbox"],input[type="radio"] { min-width: 20px; height: 20px; acce
 .unit-heading { margin: 24px 0 12px; overflow-wrap: anywhere; }
 .review-card { overflow-wrap: anywhere; }
 @media (prefers-reduced-motion: reduce) { *,*::before,*::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; } }
+.song-mode { margin-block: 16px; }
+.song-strip { position: relative; display: flex; gap: 12px; overflow-x: auto; max-width: 100%; padding: 12px; list-style: none; border: 1px solid var(--cp-border-strong); border-radius: 10px; }
+.song-strip > li { flex: 0 0 190px; display: flex; flex-direction: column; gap: 8px; padding: 12px; border: 2px solid var(--cp-border); border-radius: 10px; }
+.song-strip > .song-current { border-color: var(--cp-accent); background: var(--cp-accent-soft); }
+.song-strip > .song-next { border-style: dashed; border-color: var(--cp-border-strong); }
+.song-strip .staff-scroll svg { min-width: 0; width: 100%; }

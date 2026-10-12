@@ -1,0 +1,8 @@
+[
+  {"id":"sax-evening","title":"Evening breeze - original alto melody","tempo":80,"roots":[50,55,57,50],"events":[
+    {"note":71,"beats":1},{"note":74,"beats":1},{"note":78,"beats":2},
+    {"note":79,"beats":1},{"note":76,"beats":0.5},{"note":74,"beats":0.5},{"note":72,"beats":2},
+    {"note":78,"beats":1},{"note":76,"beats":1},{"note":73,"beats":1},{"note":null,"beats":1},
+    {"note":74,"beats":1},{"note":72,"beats":1},{"note":71,"beats":2}
+  ]}
+]

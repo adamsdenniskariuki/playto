@@ -1,0 +1,8 @@
+[
+  {"id":"keys-daybreak","title":"Daybreak - original keyboard melody","tempo":80,"roots":[48,53,55,48],"events":[
+    {"note":60,"beats":1},{"note":64,"beats":1},{"note":67,"beats":2},
+    {"note":69,"beats":1},{"note":65,"beats":0.5},{"note":64,"beats":0.5},{"note":62,"beats":2},
+    {"note":67,"beats":1},{"note":71,"beats":1},{"note":74,"beats":1},{"note":null,"beats":1},
+    {"note":67,"beats":1},{"note":64,"beats":1},{"note":60,"beats":2}
+  ]}
+]
