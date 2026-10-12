@@ -301,14 +301,15 @@ export function Practice({ course, lesson, passedTempos = [], routineSeconds, ro
       : course.id === 'sax' ? <SaxChart target={target} play={play}/>
       : <Fretboard instrument={course.id} target={target} play={play} chord={chord}/>}
     <Staff notes={targets} bass={course.id === 'bass'} octaveShift={course.id === 'guitar' || course.id === 'bass' ? 1 : 0}/>
-    <SongMode course={course} lesson={lesson} stopSignal={stopSignal + songStopSignal} reference={songReference} report={report} onStart={() => { setLoop(false); setMetronome(false); setBacking(false); audio.stop(); }}/>
-    <RecordCompare instrument={course.id} reference={songReference} stopSignal={stopSignal} report={report} onStart={() => { setSongStopSignal(value => value + 1); setLoop(false); setMetronome(false); setBacking(false); audio.stop(); }}/>
+    <nav aria-label="Practice tools" className="tool-jump">{[['tool-song','Song'],['tool-record','Record'],['tool-tune','Tune'],['tool-groove','Groove'],['tool-slow','Slow down']].map(([id, text]) => <a key={id} href={`#${id}`} onClick={event => { event.preventDefault(); document.getElementById(id)?.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }); }}>{text}</a>)}</nav>
+    <div id="tool-song"><SongMode course={course} lesson={lesson} stopSignal={stopSignal + songStopSignal} reference={songReference} report={report} onStart={() => { setLoop(false); setMetronome(false); setBacking(false); audio.stop(); }}/></div>
+    <div id="tool-record"><RecordCompare instrument={course.id} reference={songReference} stopSignal={stopSignal} report={report} onStart={() => { setSongStopSignal(value => value + 1); setLoop(false); setMetronome(false); setBacking(false); audio.stop(); }}/></div>
     {lesson && <section className="tool-card"><h3>Practise the tricky bits</h3>
       <p className="small">Wrong single notes from mic, MIDI or screen are saved as targeted reviews with this session. Mark chord clarity or rhythm difficulties yourself. {mistakeCount} difficulty report(s) this session.</p>
       <div className="button-row">{(['note','chord','rhythm'] as const).map(kind => <button key={kind} disabled={sessionStart === null} onClick={() => markMistake(kind, kind === 'note' ? noteName(target) : kind === 'chord' ? lesson.chord ?? `${lesson.title}: harmony` : `${lesson.title}: written rhythm`, kind === 'note' ? [target] : targets)}>Mark weak {kind}</button>)}</div>
     </section>}
     <div className="tool-grid">
-      <section className="tool-card"><h3>Listen & tune</h3><p className="small">Use headphones in a quiet space to avoid detecting Playto's sounds. Single-note tuner range: about 35-1600 Hz.</p>
+      <section id="tool-tune" className="tool-card"><h3>Listen & tune</h3><p className="small">Use headphones in a quiet space to avoid detecting Playto's sounds. Single-note tuner range: about 35-1600 Hz.</p>
         {(course.id === 'keyboard' || course.id === 'guitar') && <>
           <label className="check"><input type="checkbox" checked={chordMode} onChange={event => { setChordMode(event.target.checked); setChordReading({ name: null, confidence: 0 }); }}/>Listen for chords instead of single notes</label>
           {chordMode && <>
@@ -328,7 +329,7 @@ export function Practice({ course, lesson, passedTempos = [], routineSeconds, ro
         {course.id === 'sax' && <p className="small">Tuner displays concert pitch. Written B4 on alto sax sounds concert D4.</p>}
         {course.id === 'keyboard' && <><button onClick={midi.current ? disconnectMidi : connectMidi}>{midi.current ? 'Disconnect MIDI' : 'Connect MIDI keyboard'}</button><p role="status" className="small">{midiStatus}</p></>}
       </section>
-      <section className="tool-card"><h3>Find your groove</h3>
+      <section id="tool-groove" className="tool-card"><h3>Find your groove</h3>
         <label htmlFor="tempo">Tempo · {tempo} BPM</label><input id="tempo" type="range" min="40" max="180" step="5" value={tempo} onChange={event => { setTempo(Number(event.target.value)); setSteady(false); setCleanTakes(false); }}/>
         <div className="beat-dots" aria-label={`Beat ${beat || 'stopped'} of four`}>{[1,2,3,4].map(value => <span key={value} className={beat === value ? 'active' : ''}>{value}</span>)}</div>
         <div className="button-row"><button aria-pressed={metronome} onClick={() => { safeAudio(audio.ready().then(() => {})); setMetronome(!metronome); }}>{metronome ? 'Stop metronome' : 'Start metronome'}</button>
@@ -343,7 +344,7 @@ export function Practice({ course, lesson, passedTempos = [], routineSeconds, ro
         </section>}
       </section>
       <RhythmScoring clockVersion={`${tempo}-${metronome}-${backing}`} clock={beatClock} input={rhythmInput} active={metronome || backing} running={sessionStart !== null} onMistake={label => markMistake('rhythm', label)}/>
-      <section className="tool-card"><h3>Slow it down</h3>
+      <section id="tool-slow" className="tool-card"><h3>Slow it down</h3>
         <label htmlFor="speed">Pitch pattern speed</label><select id="speed" value={speed} onChange={event => { setSpeed(Number(event.target.value)); setCleanTakes(false); }}><option value="0.5">Half speed</option><option value="0.75">Three-quarter speed</option><option value="1">Full speed</option></select>
         <div className="loop-inputs"><label>From note<input type="number" min="1" max={loopEnd} value={loopStart} onChange={event => setLoopStart(Math.max(1, Math.min(loopEnd, Number(event.target.value) || 1)))}/></label>
           <label>To note<input type="number" min={loopStart} max={targets.length} value={loopEnd} onChange={event => setLoopEnd(Math.max(loopStart, Math.min(targets.length, Number(event.target.value) || targets.length)))}/></label></div>

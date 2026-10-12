@@ -194,13 +194,22 @@ function App() {
             {course.units && <><p className="muted">Three stages, four seven-lesson units per stage, plus a stage test. Existing lessons stay completed; fill new gaps at your own pace. Stage badges require all unit goals.</p><label>Style track <select aria-label="Style track" value={style} onChange={event => setStyle(event.target.value)}>{['All styles', ...new Set(course.units.map(unit => unit.style))].map(item => <option key={item}>{item}</option>)}</select></label><p className="small muted">Style filtering helps you find repertoire; it does not skip prerequisites. Choose All styles to continue your full path.</p></>}
             {(['Beginner','Intermediate','Advanced'] as const).map(stage => {
               const lessons = course.lessons.filter(lesson => lesson.stage === stage && (!course.units || style === 'All styles' || lesson.style === style || lesson.kind === 'stage-test'));
-              return lessons.length > 0 && <div className="path-stage" key={stage}><h3>{stage}<span>{stage === 'Beginner' ? 'Find your foundation' : stage === 'Intermediate' ? 'Build your musical vocabulary' : 'Make it your own'}</span></h3><div className="lesson-path">{lessons.map(lesson => {
+              const node = (lesson: typeof lessons[number]) => {
                 const index = course.lessons.indexOf(lesson), done = Boolean(record.lessons[lesson.id]), available = availableLesson(course, lesson, record.lessons);
-                const unit = course.units?.find(item => item.id === lesson.unitId);
-                const unitStart = unit?.lessonIds[0] === lesson.id;
-                return <React.Fragment key={lesson.id}>{unitStart && <h4 className="unit-heading">{unit.title} <span className="small muted"> · {unit.style} · 7 lessons</span></h4>}
-                <button className={`lesson-node ${done ? 'done' : available ? 'ready' : 'locked'}`} disabled={!available} onClick={() => { setSelected(lesson); window.scrollTo({ top: 0 }); }}>
-                  <span className="node-number" aria-hidden="true">{done ? '✓' : available ? index + 1 : '·'}</span><span className="node-description"><strong>{lesson.title}</strong><span>{lesson.kind === 'stage-test' ? 'Stage test · badge' : lesson.kind === 'checkpoint' ? 'Checkpoint' : lesson.kind === 'piece' ? 'Original piece' : 'Lesson'} · {lesson.minutes} min{done ? ' · Completed' : !available ? ' · Complete prerequisites to unlock' : ' · Ready to play'}</span></span><span className="node-arrow" aria-hidden="true">→</span></button></React.Fragment>;
+                return <button key={lesson.id} className={`lesson-node ${done ? 'done' : available ? 'ready' : 'locked'}`} disabled={!available} onClick={() => { setSelected(lesson); window.scrollTo({ top: 0 }); }}>
+                  <span className="node-number" aria-hidden="true">{done ? '✓' : available ? index + 1 : '·'}</span><span className="node-description"><strong>{lesson.title}</strong><span>{lesson.kind === 'stage-test' ? 'Stage test · badge' : lesson.kind === 'checkpoint' ? 'Checkpoint' : lesson.kind === 'piece' ? 'Original piece' : 'Lesson'} · {lesson.minutes} min{done ? ' · Completed' : !available ? ' · Complete prerequisites to unlock' : ' · Ready to play'}</span></span><span className="node-arrow" aria-hidden="true">→</span></button>;
+              };
+              const groups: { unitId?: string; items: typeof lessons }[] = [];
+              for (const lesson of lessons) {
+                const last = groups[groups.length - 1];
+                if (lesson.unitId && last?.unitId === lesson.unitId) last.items.push(lesson);
+                else groups.push({ unitId: lesson.unitId, items: [lesson] });
+              }
+              return lessons.length > 0 && <div className="path-stage" key={stage}><h3>{stage}<span>{stage === 'Beginner' ? 'Find your foundation' : stage === 'Intermediate' ? 'Build your musical vocabulary' : 'Make it your own'}</span></h3><div className="lesson-path">{groups.map((group, groupIndex) => {
+                const unit = course.units?.find(item => item.id === group.unitId);
+                if (!unit) return <React.Fragment key={`loose-${groupIndex}`}>{group.items.map(node)}</React.Fragment>;
+                const doneCount = unit.lessonIds.filter(id => record.lessons[id]).length, pct = Math.round(doneCount / unit.lessonIds.length * 100);
+                return <details className="unit-group" key={unit.id} open><summary><span className="unit-ring" style={{ '--pct': `${pct}%` } as React.CSSProperties} role="img" aria-label={`${doneCount} of ${unit.lessonIds.length} lessons complete`}><span>{doneCount}</span></span><h4 className="unit-heading">{unit.title} <span className="small muted"> · {unit.style} · 7 lessons</span></h4><span className="unit-toggle" aria-hidden="true">▾</span></summary><div className="unit-lessons">{group.items.map(node)}</div></details>;
               })}</div></div>;
             })}
           </section><aside className="encouragement"><span aria-hidden="true">♫</span><div><strong>You don't have to be good to start.</strong><p className="muted">You just have to start to get better. Five minutes counts.</p></div></aside>
