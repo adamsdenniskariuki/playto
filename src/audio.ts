@@ -32,10 +32,13 @@ export function detectPitch(samples: Float32Array, sampleRate: number): number |
   }
   return null;
 }
+const engines = new Set<AudioEngine>();
+export function stopAllAudio(): void { for (const engine of engines) engine.stop(); }
 export class AudioEngine {
   private context: AudioContext | null = null;
   private voices = new Map<OscillatorNode, GainNode>();
   async ready(): Promise<AudioContext> {
+    engines.add(this);
     if (!this.context || this.context.state === 'closed') this.context = new AudioContext();
     if (this.context.state === 'suspended') await this.context.resume();
     return this.context;
@@ -64,11 +67,16 @@ export class AudioEngine {
     for (const [index, midi] of notes.entries()) await this.note(midi, 60 / tempo * 0.85, index * 60 / tempo);
   }
   stop() {
-    for (const [voice, gain] of this.voices) { voice.onended = null; voice.stop(); voice.disconnect(); gain.disconnect(); }
+    for (const [voice, gain] of this.voices) {
+      voice.onended = null;
+      try { voice.stop(); } catch { /* already stopped */ }
+      voice.disconnect(); gain.disconnect();
+    }
     this.voices.clear();
   }
   async dispose(): Promise<void> {
     this.stop();
+    engines.delete(this);
     const context = this.context;
     this.context = null;
     if (context && context.state !== 'closed') await context.close();

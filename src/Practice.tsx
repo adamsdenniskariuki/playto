@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { audio, detectPitch, noteName, pitchInfo } from './audio';
+import { audio, detectPitch, stopAllAudio, noteName, pitchInfo } from './audio';
 import { CHORD_CONFIDENCE, chordNames, matchChroma, spectrumChroma, type ChordReading } from './chords';
 import { RhythmScoring, type RhythmInput } from './RhythmScoring';
 import { OnsetDetector, type BeatClock } from './rhythm';
@@ -212,7 +212,7 @@ export function Practice({ course, lesson, passedTempos = [], routineSeconds, ro
       cancelAnimationFrame(frame.current); stream.current?.getTracks().forEach(track => track.stop());
       sourceNode.current?.disconnect(); sourceNode.current = null;
       if (midi.current) { midi.current.inputs.forEach(input => { input.onmidimessage = null; }); midi.current.onstatechange = null; }
-      audio.stop();
+      stopAllAudio();
       const session = sessionRef.current;
       if (session.start !== null) {
         const seconds = Math.min(routineSeconds ?? Infinity, Math.floor((performance.now() - session.start) / 1000));
@@ -268,10 +268,11 @@ export function Practice({ course, lesson, passedTempos = [], routineSeconds, ro
   useEffect(() => {
     if (!loop) return;
     const slice = targets.slice(loopStart - 1, loopEnd).map(concert);
+    if (!slice.length || !(tempo * speed > 0)) return;
     safeAudio(audio.pattern(slice, tempo * speed));
     const timer = window.setInterval(() => safeAudio(audio.pattern(slice, tempo * speed)), slice.length * 60000 / (tempo * speed));
     return () => { clearInterval(timer); audio.stop(); };
-  }, [loop, loopStart, loopEnd, tempo, speed]);
+  }, [loop, loopStart, loopEnd, tempo, speed, targets.join(',')]);
   function finish() {
     if (sessionStart === null) return;
     const seconds = Math.min(routineSeconds ?? Infinity, Math.floor((performance.now() - sessionStart) / 1000));
@@ -281,7 +282,7 @@ export function Practice({ course, lesson, passedTempos = [], routineSeconds, ro
       ladderTempo: seconds >= 30 && cleanTakes && steady && speed === 1 && tempo === ladderTarget ? tempo : undefined });
     mistakes.current = []; setMistakeCount(0); setCleanTakes(false);
     setSessionStart(null); setElapsed(0); setHits(0); setChordHits(0); setIndex(0); setSteady(false);
-    setStopSignal(value => value + 1); setLoop(false); setMetronome(false); setBacking(false); stopMic(); disconnectMidi(); audio.stop();
+    setStopSignal(value => value + 1); setLoop(false); setMetronome(false); setBacking(false); stopMic(); disconnectMidi(); stopAllAudio();
   }
   return <div className="practice">
     {routineSeconds && <p role="status" data-testid="routine-timer"><strong>{routineTitle} timer · {Math.max(0, routineSeconds - elapsed)} seconds remaining</strong> · Saves at the end. Save early to pause.</p>}
@@ -291,7 +292,7 @@ export function Practice({ course, lesson, passedTempos = [], routineSeconds, ro
     <div className="button-row">{sessionStart === null ? <button className="primary" onClick={() => { mistakes.current = []; setMistakeCount(0); setCleanTakes(false); setSessionStart(performance.now()); setIndex(0); setHits(0); setChordHits(0); }}>Start practice</button>
       : <button className="primary" onClick={finish}>Save practice session</button>}
       <button onClick={() => safeAudio(audio.pattern(targets.map(concert), tempo * speed))}>Hear pitch pattern</button>
-      <button onClick={() => { setStopSignal(value => value + 1); setLoop(false); setMetronome(false); setBacking(false); audio.stop(); }}>Stop sound</button></div>
+      <button onClick={() => { setStopSignal(value => value + 1); setLoop(false); setMetronome(false); setBacking(false); stopAllAudio(); }}>Stop sound</button></div>
     <div className="target-note"><span>Next note</span><strong>{noteName(target)}</strong><span>{sessionStart === null ? 'Start practice to match notes' : 'Play, then release before repeating'}</span></div>
     {course.id === 'guitar' && <label className="chord-picker">Chord diagram <select aria-label="Chord diagram" value={chord} onChange={event => setChord(event.target.value)}>
       {Object.keys(chordShapes).map(name => <option key={name}>{name}</option>)}

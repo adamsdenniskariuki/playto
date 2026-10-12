@@ -27,10 +27,15 @@ export function SongMode({ course, lesson, stopSignal, onStart, reference, repor
   const cards = useRef<(HTMLLIElement | null)[]>([]);
   const strip = useRef<HTMLOListElement | null>(null);
   const events = song.events.slice(from - 1, to);
-  reference.current = { title: song.title, tempo: tempo * speed, countIn, events, roots: withBacking ? song.roots : [], transposition: course.id === 'sax' ? -9 : 0 };
+  const reportRef = useRef(report);
+  const transposition = course.id === 'sax' ? -9 : 0;
+  useEffect(() => { reportRef.current = report; });
+  useEffect(() => {
+    reference.current = { title: song.title, tempo: tempo * speed, countIn, events, roots: withBacking ? song.roots : [], transposition };
+  });
   function stop() { generation.current++; clearInterval(timer.current); engine.current.stop(); setPlaying(false); setPending(false); setPosition(-1); setCount(0); }
   useEffect(() => { stop(); }, [stopSignal]);
-  useEffect(() => () => { generation.current++; clearInterval(timer.current); void engine.current.dispose().catch(error => report(`Song audio cleanup failed: ${String(error)}`)); }, []);
+  useEffect(() => () => { generation.current++; clearInterval(timer.current); void engine.current.dispose().catch(error => reportRef.current(`Song audio cleanup failed: ${String(error)}`)); }, []);
   useEffect(() => {
     const card = cards.current[position], container = strip.current;
     if (card && container) container.scrollTo({ left: card.offsetLeft - container.offsetLeft - container.clientWidth / 2 + card.clientWidth / 2, behavior: 'auto' });
@@ -41,14 +46,16 @@ export function SongMode({ course, lesson, stopSignal, onStart, reference, repor
     try {
       const context = await engine.current.ready();
       if (request !== generation.current) return;
+      const timeline = scoreTimeline(events);
+      if (!timeline.length) { stop(); report('Choose at least one song event to play.'); return; }
       onStart();
       const origin = context.currentTime + 0.15, secondsPerBeat = 60 / (tempo * speed);
-      const timeline = scoreTimeline(events), duration = timeline.at(-1)!.end;
+      const duration = timeline[timeline.length - 1].end;
       const first = origin + countIn * secondsPerBeat;
       let nextCycle = first;
       for (let beat = 0; beat < countIn; beat++) engine.current.noteAt(beat % 4 === 0 ? 96 : 89, 0.07, origin + beat * secondsPerBeat, 0.07);
       function cycle(startTime: number) {
-        for (const event of timeline) if (event.note !== null) engine.current.noteAt(event.note + reference.current.transposition, event.beats * secondsPerBeat * 0.85, startTime + event.start * secondsPerBeat);
+        for (const event of timeline) if (event.note !== null) engine.current.noteAt(event.note + transposition, event.beats * secondsPerBeat * 0.85, startTime + event.start * secondsPerBeat);
         if (withBacking) for (let beat = 0; beat < duration; beat++) {
           const root = song.roots[Math.floor(beat / 4) % song.roots.length];
           engine.current.noteAt(root + (beat % 4 === 2 ? 7 : 0), secondsPerBeat * 0.65, startTime + beat * secondsPerBeat, 0.05);

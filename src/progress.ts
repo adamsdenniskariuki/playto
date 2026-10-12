@@ -103,6 +103,7 @@ export function parseProgress(text: string): Progress {
   };
   for (const id of instrumentIds) {
     const data = raw.instruments[id];
+    if (data === undefined) continue;
     if (!object(data) || !object(data.lessons) || !count(data.minutes) || !integer(data.notes) ||
       !count(data.tempo) || data.tempo > 240 || !Array.isArray(data.chords) ||
       !data.chords.every(chord => typeof chord === 'string' && chord.length < 80) ||

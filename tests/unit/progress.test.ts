@@ -9,6 +9,13 @@ describe('local progress', () => {
     const progress = completeLesson(freshProgress(), 'keyboard', lesson, date);
     expect(parseProgress(JSON.stringify(progress))).toEqual(progress);
   });
+  it('keeps defaults for instruments missing from a backup', () => {
+    const progress = completeLesson(freshProgress(), 'keyboard', lesson, date) as any;
+    delete progress.instruments.sax;
+    const parsed = parseProgress(JSON.stringify(progress));
+    expect(parsed.instruments.sax).toEqual(freshProgress().instruments.sax);
+    expect(parsed.instruments.keyboard.lessons[lesson.id]).toBeDefined();
+  });
   it('awards completion once and tracks instruments independently', () => {
     const done = completeLesson(freshProgress(), 'keyboard', lesson, date);
     expect(done.xp).toBe(50);
@@ -65,7 +72,7 @@ describe('local progress', () => {
     (p: Record<string, unknown>) => { p.version = 3; },
     (p: Record<string, unknown>) => { p.xp = -1; },
     (p: Record<string, unknown>) => { p.xp = '50'; },
-    (p: Record<string, unknown>) => { p.instruments = {}; },
+    (p: Record<string, unknown>) => { p.instruments = { keyboard: 'bad' }; },
     (p: Record<string, unknown>) => { p.settings = { theme: 'bad', font: 'bad', tourSeen: false }; },
     (p: Record<string, unknown>) => { p.freezes = 50; }
   ]) it('rejects invalid backup data', () => {
