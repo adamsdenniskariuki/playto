@@ -6,7 +6,7 @@ A little practice. A lot of music.
 
 ## Learn and practise
 
-**Keyboard, acoustic guitar and bass now have 87 lessons each:** three stages with four seven-lesson units each and a stage test. Keyboard offers classical, pop/rock, folk accompaniment, blues and jazz basics. Guitar adds open/movable harmony, tab and written-octave reading, fingerstyle independence, blues phrasing, jazz triads/sevenths and original acoustic arrangements. Bass covers muting, roots and fifths, key signatures, walking sevenths, funk/ghost-note grids, optional safe slap/pop, fills and full bass arrangements. Alto saxophone currently retains its 15-lesson foundations while its full course is delivered next.
+**348 lessons across four full courses: 87 per instrument.** Each course has beginner, intermediate and advanced stages with four seven-lesson units per stage and a stage test. Keyboard offers classical, pop/rock, folk accompaniment, blues and jazz basics. Guitar adds open/movable harmony, tab and written-octave reading, fingerstyle independence, blues phrasing, jazz triads/sevenths and original acoustic arrangements. Bass covers muting, roots and fifths, key signatures, walking sevenths, funk/ghost-note grids, optional safe slap/pop, fills and full bass arrangements. Alto sax develops supported tone, articulation, low/palm-key range, written keys and concert transposition, pop/blues/jazz phrasing, arpeggios and personal band arrangements.
 
 - Sequential lesson paths, playing goals and short knowledge checks.
 - Unit checkpoints require three playing goals; stage tests check all four units and four knowledge questions. Stage badges require every lesson, unit checkpoint and stage test, not just a final click. Style-track filtering finds repertoire without skipping prerequisites.
@@ -14,6 +14,7 @@ A little practice. A lot of music.
 - Every full-course lesson has an ascending tempo ladder. Save at least 30 seconds at the next target, with a steady pulse and two self-assessed clean, complete takes at full speed, to pass one rung. Chords, articulation, expression and musical timing are honestly self-assessed; mic/MIDI feedback measures single pitches only.
 - On-screen keyboard, guitar and bass fretboard/tab, guitar chord shapes, alto sax main-key fingering charts with extra-key instructions, and staff pitch guides. Alto sax lessons/charts use written pitch; microphone matching accounts for the nine-semitone Eb transposition and the tuner shows concert pitch. Guitar/bass fretboards use sounding pitch; their staff guides use the conventional one-octave-higher written pitch.
 - Guitar diagrams include open major/minor chords, sevenths, added ninth, partial/full F and Bm. Fretboards extend through fret 12 (and higher when a target needs it). Drop-D and capo lessons explicitly describe real-instrument adaptations: the diagram itself remains in standard absolute tuning.
+- Sax fingerings cover written low Bb3 through high F6, with low-table, bis Bb, G#, Eb, octave and palm/side-key instructions. Upper-range exploration is optional and teacher-guided; key layouts can vary and altissimo is not taught. Written Bb/Eb are displayed enharmonically as A#/D# in the pitch guide, while lesson text preserves key spelling.
 - Randomized, replayable ear-training challenges for unison, major second/third, fourth, fifth and octave, with instant feedback and no penalties.
 - Optional microphone tuner and single-note practice using local YIN pitch detection. Tap **Connect microphone** to request permission directly. No recording or audio upload; headphones avoid feedback. Polyphonic chords and rhythm use explicit self-assessment, not pretend automated grading.
 - Optional Web MIDI keyboard input (Chrome/Edge over HTTPS), metronome, original synthesized backing, adjustable tempo and selected-note pitch loops at half/full speed. Pattern playback uses equal-duration notes; written lesson counts specify actual musical rhythm.
@@ -44,7 +45,7 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-After a release, `node scripts/live-smoke.mjs keyboard guitar bass` checks deployed course counts, all four practice layouts and offline reload at phone/tablet/desktop widths. Pass exactly the IDs already expanded on the live deployment; add `sax` after its full course ships.
+After a release, `node scripts/live-smoke.mjs keyboard guitar bass sax` checks deployed course counts, all four practice layouts and offline reload at phone/tablet/desktop widths. Pass exactly the IDs already expanded on the live deployment.
 
 The production preview is used by Playwright. Tests cover audio detection (including low bass, harmonics, silence and noise), progress/backup/streak/review logic, curriculum validity, lesson completion, themes and fonts, mocked microphone success/denial and sax transposition, audio controls, MIDI input, import/export, ear training, offline reload, and overflow at 390px, 768px and 1440px.
 Raster PWA icons are generated from the source SVG with `node scripts/generate-icons.mjs` (requires Playwright Chromium).
@@ -63,5 +64,7 @@ Content lives in `content/<instrument>/course.json` (preserved foundations) and 
 
 OpenDyslexic is distributed through `@fontsource/opendyslexic` with its bundled licence. React, Vite, TypeScript, Vitest and Playwright retain their respective upstream licences.
 
+Sax low-table and palm-key instructions were checked against the [Woodwind Fingering Guide's first octave](https://www.wfg.woodwind.org/sax/sax_bas_1.html) and [second octave](https://www.wfg.woodwind.org/sax/sax_bas_2.html). The app uses its own schematic and lesson wording, not their chart artwork; confirm reach, alternate fingerings and instrument-specific details with a teacher.
+
 Playto is a practice companion, not a substitute for an instrument teacher. Rest regularly and stop if playing hurts; a teacher can assess posture, technique and instrument setup.
-The advanced stage is a structured introduction to advanced techniques and musical decisions, not an exhaustive conservatory curriculum or a claim of mastery. Keyboard covers inversions, pedal, independent syncopation and arranging; guitar covers partial barre, fingerstyle, triads and improvisation; bass covers arpeggios, walking, sixteenth subdivisions and fills; sax covers chromatic/extra-key work, arpeggios, expression, transposition and improvisation.
+The advanced stage is a structured course in advanced techniques and musical decisions, not an exhaustive conservatory curriculum or a claim of mastery. Painful techniques and upper sax range are not prerequisites for musical progress: use the explicit alternatives and seek a teacher's feedback on setup, posture, tone and expressive performance.

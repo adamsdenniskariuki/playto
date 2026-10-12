@@ -52,12 +52,16 @@ export function Fretboard({ instrument, target, play, chord }: { instrument: 'gu
   </>;
 }
 
-// Basic written D4-C6 fingerings; numbered main keys run left index to right ring.
+// Numbered main keys run left index to right ring; special keys are named in text.
 const saxFingerings: Record<number, { keys: number[]; octave: boolean; extra: string }> = {
-  62: { keys: [1,2,3,4,5,6], octave: false, extra: 'Low D: all six main keys. No octave key.' },
+  58: { keys: [1,2,3,4,5,6], octave: false, extra: 'Low Bb: all six main keys, right little-finger low-C key, and left little-finger low-Bb key. No octave key.' },
+  59: { keys: [1,2,3,4,5,6], octave: false, extra: 'Low B: all six main keys, right little-finger low-C key, and left little-finger low-B key. No octave key.' },
+  60: { keys: [1,2,3,4,5,6], octave: false, extra: 'Low C: all six main keys plus the right little-finger low-C key. No octave key.' },
+  61: { keys: [1,2,3,4,5,6], octave: false, extra: 'Low C#: all six main keys, right little-finger low-C key, and left little-finger low-C# key. No octave key.' },
+  62: { keys: [1,2,3,4,5,6], octave: false, extra: 'D: all six main keys.' },
   63: { keys: [1,2,3,4,5,6], octave: false, extra: 'Add right little-finger Eb key.' },
-  64: { keys: [1,2,3,4,5], octave: false, extra: 'Low E: lift right ring finger.' },
-  65: { keys: [1,2,3,4], octave: false, extra: 'Low F: right index only in the lower stack.' },
+  64: { keys: [1,2,3,4,5], octave: false, extra: 'E: lift right ring finger.' },
+  65: { keys: [1,2,3,4], octave: false, extra: 'F: right index only in the lower stack.' },
   66: { keys: [1,2,3,5], octave: false, extra: 'F#: use right middle finger, not index.' },
   67: { keys: [1,2,3], octave: false, extra: 'G: left-hand main keys only.' },
   68: { keys: [1,2,3], octave: false, extra: 'Add left little-finger G# key.' },
@@ -65,10 +69,15 @@ const saxFingerings: Record<number, { keys: number[]; octave: boolean; extra: st
   70: { keys: [1], octave: false, extra: 'Bb: left index plus the small bis key beneath B.' },
   71: { keys: [1], octave: false, extra: 'B: left index only.' },
   72: { keys: [2], octave: false, extra: 'C: left middle finger only.' },
-  73: { keys: [], octave: false, extra: 'C#: all six main keys open.' }
+  73: { keys: [], octave: false, extra: 'C#: all six main keys open.' },
+  85: { keys: [], octave: true, extra: 'High C#: open all six main keys and use the octave key.' },
+  86: { keys: [], octave: true, extra: 'High D: octave key plus left-hand palm D. Keep the six main keys open; consult your teacher for palm-key reach.' },
+  87: { keys: [], octave: true, extra: 'High Eb: octave key plus palm D and palm Eb. Main keys open.' },
+  88: { keys: [], octave: true, extra: 'High E: octave key, palm D and Eb, plus the right-hand high-E side key. Main keys open; key placement varies.' },
+  89: { keys: [], octave: true, extra: 'High F: octave key, left-hand palm D, Eb and F, plus the right-hand high-E side key. Main keys open; use a teacher to check comfortable reach.' }
 };
 export function SaxChart({ target, play }: { target: number; play: (midi: number) => void }) {
-  const base = target >= 74 ? target - 12 : target;
+  const base = target >= 74 && target <= 84 ? target - 12 : target;
   const fingering = saxFingerings[base];
   const octave = target >= 74 || Boolean(fingering?.octave);
   return <div className="sax-chart">

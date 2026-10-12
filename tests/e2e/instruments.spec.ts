@@ -1,4 +1,6 @@
 import { expect, test } from '@playwright/test';
+import { courses } from '../../src/courses';
+import { freshProgress, STORAGE_KEY } from '../../src/progress';
 
 test('bass and sax have independent paths and accessible playable visuals', async ({ page }) => {
   await page.goto('/');
@@ -46,4 +48,33 @@ test('alto sax microphone matches concert D4 to written B4 once per sustained no
   await page.waitForTimeout(700);
   await expect(page.getByText(/1 notes matched/)).toBeVisible();
   await page.getByRole('button', { name: 'Back to your path' }).click();
+});
+
+test('sax low-table and palm-key lessons show correct keys and concert playback throughout the pattern', async ({ page }) => {
+  const progress = freshProgress(); progress.settings.tourSeen = true; progress.instrument = 'sax';
+  const sax = courses.find(course => course.id === 'sax')!;
+  for (const lesson of sax.lessons)
+    progress.instruments.sax.lessons[lesson.id] = { completedAt: '2026-10-01T12:00:00Z', reviewAt: '2099-10-02T12:00:00Z', interval: 1, reviews: 0 };
+  await page.addInitScript(({ key, value }) => { if (!localStorage.getItem(key)) localStorage.setItem(key, value); }, { key: STORAGE_KEY, value: JSON.stringify(progress) });
+  await page.goto('/');
+  await page.getByRole('button', { name: /Low B and Bb with patient air/ }).click();
+  await page.getByRole('button', { name: 'Start practice', exact: true }).click();
+  await page.getByRole('button', { name: 'Hear concert D#3', exact: true }).click();
+  await expect(page.locator('.sax-chart')).toContainText('left little-finger low-B key');
+  await expect(page.locator('.sax-chart')).toContainText('right little-finger low-C key');
+  await page.getByRole('button', { name: 'Hear concert D3', exact: true }).click();
+  await expect(page.locator('.sax-chart')).toContainText('left little-finger low-Bb key');
+  await page.getByRole('button', { name: 'Hear concert C#3', exact: true }).click();
+  await expect(page.getByText(/3 notes matched/)).toBeVisible();
+  await page.getByRole('button', { name: 'Back to your path' }).click();
+  await page.getByRole('button', { name: /Optional upper palm E and F/ }).click();
+  await page.getByRole('button', { name: 'Start practice', exact: true }).click();
+  await page.getByRole('button', { name: 'Hear concert F5', exact: true }).click();
+  await expect(page.locator('.sax-chart')).toContainText('high-E side key');
+  await page.getByRole('button', { name: 'Hear concert G5', exact: true }).click();
+  await expect(page.locator('.sax-chart')).toContainText('palm D, Eb and F');
+  await expect(page.locator('.sax-chart')).toContainText('high-E side key');
+  await page.getByRole('button', { name: 'Hear concert G#5', exact: true }).click();
+  await expect(page.getByText(/3 notes matched/)).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });

@@ -28,7 +28,7 @@ describe('full-depth curriculum', () => {
       }
       for (const lesson of course.lessons) {
         expect(lesson.tempoLadder).toHaveLength(3);
-        expect(lesson.targetNotes.every(note => course.id !== 'sax' || (note >= 62 && note <= 84))).toBe(true);
+        expect(lesson.targetNotes.every(note => course.id !== 'sax' || (note >= 58 && note <= 89))).toBe(true);
         expect(lesson.quiz.options.every(option => typeof option === 'string')).toBe(true);
       }
     });

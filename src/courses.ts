@@ -5,6 +5,7 @@ import sax from '../content/sax/course.json' with { type: 'json' };
 import keyboardCurriculum from '../content/keyboard/curriculum.json' with { type: 'json' };
 import guitarCurriculum from '../content/guitar/curriculum.json' with { type: 'json' };
 import bassCurriculum from '../content/bass/curriculum.json' with { type: 'json' };
+import saxCurriculum from '../content/sax/curriculum.json' with { type: 'json' };
 import { expandCourse, stages } from './curriculum';
 import type { Course, Curriculum, Lesson } from './types';
 
@@ -27,7 +28,8 @@ function validateCourse(raw: unknown): Course {
 export const courses: Course[] = [
   expandCourse(validateCourse(keyboard), keyboardCurriculum as Curriculum),
   expandCourse(validateCourse(guitar), guitarCurriculum as Curriculum),
-  expandCourse(validateCourse(bass), bassCurriculum as Curriculum), sax
+  expandCourse(validateCourse(bass), bassCurriculum as Curriculum),
+  expandCourse(validateCourse(sax), saxCurriculum as Curriculum)
 ].map(validateCourse);
 export const lessonAvailable = (lessons: Lesson[], index: number, completed: Record<string, unknown>) =>
   index === 0 || Boolean(completed[lessons[index - 1].id]);
