@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { audio, detectPitch, noteName, pitchInfo } from './audio';
+import { CHORD_CONFIDENCE, chordNames, matchChroma, spectrumChroma, type ChordReading } from './chords';
 import { chordShapes, Fretboard, Piano, SaxChart, Staff } from './Visuals';
 import type { Course, Lesson, PracticeResult, WeakKind } from './types';
 
@@ -30,6 +31,11 @@ export function Practice({ course, lesson, passedTempos = [], onSave, report }: 
   const [elapsed, setElapsed] = useState(0);
   const [steady, setSteady] = useState(false);
   const [chord, setChord] = useState(lesson?.chord ?? 'E minor');
+  const [chordMode, setChordMode] = useState(false);
+  const [chordReading, setChordReading] = useState<ChordReading>({ name: null, confidence: 0 });
+  const [chordHits, setChordHits] = useState(0);
+  const chordRef = useRef({ enabled: chordMode, target: chord });
+  chordRef.current = { enabled: chordMode, target: chord };
   const [micStatus, setMicStatus] = useState('Not connected - microphone is off');
   const [micOn, setMicOn] = useState(false);
   const [micPending, setMicPending] = useState(false);
@@ -75,7 +81,7 @@ export function Practice({ course, lesson, passedTempos = [], onSave, report }: 
     stream.current?.getTracks().forEach(track => track.stop());
     sourceNode.current?.disconnect(); sourceNode.current = null;
     stream.current = null;
-    setMicOn(false); setMicPending(false); setReading(null); setMicStatus('Not connected - microphone is off');
+    setMicOn(false); setMicPending(false); setReading(null); setChordReading({ name: null, confidence: 0 }); setMicStatus('Not connected - microphone is off');
   }
   async function startMic() {
     if (!navigator.mediaDevices?.getUserMedia) { setMicStatus('Unavailable - use HTTPS and a browser that supports microphone input.'); return; }
@@ -92,17 +98,43 @@ export function Practice({ course, lesson, passedTempos = [], onSave, report }: 
       const source = context.createMediaStreamSource(acquired);
       sourceNode.current = source;
       const analyser = context.createAnalyser();
-      analyser.fftSize = 4096;
+      analyser.fftSize = 8192;
+      analyser.smoothingTimeConstant = 0;
       source.connect(analyser);
       const samples = new Float32Array(analyser.fftSize);
+      const spectrum = new Float32Array(analyser.frequencyBinCount);
+      let profile = Array<number>(12).fill(0), heldChord: string | null = null, stableChord: string | null = null, chordFrames = 0, quietChordFrames = 0;
       let held: number | null = null, candidate: number | null = null, stable = 0, silence = 0;
       let lastAnalysis = 0;
-      setMicOn(true); setMicPending(false); setMicStatus('Connected - listening locally; audio is never recorded or uploaded');
+      setMicOn(true); setMicPending(false); setMicStatus('Connected - listening locally; audio is never uploaded');
       const listen = (time: number) => {
         if (generation !== micGeneration.current) { source.disconnect(); return; }
         if (time - lastAnalysis > 70) {
           lastAnalysis = time;
           analyser.getFloatTimeDomainData(samples);
+          if (chordRef.current.enabled) {
+            analyser.getFloatFrequencyData(spectrum);
+            const current = spectrumChroma(spectrum, context.sampleRate, analyser.fftSize);
+            profile = profile.map((value, i) => Math.max(current[i], value * 0.65));
+            quietChordFrames = current.some(value => value > 0) ? 0 : quietChordFrames + 1;
+            if (quietChordFrames >= 3) { profile.fill(0); heldChord = null; }
+            const result = matchChroma(profile);
+            setChordReading(result);
+            if (result.name && result.confidence >= CHORD_CONFIDENCE) {
+              chordFrames = stableChord === result.name ? chordFrames + 1 : 1;
+              stableChord = result.name;
+              if (chordFrames >= 3 && heldChord !== result.name && runningRef.current) {
+                heldChord = result.name;
+                const expected = chordRef.current.target === 'F barre' ? 'F major' : chordRef.current.target;
+                if (result.name === expected) setChordHits(value => value + 1);
+                else markMistake('chord', `Expected ${expected}; detected ${result.name}`);
+              }
+            } else { stableChord = null; chordFrames = 0; }
+            setReading(null);
+            frame.current = requestAnimationFrame(listen);
+            return;
+          }
+          profile.fill(0); heldChord = null; stableChord = null; chordFrames = 0; quietChordFrames = 0;
           const frequency = detectPitch(samples, context.sampleRate);
           const info = frequency ? pitchInfo(frequency) : null;
           setReading(info);
@@ -217,14 +249,14 @@ export function Practice({ course, lesson, passedTempos = [], onSave, report }: 
     onSave(seconds, hits, milestone, { seconds, notes: hits, tempo: milestone, mistakes: mistakes.current,
       ladderTempo: seconds >= 30 && cleanTakes && steady && speed === 1 && tempo === ladderTarget ? tempo : undefined });
     mistakes.current = []; setMistakeCount(0); setCleanTakes(false);
-    setSessionStart(null); setElapsed(0); setHits(0); setIndex(0); setSteady(false);
+    setSessionStart(null); setElapsed(0); setHits(0); setChordHits(0); setIndex(0); setSteady(false);
     setLoop(false); setMetronome(false); setBacking(false); stopMic(); disconnectMidi(); audio.stop();
   }
   return <div className="practice">
     <div className="practice-heading"><div><span className="eyebrow">YOUR PRACTICE SPACE</span><h3>Make a little music</h3></div>
       <span className="pill">{Math.floor(elapsed / 60)}:{String(elapsed % 60).padStart(2, '0')} · {hits} notes matched</span></div>
-    <p className="muted">Start a session to track actual practice time. Sessions save when you finish or leave this practice space. Save before closing the browser. Chords and rhythm use self-assessment.</p>
-    <div className="button-row">{sessionStart === null ? <button className="primary" onClick={() => { mistakes.current = []; setMistakeCount(0); setCleanTakes(false); setSessionStart(performance.now()); setIndex(0); setHits(0); }}>Start practice</button>
+    <p className="muted">Start a session to track actual practice time. Sessions save when you finish or leave this practice space. Save before closing the browser. Chord estimates supplement self-assessment; rhythm is self-assessed.</p>
+    <div className="button-row">{sessionStart === null ? <button className="primary" onClick={() => { mistakes.current = []; setMistakeCount(0); setCleanTakes(false); setSessionStart(performance.now()); setIndex(0); setHits(0); setChordHits(0); }}>Start practice</button>
       : <button className="primary" onClick={finish}>Save practice session</button>}
       <button onClick={() => safeAudio(audio.pattern(targets.map(concert), tempo * speed))}>Hear pitch pattern</button>
       <button onClick={() => { setLoop(false); setMetronome(false); setBacking(false); audio.stop(); }}>Stop sound</button></div>
@@ -241,12 +273,23 @@ export function Practice({ course, lesson, passedTempos = [], onSave, report }: 
       <div className="button-row">{(['note','chord','rhythm'] as const).map(kind => <button key={kind} disabled={sessionStart === null} onClick={() => markMistake(kind, kind === 'note' ? noteName(target) : kind === 'chord' ? lesson.chord ?? `${lesson.title}: harmony` : `${lesson.title}: written rhythm`, kind === 'note' ? [target] : targets)}>Mark weak {kind}</button>)}</div>
     </section>}
     <div className="tool-grid">
-      <section className="tool-card"><h3>Listen & tune</h3><p className="small">One note at a time, in a quiet space. Use headphones to avoid detecting Playto's sounds. Range: about 35-1600 Hz; chords are not graded.</p>
+      <section className="tool-card"><h3>Listen & tune</h3><p className="small">Use headphones in a quiet space to avoid detecting Playto's sounds. Single-note tuner range: about 35-1600 Hz.</p>
+        {(course.id === 'keyboard' || course.id === 'guitar') && <>
+          <label className="check"><input type="checkbox" checked={chordMode} onChange={event => { setChordMode(event.target.checked); setChordReading({ name: null, confidence: 0 }); }}/>Listen for chords instead of single notes</label>
+          {chordMode && <>
+            <label>Chord to practise<select aria-label="Chord to practise" value={chord === 'F barre' ? 'F major' : chord} onChange={event => { setChord(event.target.value); setChordHits(0); }}>
+              {chordNames.map(name => <option key={name}>{name}</option>)}
+            </select></label>
+            <p role="status" data-testid="chord-reading">{chordReading.name ?? 'No clear chord'} · Confidence {Math.round(chordReading.confidence * 100)}% · {chordHits} chords matched</p>
+            <p className="small">{chordReading.confidence >= CHORD_CONFIDENCE ? 'Confident estimate. Sustain the whole chord, then release before repeating.' : 'Low confidence - use self-assessment. Check every string/key sounds clearly.'}</p>
+            <p className="small muted">Local FFT pitch-class matching supports major/minor, 7, maj7, m7 and add9 chords, including strums. It cannot grade voicing, technique or musical expression. Estimates are not lesson passes.</p>
+          </>}
+        </>}
         <button disabled={micPending} onClick={micOn ? stopMic : startMic}>{micPending ? 'Requesting permission...' : micOn ? 'Disconnect microphone' : 'Connect microphone'}</button>
         <p className="small" role="status" data-testid="mic-status">{micStatus}</p>
-        <div className="tuner" data-testid="tuner"><strong>{reading?.name ?? '--'}</strong><span>{reading ? `${reading.frequency.toFixed(1)} Hz · ${reading.cents > 0 ? '+' : ''}${reading.cents} cents` : 'Play a single sustained note'}</span>
+        {!chordMode && <div className="tuner" data-testid="tuner"><strong>{reading?.name ?? '--'}</strong><span>{reading ? `${reading.frequency.toFixed(1)} Hz · ${reading.cents > 0 ? '+' : ''}${reading.cents} cents` : 'Play a single sustained note'}</span>
           <div className="tuner-track"><i style={{ left: `${50 + Math.max(-50, Math.min(50, reading?.cents ?? 0))}%` }}/></div>
-          <span>{reading ? Math.abs(reading.cents) <= 10 ? 'In tune' : reading.cents < 0 ? 'Flat - raise pitch gently' : 'Sharp - lower pitch gently' : 'A4 reference = 440 Hz'}</span></div>
+          <span>{reading ? Math.abs(reading.cents) <= 10 ? 'In tune' : reading.cents < 0 ? 'Flat - raise pitch gently' : 'Sharp - lower pitch gently' : 'A4 reference = 440 Hz'}</span></div>}
         {course.id === 'sax' && <p className="small">Tuner displays concert pitch. Written B4 on alto sax sounds concert D4.</p>}
         {course.id === 'keyboard' && <><button onClick={midi.current ? disconnectMidi : connectMidi}>{midi.current ? 'Disconnect MIDI' : 'Connect MIDI keyboard'}</button><p role="status" className="small">{midiStatus}</p></>}
       </section>
