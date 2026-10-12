@@ -79,6 +79,6 @@ export interface Progress {
   lastPractice: string | null;
   freezes: number;
   instrument: InstrumentId;
-  settings: { theme: Theme; font: Font; themeChosen: boolean; fontChosen: boolean; tourSeen: boolean };
+  settings: { theme: Theme; font: Font; themeChosen: boolean; fontChosen: boolean; tourSeen: boolean; leftHanded: boolean };
   instruments: Record<InstrumentId, InstrumentProgress>;
 }

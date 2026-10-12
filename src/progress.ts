@@ -6,7 +6,7 @@ export const instrumentIds: InstrumentId[] = ['keyboard', 'guitar', 'bass', 'sax
 export function freshProgress(): Progress {
   return {
     version: 2, xp: 0, streak: 0, lastPractice: null, freezes: 1, instrument: 'keyboard',
-    settings: { theme: DEFAULT_THEME, font: DEFAULT_FONT, themeChosen: false, fontChosen: false, tourSeen: false },
+    settings: { theme: DEFAULT_THEME, font: DEFAULT_FONT, themeChosen: false, fontChosen: false, tourSeen: false, leftHanded: false },
     instruments: {
       keyboard: { lessons: {}, minutes: 0, notes: 0, chords: [], tempo: 0, weak: {}, ladders: {}, planner: { day: null, seconds: [0,0,0,0] } },
       guitar: { lessons: {}, minutes: 0, notes: 0, chords: [], tempo: 0, weak: {}, ladders: {}, planner: { day: null, seconds: [0,0,0,0] } },
@@ -87,6 +87,7 @@ export function parseProgress(text: string): Progress {
       !object(raw.settings) || !isTheme(raw.settings.theme) || !isFont(raw.settings.font) ||
       (raw.settings.themeChosen !== undefined && typeof raw.settings.themeChosen !== 'boolean') ||
       (raw.settings.fontChosen !== undefined && typeof raw.settings.fontChosen !== 'boolean') ||
+      (raw.settings.leftHanded !== undefined && typeof raw.settings.leftHanded !== 'boolean') ||
       typeof raw.settings.tourSeen !== 'boolean' ||
       !object(raw.instruments)) throw new Error('This is not a valid Playto v1/v2 backup.');
   const result = freshProgress();
@@ -98,7 +99,7 @@ export function parseProgress(text: string): Progress {
   result.settings = {
     theme: themeChosen ? raw.settings.theme : DEFAULT_THEME,
     font: fontChosen ? raw.settings.font : DEFAULT_FONT,
-    themeChosen, fontChosen, tourSeen: raw.settings.tourSeen
+    themeChosen, fontChosen, tourSeen: raw.settings.tourSeen, leftHanded: raw.settings.leftHanded ?? false
   };
   for (const id of instrumentIds) {
     const data = raw.instruments[id];

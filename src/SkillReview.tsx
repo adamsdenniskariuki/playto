@@ -13,8 +13,8 @@ export function SkillReview({ course, lesson, item, passedTempos, onReview, onSa
   return <section className="panel">
     <h2>Weak {item.kind}: {item.label}</h2>
     <p>{item.mistakes} mistake(s) recorded. {item.kind === 'note' ? 'Hear the target, play it slowly, release, and repeat. Use mic/MIDI for single-note feedback.' :
-      item.kind === 'chord' ? 'Check every chord tone separately, then play the whole chord twice. Assess clarity by listening; the mic does not grade chords.' :
-      'Count the written subdivisions, clap the pattern, then play it twice with the metronome. Timing is self-assessed, not inferred from pitch.'}</p>
+      item.kind === 'chord' ? 'Check every chord tone separately, then play the whole chord twice. Try chord estimates for supported keyboard/guitar chords; low confidence and musical clarity need your assessment.' :
+      'Count the written subdivisions, clap the pattern, then play it twice with the metronome. Try the one-attack-per-beat timing drill; full written rhythms still need your assessment.'}</p>
     <p className="pattern">{lesson.pattern}</p>
     <Practice course={course} lesson={drill} passedTempos={passedTempos} onSave={onSave} report={report}/>
     <label className="check"><input type="checkbox" checked={confirmed} onChange={event => setConfirmed(event.target.checked)}/>I practised this specific difficulty twice and checked the result.</label>

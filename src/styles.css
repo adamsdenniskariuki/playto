@@ -376,3 +376,9 @@ input[type="checkbox"],input[type="radio"] { min-width: 20px; height: 20px; acce
 .practice-planner { margin-bottom: 20px; }
 .routine-steps { padding-left: 24px; }
 .routine-steps > li { margin-bottom: 16px; }
+.key-content { display: flex; flex-direction: column; gap: 6px; align-items: center; }
+.key.black .key-content { writing-mode: horizontal-tb; }
+.key kbd { font: inherit; font-size: 9px; writing-mode: horizontal-tb; }
+.fretboard .keyboard-selected { outline: 2px dashed var(--cp-text); outline-offset: 2px; }
+.chord-strings.left-handed { flex-direction: row-reverse; }
+.loop-inputs { flex-wrap: wrap; }

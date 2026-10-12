@@ -11,15 +11,15 @@ describe('appearance preferences', () => {
     const legacy = JSON.parse(JSON.stringify(freshProgress()));
     legacy.settings = { theme: 'system', font: 'default', tourSeen: true }; legacy.xp = 1200;
     const migrated = parseProgress(JSON.stringify(legacy));
-    expect(migrated.settings).toEqual({ theme: 'stage', font: 'andika', themeChosen: false, fontChosen: false, tourSeen: true });
+    expect(migrated.settings).toEqual({ theme: 'stage', font: 'andika', themeChosen: false, fontChosen: false, tourSeen: true, leftHanded: false });
     expect(migrated.xp).toBe(1200); expect(migrated.instruments).toEqual(legacy.instruments);
   });
   it('retains non-default legacy choices and explicit system/native choices independently', () => {
     const legacy = JSON.parse(JSON.stringify(freshProgress()));
     legacy.settings = { theme: 'sepia', font: 'dyslexic', tourSeen: true };
-    expect(parseProgress(JSON.stringify(legacy)).settings).toEqual({ ...legacy.settings, themeChosen: true, fontChosen: true });
+    expect(parseProgress(JSON.stringify(legacy)).settings).toEqual({ ...legacy.settings, themeChosen: true, fontChosen: true, leftHanded: false });
     legacy.settings = { theme: 'system', font: 'default', themeChosen: true, fontChosen: true, tourSeen: true };
-    expect(parseProgress(JSON.stringify(legacy)).settings).toEqual(legacy.settings);
+    expect(parseProgress(JSON.stringify(legacy)).settings).toEqual({ ...legacy.settings, leftHanded: false });
     legacy.settings = { theme: 'contrast', font: 'default', tourSeen: true };
     expect(parseProgress(JSON.stringify(legacy)).settings).toMatchObject({ theme: 'contrast', themeChosen: true, font: 'andika', fontChosen: false });
   });

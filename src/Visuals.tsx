@@ -1,4 +1,7 @@
+import { useContext, useId, useRef, useState } from 'react';
 import { NOTE_NAMES, noteName } from './audio';
+import { InstrumentPreferences } from './InstrumentPreferences';
+import { fretColumns, pianoStart, PLAY_KEYS, playKeyIndex } from './computerKeys';
 import type { InstrumentId } from './types';
 
 export const tunings = { guitar: [64, 59, 55, 50, 45, 40], bass: [43, 38, 33, 28] };
@@ -21,32 +24,76 @@ export function InstrumentMark({ instrument }: { instrument: InstrumentId }) {
   </svg>;
 }
 export function Piano({ target, play }: { target: number; play: (midi: number) => void }) {
-  const start = Math.max(24, Math.min(84, Math.floor(target / 12) * 12));
+  const start = pianoStart(target), help = useId();
   const keys = Array.from({ length: 13 }, (_, index) => start + index);
-  return <div className="piano" aria-label="Interactive piano">
+  return <><p id={help} className="small">Computer keys: A W S E D F T G Y H U J K play the displayed notes from left to right. Tab into the piano first. * marks the target; labels work without colour. Enter/Space also play the focused key.</p>
+    <div className="piano" role="group" tabIndex={0} aria-label="Interactive piano" aria-describedby={help} onKeyDown={event => {
+      if (event.ctrlKey || event.altKey || event.metaKey) return;
+      if (event.repeat && (event.key === 'Enter' || event.key === ' ')) { event.preventDefault(); return; }
+      const index = playKeyIndex(event.key);
+      if (index < 0) return;
+      event.preventDefault();
+      if (!event.repeat) play(start + index);
+    }}>
     {keys.map(midi => <button key={midi} className={`key ${[1, 3, 6, 8, 10].includes(midi % 12) ? 'black' : 'white'} ${midi === target ? 'target' : ''}`}
-      aria-label={`Play ${noteName(midi)}`} onClick={() => play(midi)}><span>{noteName(midi)}</span></button>)}
-  </div>;
+      aria-label={`Play ${noteName(midi)}`} aria-description={midi === target ? 'Target note, marked with a star' : undefined}
+      aria-keyshortcuts={PLAY_KEYS[midi - start].toUpperCase()} onClick={() => play(midi)}>
+      <span className="key-content"><span>{midi === target ? '* ' : ''}{noteName(midi)}</span><kbd>{PLAY_KEYS[midi - start].toUpperCase()}</kbd></span></button>)}
+  </div></>;
 }
 export function Fretboard({ instrument, target, play, chord }: { instrument: 'guitar' | 'bass'; target: number; play: (midi: number) => void; chord?: string }) {
   const strings = tunings[instrument];
   const fretCount = Math.max(13, Math.min(25, target - strings[0] + 1));
+  const { leftHanded } = useContext(InstrumentPreferences);
+  const help = useId(), board = useRef<HTMLDivElement | null>(null);
+  const [selectedString, setSelectedString] = useState(() => Math.max(0, strings.findIndex(open => target >= open && target - open <= 12)));
+  const [selectedFret, setSelectedFret] = useState(() => Math.max(0, Math.min(12, target - strings[selectedString])));
+  const [bank, setBank] = useState(0);
+  const frets = fretColumns(fretCount, leftHanded);
   const shape = chord && instrument === 'guitar' ? chordShapes[chord] : undefined;
+  function select(string: number, fret: number) {
+    setSelectedString(string); setSelectedFret(fret);
+    if (fret < bank || fret > bank + 12) setBank(fret >= 12 ? 12 : 0);
+    board.current?.querySelector<HTMLButtonElement>(`button[data-string="${string}"][data-fret="${fret}"]`)?.focus();
+  }
   return <>
     {shape && <div className="chord-diagram">
       <strong>{chord} chord shape</strong>
-      <div className="chord-strings">{shape.map((fret, index) => <div key={index}>
+      <div className={`chord-strings ${leftHanded ? 'left-handed' : ''}`}>{shape.map((fret, index) => <div key={index}>
         <span>String {6 - index}</span><b>{fret === null ? 'x' : fret}</b>
         <span>{fret === null ? 'Skip' : fret === 0 ? 'Open' : `Fret ${fret}`}</span>
       </div>)}</div>
-      <p className="muted small">Thickest to thinnest. x = skip, 0 = open. Pick each string to check clarity.</p>
+      <p className="muted small">{leftHanded ? 'Left-handed mirror: thinnest to thickest.' : 'Thickest to thinnest.'} x = skip, 0 = open. Pick each string to check clarity.</p>
     </div>}
-    <div className="fretboard-scroll" tabIndex={0} aria-label="Fretboard scroll area">
-      <table className="fretboard"><caption>{instrument === 'guitar' ? 'Guitar' : 'Bass'} fretboard · thin strings at the top</caption>
-        <thead><tr><th scope="col">String</th>{Array.from({ length: fretCount }, (_, fret) => <th key={fret} scope="col">{fret === 0 ? 'Open' : fret}</th>)}</tr></thead>
+    <p id={help} className="small">Computer keys: 1-{strings.length} choose a string; A W S E D F T G Y H U J K play frets {bank}-{Math.min(fretCount - 1, bank + 12)} on it. Arrow keys move across the board; Enter/Space play the selected note. PageDown selects low frets; PageUp selects higher frets when available. * marks target notes, with labels as well as colour.</p>
+    <p className="small" role="status">Selected string {selectedString + 1}, fret {selectedFret} · {noteName(strings[selectedString] + selectedFret)}</p>
+    <div className="fretboard-scroll" ref={board} tabIndex={0} aria-label="Fretboard scroll area" aria-describedby={help} onKeyDown={event => {
+      if (event.ctrlKey || event.altKey || event.metaKey) return;
+      const index = playKeyIndex(event.key), string = Number(event.key) - 1;
+      if (event.key === 'PageUp' || event.key === 'PageDown') {
+        event.preventDefault(); if (!event.repeat) setBank(event.key === 'PageUp' && fretCount > 13 ? 12 : 0); return;
+      }
+      if (Number.isInteger(string) && string >= 0 && string < strings.length) { event.preventDefault(); if (!event.repeat) select(string, selectedFret); return; }
+      if (index >= 0) {
+        event.preventDefault();
+        if (!event.repeat && bank + index < fretCount) { select(selectedString, bank + index); play(strings[selectedString] + bank + index); }
+        return;
+      }
+      if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); if (!event.repeat) play(strings[selectedString] + selectedFret); return; }
+      if (['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(event.key)) {
+        event.preventDefault(); if (event.repeat) return;
+        const delta = (event.key === 'ArrowRight' ? 1 : -1) * (leftHanded ? -1 : 1);
+        if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') select(selectedString, Math.max(0, Math.min(fretCount - 1, selectedFret + delta)));
+        else select(Math.max(0, Math.min(strings.length - 1, selectedString + (event.key === 'ArrowDown' ? 1 : -1))), selectedFret);
+      }
+    }}>
+      <table className="fretboard"><caption>{instrument === 'guitar' ? 'Guitar' : 'Bass'} fretboard · thin strings at the top · {leftHanded ? 'left-handed, open strings on the right' : 'right-handed, open strings on the left'}</caption>
+        <thead><tr><th scope="col">String</th>{frets.map(fret => <th key={fret} scope="col">{fret === 0 ? 'Open' : fret}</th>)}</tr></thead>
         <tbody>{strings.map((open, index) => <tr key={open}><th scope="row">{index + 1} · {noteName(open)}</th>
-          {Array.from({ length: fretCount }, (_, fret) => <td key={fret}><button className={open + fret === target ? 'target' : ''}
-            aria-label={`Play ${noteName(open + fret)}, string ${index + 1}, fret ${fret}`} onClick={() => play(open + fret)}>{NOTE_NAMES[(open + fret) % 12]}</button></td>)}</tr>)}</tbody>
+          {frets.map(fret => <td key={fret}><button className={`${open + fret === target ? 'target' : ''} ${index === selectedString && fret === selectedFret ? 'keyboard-selected' : ''}`}
+            data-string={index} data-fret={fret} aria-description={open + fret === target ? 'Target note, marked with a star' : undefined}
+            onFocus={() => { setSelectedString(index); setSelectedFret(fret); }}
+            aria-label={`Play ${noteName(open + fret)}, string ${index + 1}, fret ${fret}`} onClick={() => play(open + fret)}>{open + fret === target ? '* ' : ''}{NOTE_NAMES[(open + fret) % 12]}</button></td>)}</tr>)}</tbody>
       </table>
     </div>
   </>;

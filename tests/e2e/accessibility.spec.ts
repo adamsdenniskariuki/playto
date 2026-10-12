@@ -1,0 +1,54 @@
+import { test, expect } from '@playwright/test';
+
+test('computer piano keys, target labels and typing-safe shortcuts', async ({ page }) => {
+  await page.goto('/'); await page.getByRole('button', { name: 'Skip tour' }).click();
+  await page.getByRole('button', { name: 'Practice', exact: true }).click();
+  await page.getByRole('button', { name: 'Start practice', exact: true }).click();
+  const piano = page.getByRole('group', { name: 'Interactive piano', exact: true });
+  await piano.focus(); await page.keyboard.press('a');
+  await expect(page.getByText(/1 notes matched/)).toBeVisible();
+  await page.keyboard.press('s');
+  await expect(page.getByText(/2 notes matched/)).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Play E4', exact: true })).toHaveAttribute('aria-description', /Target note/);
+  await expect(page.getByRole('button', { name: 'Play E4', exact: true })).toContainText('*');
+  await page.getByLabel('Song tempo (BPM)').fill('140');
+  await page.keyboard.press('a');
+  await expect(page.getByText(/2 notes matched/)).toBeVisible();
+  await piano.focus();
+  await page.keyboard.down('d'); await page.keyboard.down('d'); await page.keyboard.up('d');
+  await expect(page.getByText(/3 notes matched/)).toBeVisible();
+  await expect(page.locator('.key.black .key-content').first()).toHaveCSS('writing-mode', 'horizontal-tb');
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('left-handed preference mirrors guitar/bass, retains pitch labels and keyboard play', async ({ page }) => {
+  await page.goto('/'); await page.getByRole('button', { name: 'Skip tour' }).click();
+  await page.getByRole('button', { name: 'Settings', exact: true }).click();
+  await page.getByLabel('Left-handed guitar and bass fretboards').check();
+  await page.getByLabel('CURRENT INSTRUMENT').selectOption('guitar');
+  await page.getByRole('button', { name: 'Practice', exact: true }).click();
+  await expect(page.getByRole('table')).toContainText('left-handed, open strings on the right');
+  const headings = page.locator('.fretboard thead th');
+  await expect(headings.nth(1)).toHaveText('12');
+  await expect(headings.last()).toHaveText('Open');
+  const chordStrings = page.locator('.chord-strings > div');
+  const thick = await chordStrings.first().boundingBox(), thin = await chordStrings.last().boundingBox();
+  expect(thick!.x).toBeGreaterThan(thin!.x);
+  await page.getByRole('button', { name: 'Start practice', exact: true }).click();
+  const board = page.getByLabel('Fretboard scroll area', { exact: true });
+  await board.focus(); await page.keyboard.press('6'); await page.keyboard.press('a');
+  await expect(page.getByText(/1 notes matched/)).toBeVisible();
+  await page.keyboard.press('5'); await page.keyboard.press('a');
+  await expect(page.getByText(/2 notes matched/)).toBeVisible();
+  await page.keyboard.press('ArrowLeft'); await page.keyboard.press('Space');
+  await expect(page.getByRole('status').filter({ hasText: 'Selected string 5, fret 1' })).toBeVisible();
+  await page.reload(); await page.getByRole('button', { name: 'Practice', exact: true }).click();
+  await expect(page.getByRole('table')).toContainText('left-handed');
+  await page.getByLabel('CURRENT INSTRUMENT').selectOption('bass');
+  await expect(page.getByRole('table')).toContainText('left-handed');
+  await page.getByRole('button', { name: 'Start practice', exact: true }).click();
+  await board.focus(); await page.keyboard.press('4'); await page.keyboard.press('a');
+  await expect(page.getByText(/1 notes matched/)).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Play A1, string 3, fret 0', exact: true })).toContainText('*');
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
