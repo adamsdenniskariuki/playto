@@ -17,7 +17,8 @@ import { Practice } from './Practice';
 import { EarTraining } from './EarTraining';
 import { SkillReview } from './SkillReview';
 import { availableLesson, stageBadges } from './curriculum';
-import { recordMistake, reviewWeak, savePracticeResult } from './progress';
+import { dayKey, recordMistake, reviewWeak, savePracticeResult, saveRoutineResult } from './progress';
+import { PracticePlanner } from './PracticePlanner';
 import { fontLabels, isFont, isTheme, resolveTheme, themeLabels } from './appearance';
 import type { Course, Lesson, PracticeResult, Progress, WeakKind } from './types';
 
@@ -79,6 +80,7 @@ function App() {
   const [offlineReady, setOfflineReady] = useState(false);
   const [update, setUpdate] = useState<ServiceWorker | null>(null);
   const importInput = useRef<HTMLInputElement>(null);
+  const [plannerActive, setPlannerActive] = useState(false);
   const course = courses.find(item => item.id === progress.instrument) ?? courses[0];
   const record = progress.instruments[course.id];
   const completed = course.lessons.filter(lesson => record.lessons[lesson.id]);
@@ -201,7 +203,12 @@ function App() {
               })}</div></div>;
             })}
           </section><aside className="encouragement"><span aria-hidden="true">♫</span><div><strong>You don't have to be good to start.</strong><p className="muted">You just have to start to get better. Five minutes counts.</p></div></aside>
-        </> : page === 'practice' ? <><div className="page-heading"><div><span className="eyebrow">NO PERFECT PERFORMANCE REQUIRED</span><h1>Your practice studio</h1><p className="muted">{course.tuning}</p></div></div><Practice key={course.id} course={course} onSave={onSave} report={setMessage}/><EarTraining key={`ear-${course.id}`} report={setMessage}/></>
+        </> : page === 'practice' ? <><div className="page-heading"><div><span className="eyebrow">NO PERFECT PERFORMANCE REQUIRED</span><h1>Your practice studio</h1><p className="muted">{course.tuning}</p></div></div>
+          <PracticePlanner key={`${course.id}-${dayKey()}`} course={course} record={record} onActive={setPlannerActive} report={setMessage} onSave={(step, lesson, result) => {
+            save(current => saveRoutineResult(current, course.id, lesson, result, step));
+            setMessage(`Daily routine saved: ${result.seconds}s of ${course.name} practice. Resume whenever you are ready.`);
+          }}/>
+          {!plannerActive && <><Practice key={course.id} course={course} onSave={onSave} report={setMessage}/><EarTraining key={`ear-${course.id}`} report={setMessage}/></>}</>
         : page === 'review' ? <><span className="eyebrow">KEEP THE GOOD THINGS FRESH</span><h1>Spaced review</h1><p className="muted">Mistakes create specific note, chord and rhythm drills immediately. Confident reviews double their interval up to 60 days; difficult skills return tomorrow (+10 XP). Whole-lesson reviews start tomorrow (+15 XP).</p>
           {weakDue.map(([key, item]) => <button className="review-card panel" key={key} onClick={() => setSelectedWeak(key)}><strong>Weak {item.kind}: {item.label}</strong><span>{item.mistakes} mistake(s) · Targeted drill →</span></button>)}
           {due.map(lesson => <button className="review-card panel" key={lesson.id} onClick={() => setSelected(lesson)}><strong>{lesson.title}</strong><span>Ready to revisit →</span></button>)}

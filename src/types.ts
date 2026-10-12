@@ -61,6 +61,7 @@ export interface InstrumentProgress {
   tempo: number;
   weak: Record<string, WeakItem>;
   ladders: Record<string, number[]>;
+  planner: { day: string | null; seconds: number[] };
 }
 export interface WeakItem {
   lessonId: string; kind: WeakKind; label: string; notes: number[];

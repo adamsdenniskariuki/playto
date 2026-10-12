@@ -12,8 +12,9 @@ import type { Course, Lesson, PracticeResult, WeakKind } from './types';
 interface MidiInput extends EventTarget { onmidimessage: ((event: { data: Uint8Array }) => void) | null }
 interface MidiAccess extends EventTarget { inputs: Map<string, MidiInput>; onstatechange: (() => void) | null }
 type MidiNavigator = Navigator & { requestMIDIAccess?: () => Promise<MidiAccess> };
-export function Practice({ course, lesson, passedTempos = [], onSave, report }: {
+export function Practice({ course, lesson, passedTempos = [], routineSeconds, routineTitle, onSave, report }: {
   course: Course; lesson?: Lesson; passedTempos?: number[];
+  routineSeconds?: number; routineTitle?: string;
   onSave: (seconds: number, notes: number, tempo: number, detail?: PracticeResult) => void;
   report: (message: string) => void;
 }) {
@@ -37,7 +38,7 @@ export function Practice({ course, lesson, passedTempos = [], onSave, report }: 
   const [stopSignal, setStopSignal] = useState(0);
   const [songStopSignal, setSongStopSignal] = useState(0);
   const songReference = useRef<ReferenceScore>({ title: songs[course.id][0].title, tempo: 60, countIn: 4, events: songs[course.id][0].events, roots: songs[course.id][0].roots, transposition: course.id === 'sax' ? -9 : 0 });
-  const [sessionStart, setSessionStart] = useState<number | null>(null);
+  const [sessionStart, setSessionStart] = useState<number | null>(() => routineSeconds ? performance.now() : null);
   const [elapsed, setElapsed] = useState(0);
   const [steady, setSteady] = useState(false);
   const [chord, setChord] = useState(lesson?.chord ?? 'E minor');
@@ -214,7 +215,7 @@ export function Practice({ course, lesson, passedTempos = [], onSave, report }: 
       audio.stop();
       const session = sessionRef.current;
       if (session.start !== null) {
-        const seconds = Math.floor((performance.now() - session.start) / 1000);
+        const seconds = Math.min(routineSeconds ?? Infinity, Math.floor((performance.now() - session.start) / 1000));
         sessionRef.current.start = null;
         const milestone = session.steady && seconds >= 30 ? session.tempo : 0;
         saveRef.current(seconds, session.hits, milestone, {
@@ -229,6 +230,16 @@ export function Practice({ course, lesson, passedTempos = [], onSave, report }: 
     const timer = window.setInterval(() => setElapsed(Math.floor((performance.now() - sessionStart) / 1000)), 500);
     return () => clearInterval(timer);
   }, [sessionStart]);
+  useEffect(() => {
+    if (!routineSeconds || sessionStart === null) return;
+    if (elapsed >= routineSeconds) finish();
+  }, [elapsed, routineSeconds, sessionStart]);
+  useEffect(() => {
+    if (!routineSeconds) return;
+    const pause = () => { if (document.hidden) finish(); };
+    document.addEventListener('visibilitychange', pause);
+    return () => document.removeEventListener('visibilitychange', pause);
+  }, [routineSeconds, sessionStart]);
   useEffect(() => {
     if (!metronome && !backing) return;
     let count = 0, timer = 0, cancelled = false;
@@ -263,7 +274,7 @@ export function Practice({ course, lesson, passedTempos = [], onSave, report }: 
   }, [loop, loopStart, loopEnd, tempo, speed]);
   function finish() {
     if (sessionStart === null) return;
-    const seconds = Math.floor((performance.now() - sessionStart) / 1000);
+    const seconds = Math.min(routineSeconds ?? Infinity, Math.floor((performance.now() - sessionStart) / 1000));
     sessionRef.current.start = null;
     const milestone = steady && seconds >= 30 ? tempo : 0;
     onSave(seconds, hits, milestone, { seconds, notes: hits, tempo: milestone, mistakes: mistakes.current,
@@ -273,6 +284,7 @@ export function Practice({ course, lesson, passedTempos = [], onSave, report }: 
     setStopSignal(value => value + 1); setLoop(false); setMetronome(false); setBacking(false); stopMic(); disconnectMidi(); audio.stop();
   }
   return <div className="practice">
+    {routineSeconds && <p role="status" data-testid="routine-timer"><strong>{routineTitle} timer · {Math.max(0, routineSeconds - elapsed)} seconds remaining</strong> · Saves at the end. Save early to pause.</p>}
     <div className="practice-heading"><div><span className="eyebrow">YOUR PRACTICE SPACE</span><h3>Make a little music</h3></div>
       <span className="pill">{Math.floor(elapsed / 60)}:{String(elapsed % 60).padStart(2, '0')} · {hits} notes matched</span></div>
     <p className="muted">Start a session to track actual practice time. Sessions save when you finish or leave this practice space. Save before closing the browser. Chord estimates and beat-timing drills supplement musical self-assessment.</p>

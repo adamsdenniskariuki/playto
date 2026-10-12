@@ -8,10 +8,10 @@ export function freshProgress(): Progress {
     version: 2, xp: 0, streak: 0, lastPractice: null, freezes: 1, instrument: 'keyboard',
     settings: { theme: DEFAULT_THEME, font: DEFAULT_FONT, themeChosen: false, fontChosen: false, tourSeen: false },
     instruments: {
-      keyboard: { lessons: {}, minutes: 0, notes: 0, chords: [], tempo: 0, weak: {}, ladders: {} },
-      guitar: { lessons: {}, minutes: 0, notes: 0, chords: [], tempo: 0, weak: {}, ladders: {} },
-      bass: { lessons: {}, minutes: 0, notes: 0, chords: [], tempo: 0, weak: {}, ladders: {} },
-      sax: { lessons: {}, minutes: 0, notes: 0, chords: [], tempo: 0, weak: {}, ladders: {} }
+      keyboard: { lessons: {}, minutes: 0, notes: 0, chords: [], tempo: 0, weak: {}, ladders: {}, planner: { day: null, seconds: [0,0,0,0] } },
+      guitar: { lessons: {}, minutes: 0, notes: 0, chords: [], tempo: 0, weak: {}, ladders: {}, planner: { day: null, seconds: [0,0,0,0] } },
+      bass: { lessons: {}, minutes: 0, notes: 0, chords: [], tempo: 0, weak: {}, ladders: {}, planner: { day: null, seconds: [0,0,0,0] } },
+      sax: { lessons: {}, minutes: 0, notes: 0, chords: [], tempo: 0, weak: {}, ladders: {}, planner: { day: null, seconds: [0,0,0,0] } }
     }
   };
 }
@@ -131,7 +131,13 @@ export function parseProgress(text: string): Progress {
         ladders[key] = [...tempos] as number[];
       }
     }
-    result.instruments[id] = { lessons, minutes: data.minutes, notes: data.notes, chords: [...data.chords] as string[], tempo: data.tempo, weak, ladders };
+    let planner: Progress['instruments']['keyboard']['planner'] = { day: null, seconds: [0,0,0,0] };
+    if (data.planner !== undefined) {
+      if (!object(data.planner) || !(data.planner.day === null || (typeof data.planner.day === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(data.planner.day) && validDate(data.planner.day))) ||
+        !Array.isArray(data.planner.seconds) || data.planner.seconds.length !== 4 || !data.planner.seconds.every(value => integer(value) && value <= 86400)) throw new Error('Invalid daily planner record.');
+      planner = { day: data.planner.day as string | null, seconds: [...data.planner.seconds] as number[] };
+    }
+    result.instruments[id] = { lessons, minutes: data.minutes, notes: data.notes, chords: [...data.chords] as string[], tempo: data.tempo, weak, ladders, planner };
   }
   return result;
 }
@@ -166,6 +172,14 @@ export function savePracticeResult(progress: Progress, instrument: InstrumentId,
       if (target === result.ladderTempo) next.instruments[instrument].ladders[lesson.id] = [...passed, target];
     }
   }
+  return next;
+}
+export function saveRoutineResult(progress: Progress, instrument: InstrumentId, lesson: Lesson, result: PracticeResult, step: number): Progress {
+  if (!Number.isInteger(step) || step < 0 || step > 3) throw new Error('Invalid routine step.');
+  const next = savePracticeResult(progress, instrument, lesson, result);
+  const today = dayKey(), record = next.instruments[instrument];
+  if (record.planner.day !== today) record.planner = { day: today, seconds: [0,0,0,0] };
+  record.planner.seconds[step] = Math.min(86400, record.planner.seconds[step] + Math.max(0, Math.floor(result.seconds)));
   return next;
 }
 export function badges(progress: Progress): { name: string; earned: boolean; detail: string }[] {
