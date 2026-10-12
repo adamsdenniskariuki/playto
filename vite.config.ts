@@ -7,7 +7,9 @@ function offlineWorker(): Plugin {
   return {
     name: 'playto-offline',
     generateBundle(_, bundle) {
-      this.emitFile({ type: 'asset', fileName: 'font-license.txt', source: readFileSync(resolve('node_modules', '@fontsource', 'opendyslexic', 'LICENSE'), 'utf8') });
+      const fonts = ['opendyslexic', 'andika', 'outfit', 'merriweather', 'comic-neue'];
+      this.emitFile({ type: 'asset', fileName: 'font-license.txt', source: fonts.map(font =>
+        `${font}\n\n${readFileSync(resolve('node_modules', '@fontsource', font, 'LICENSE'), 'utf8')}`).join('\n\n---\n\n') });
       const assets = [...new Set(['/', '/index.html', '/manifest.webmanifest', '/icon.svg', '/icon-192.png', '/icon-512.png', '/font-license.txt', '/CNAME',
         ...Object.keys(bundle).map(file => `/${file}`)])];
       this.emitFile({

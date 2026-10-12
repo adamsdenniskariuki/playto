@@ -1,11 +1,12 @@
 import type { InstrumentId, Lesson, PracticeResult, Progress, WeakKind } from './types';
+import { DEFAULT_FONT, DEFAULT_THEME, isFont, isTheme } from './appearance';
 
 export const STORAGE_KEY = 'playto.progress.v1';
 export const instrumentIds: InstrumentId[] = ['keyboard', 'guitar', 'bass', 'sax'];
 export function freshProgress(): Progress {
   return {
     version: 2, xp: 0, streak: 0, lastPractice: null, freezes: 1, instrument: 'keyboard',
-    settings: { theme: 'system', font: 'default', tourSeen: false },
+    settings: { theme: DEFAULT_THEME, font: DEFAULT_FONT, themeChosen: false, fontChosen: false, tourSeen: false },
     instruments: {
       keyboard: { lessons: {}, minutes: 0, notes: 0, chords: [], tempo: 0, weak: {}, ladders: {} },
       guitar: { lessons: {}, minutes: 0, notes: 0, chords: [], tempo: 0, weak: {}, ladders: {} },
@@ -83,13 +84,22 @@ export function parseProgress(text: string): Progress {
   if (!object(raw) || ![1, 2].includes(Number(raw.version)) || typeof raw.version !== 'number' || !integer(raw.xp) || !integer(raw.streak) ||
       !integer(raw.freezes) || raw.freezes > 2 || !instrumentIds.includes(raw.instrument as InstrumentId) ||
       !(raw.lastPractice === null || (typeof raw.lastPractice === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(raw.lastPractice) && validDate(raw.lastPractice) && dayKey(new Date(`${raw.lastPractice}T12:00:00`)) === raw.lastPractice)) ||
-      !object(raw.settings) || !['system', 'light', 'dark', 'sepia', 'contrast'].includes(String(raw.settings.theme)) ||
-      !['default', 'serif', 'dyslexic'].includes(String(raw.settings.font)) || typeof raw.settings.tourSeen !== 'boolean' ||
+      !object(raw.settings) || !isTheme(raw.settings.theme) || !isFont(raw.settings.font) ||
+      (raw.settings.themeChosen !== undefined && typeof raw.settings.themeChosen !== 'boolean') ||
+      (raw.settings.fontChosen !== undefined && typeof raw.settings.fontChosen !== 'boolean') ||
+      typeof raw.settings.tourSeen !== 'boolean' ||
       !object(raw.instruments)) throw new Error('This is not a valid Playto v1/v2 backup.');
   const result = freshProgress();
   result.xp = raw.xp; result.streak = raw.streak; result.freezes = raw.freezes;
   result.instrument = raw.instrument as InstrumentId; result.lastPractice = raw.lastPractice as string | null;
-  result.settings = { theme: raw.settings.theme as Progress['settings']['theme'], font: raw.settings.font as Progress['settings']['font'], tourSeen: raw.settings.tourSeen };
+  // Legacy system/native values are treated as untouched defaults for this migration.
+  const themeChosen = raw.settings.themeChosen ?? raw.settings.theme !== 'system';
+  const fontChosen = raw.settings.fontChosen ?? raw.settings.font !== 'default';
+  result.settings = {
+    theme: themeChosen ? raw.settings.theme : DEFAULT_THEME,
+    font: fontChosen ? raw.settings.font : DEFAULT_FONT,
+    themeChosen, fontChosen, tourSeen: raw.settings.tourSeen
+  };
   for (const id of instrumentIds) {
     const data = raw.instruments[id];
     if (!object(data) || !object(data.lessons) || !count(data.minutes) || !integer(data.notes) ||

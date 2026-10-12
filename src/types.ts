@@ -1,6 +1,6 @@
 export type InstrumentId = 'keyboard' | 'guitar' | 'bass' | 'sax';
-export type Theme = 'system' | 'light' | 'dark' | 'sepia' | 'contrast';
-export type Font = 'default' | 'serif' | 'dyslexic';
+export type Theme = 'system' | 'light' | 'dark' | 'sepia' | 'contrast' | 'stage' | 'wood' | 'velvet' | 'pastel' | 'amoled';
+export type Font = 'default' | 'serif' | 'dyslexic' | 'andika' | 'outfit' | 'merriweather' | 'comic';
 export type Stage = 'Beginner' | 'Intermediate' | 'Advanced';
 export type Focus = 'technique' | 'reading' | 'scale' | 'harmony' | 'rhythm' | 'ear' | 'repertoire' | 'creativity';
 export type WeakKind = 'note' | 'chord' | 'rhythm';
@@ -78,6 +78,6 @@ export interface Progress {
   lastPractice: string | null;
   freezes: number;
   instrument: InstrumentId;
-  settings: { theme: Theme; font: Font; tourSeen: boolean };
+  settings: { theme: Theme; font: Font; themeChosen: boolean; fontChosen: boolean; tourSeen: boolean };
   instruments: Record<InstrumentId, InstrumentProgress>;
 }

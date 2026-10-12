@@ -20,10 +20,11 @@ A little practice. A lot of music.
 - Optional Web MIDI keyboard input (Chrome/Edge over HTTPS), metronome, original synthesized backing, adjustable tempo and selected-note pitch loops at half/full speed. Pattern playback uses equal-duration notes; written lesson counts specify actual musical rhythm.
 - XP, levels, badges, daily streaks with an automatic one-day freeze, and spaced reviews. Every seven streak days earns a freeze (maximum two). Reviews begin after one day, double when confident (maximum 60 days), and return tomorrow when difficult.
 - Actual saved practice minutes, matched notes, learned chords and self-assessed tempo milestones (minimum 30-second session).
-- System-default dark/light theme, sepia, high contrast, serif and bundled OpenDyslexic reading fonts. Replay the welcome tour in Settings.
+- Stage (the new music-focused default), Warm wood, Velvet, Rose pastel and AMOLED themes each follow system light/dark mode. Classic light/dark/system, sepia and high contrast remain available. Andika is the new default font; Outfit, Merriweather, Comic Neue, OpenDyslexic and native sans/serif alternatives are selectable. Named fonts are bundled offline. Replay the count-agnostic welcome tour in Settings.
 
 Progress is stored only in this browser's `localStorage`, separately per instrument. **Export progress JSON** in Settings to back it up or move it to another device. Import validates the entire backup and asks before replacing data. Clearing browser storage removes progress. A failed storage read is reported and the original data is not overwritten.
 Legacy v1 saves/backups are migrated in memory to v2 with empty weak-skill and tempo records, then persisted on the next save. The storage key stays unchanged and every original lesson ID is retained. Previously completed lessons remain replayable; new unit work must be filled in to earn full-stage badges.
+Appearance migration treats unflagged legacy `system` theme and `default` font as untouched defaults and upgrades them to Stage/Andika. Legacy non-default choices are retained; new explicit selections set `themeChosen`/`fontChosen` flags, including explicit Classic system/native choices. **Use Playto defaults** resets both flags. Flags survive backups and future default changes. Old saves did not record choice history, so a previously explicit system/native selection without flags is indistinguishable from an untouched default and is upgraded by this one-time rule.
 
 ## Offline and install
 
@@ -62,7 +63,7 @@ The CNAME was verified during initial deployment. Keep this record if changing D
 
 Content lives in `content/<instrument>/course.json` (preserved foundations) and `curriculum.json` (full-course units). Each seven-lesson unit contains six authored learning lessons plus a checkpoint; JSON strings reference preserved lesson IDs, and JSON objects supply distinct goals, practical steps, note patterns and quizzes. `src/curriculum.ts` assembles checkpoints and stage tests from those unit goals; `src/types.ts` defines the schema and `src/courses.ts` validates and registers each course. All pieces and backing patterns are original exercises, not copyrighted songs. The staff is a labelled pitch guide rather than a full rhythmic engraving engine.
 
-OpenDyslexic is distributed through `@fontsource/opendyslexic` with its bundled licence. React, Vite, TypeScript, Vitest and Playwright retain their respective upstream licences.
+Andika, Outfit, Merriweather, Comic Neue and OpenDyslexic are distributed through their `@fontsource` packages; all licences are bundled at `/font-license.txt`. React, Vite, TypeScript, Vitest and Playwright retain their respective upstream licences.
 
 Sax low-table and palm-key instructions were checked against the [Woodwind Fingering Guide's first octave](https://www.wfg.woodwind.org/sax/sax_bas_1.html) and [second octave](https://www.wfg.woodwind.org/sax/sax_bas_2.html). The app uses its own schematic and lesson wording, not their chart artwork; confirm reach, alternate fingerings and instrument-specific details with a teacher.
 
