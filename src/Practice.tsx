@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { audio, detectPitch, noteName, pitchInfo } from './audio';
-import { Fretboard, Piano, SaxChart, Staff } from './Visuals';
+import { chordShapes, Fretboard, Piano, SaxChart, Staff } from './Visuals';
 import type { Course, Lesson, PracticeResult, WeakKind } from './types';
 
 interface MidiInput extends EventTarget { onmidimessage: ((event: { data: Uint8Array }) => void) | null }
@@ -230,7 +230,7 @@ export function Practice({ course, lesson, passedTempos = [], onSave, report }: 
       <button onClick={() => { setLoop(false); setMetronome(false); setBacking(false); audio.stop(); }}>Stop sound</button></div>
     <div className="target-note"><span>Next note</span><strong>{noteName(target)}</strong><span>{sessionStart === null ? 'Start practice to match notes' : 'Play, then release before repeating'}</span></div>
     {course.id === 'guitar' && <label className="chord-picker">Chord diagram <select aria-label="Chord diagram" value={chord} onChange={event => setChord(event.target.value)}>
-      {['E minor','A minor','C major','G major','D major','F major'].map(name => <option key={name}>{name}</option>)}
+      {Object.keys(chordShapes).map(name => <option key={name}>{name}</option>)}
     </select></label>}
     {course.id === 'keyboard' ? <Piano target={target} play={play}/>
       : course.id === 'sax' ? <SaxChart target={target} play={play}/>

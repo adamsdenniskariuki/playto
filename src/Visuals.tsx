@@ -2,10 +2,16 @@ import { NOTE_NAMES, noteName } from './audio';
 import type { InstrumentId } from './types';
 
 const tunings = { guitar: [64, 59, 55, 50, 45, 40], bass: [43, 38, 33, 28] };
-const chordShapes: Record<string, (number | null)[]> = {
+export const chordShapes: Record<string, (number | null)[]> = {
   'E minor': [0, 2, 2, 0, 0, 0], 'A minor': [null, 0, 2, 2, 1, 0],
   'C major': [null, 3, 2, 0, 1, 0], 'G major': [3, 2, 0, 0, 0, 3],
-  'D major': [null, null, 0, 2, 3, 2], 'F major': [null, null, 3, 2, 1, 1]
+  'D major': [null, null, 0, 2, 3, 2], 'F major': [null, null, 3, 2, 1, 1],
+  'E major': [0, 2, 2, 1, 0, 0], 'A major': [null, 0, 2, 2, 2, 0],
+  'D minor': [null, null, 0, 2, 3, 1], 'A7': [null, 0, 2, 0, 2, 0],
+  'D7': [null, null, 0, 2, 1, 2], 'E7': [0, 2, 0, 1, 0, 0],
+  'B minor': [null, 2, 4, 4, 3, 2], 'F barre': [1, 3, 3, 2, 1, 1],
+  'Cmaj7': [null, 3, 2, 0, 0, 0], 'Dm7': [null, null, 0, 2, 1, 1],
+  'G7': [3, 2, 0, 0, 0, 1], 'Cadd9': [null, 3, 2, 0, 3, 3]
 };
 export function InstrumentMark({ instrument }: { instrument: InstrumentId }) {
   return <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
@@ -24,6 +30,7 @@ export function Piano({ target, play }: { target: number; play: (midi: number) =
 }
 export function Fretboard({ instrument, target, play, chord }: { instrument: 'guitar' | 'bass'; target: number; play: (midi: number) => void; chord?: string }) {
   const strings = tunings[instrument];
+  const fretCount = Math.max(13, Math.min(25, target - strings[0] + 1));
   const shape = chord && instrument === 'guitar' ? chordShapes[chord] : undefined;
   return <>
     {shape && <div className="chord-diagram">
@@ -36,9 +43,9 @@ export function Fretboard({ instrument, target, play, chord }: { instrument: 'gu
     </div>}
     <div className="fretboard-scroll" tabIndex={0} aria-label="Fretboard scroll area">
       <table className="fretboard"><caption>{instrument === 'guitar' ? 'Guitar' : 'Bass'} fretboard · thin strings at the top</caption>
-        <thead><tr><th scope="col">String</th>{Array.from({ length: 8 }, (_, fret) => <th key={fret} scope="col">{fret === 0 ? 'Open' : fret}</th>)}</tr></thead>
+        <thead><tr><th scope="col">String</th>{Array.from({ length: fretCount }, (_, fret) => <th key={fret} scope="col">{fret === 0 ? 'Open' : fret}</th>)}</tr></thead>
         <tbody>{strings.map((open, index) => <tr key={open}><th scope="row">{index + 1} · {noteName(open)}</th>
-          {Array.from({ length: 8 }, (_, fret) => <td key={fret}><button className={open + fret === target ? 'target' : ''}
+          {Array.from({ length: fretCount }, (_, fret) => <td key={fret}><button className={open + fret === target ? 'target' : ''}
             aria-label={`Play ${noteName(open + fret)}, string ${index + 1}, fret ${fret}`} onClick={() => play(open + fret)}>{NOTE_NAMES[(open + fret) % 12]}</button></td>)}</tr>)}</tbody>
       </table>
     </div>
