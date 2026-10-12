@@ -6,7 +6,7 @@ A little practice. A lot of music.
 
 ## Learn and practise
 
-**Keyboard and acoustic guitar now have 87 lessons each:** three stages with four seven-lesson units each and a stage test. Keyboard offers classical, pop/rock, folk accompaniment, blues and jazz basics. Guitar adds open/movable harmony, tab and written-octave reading, fingerstyle independence, blues phrasing, jazz triads/sevenths and original acoustic arrangements. Bass guitar and alto saxophone currently retain their 15-lesson foundations while their full courses are delivered individually.
+**Keyboard, acoustic guitar and bass now have 87 lessons each:** three stages with four seven-lesson units each and a stage test. Keyboard offers classical, pop/rock, folk accompaniment, blues and jazz basics. Guitar adds open/movable harmony, tab and written-octave reading, fingerstyle independence, blues phrasing, jazz triads/sevenths and original acoustic arrangements. Bass covers muting, roots and fifths, key signatures, walking sevenths, funk/ghost-note grids, optional safe slap/pop, fills and full bass arrangements. Alto saxophone currently retains its 15-lesson foundations while its full course is delivered next.
 
 - Sequential lesson paths, playing goals and short knowledge checks.
 - Unit checkpoints require three playing goals; stage tests check all four units and four knowledge questions. Stage badges require every lesson, unit checkpoint and stage test, not just a final click. Style-track filtering finds repertoire without skipping prerequisites.
@@ -43,6 +43,8 @@ npm run build
 npx playwright install chromium
 npm run test:e2e
 ```
+
+After a release, `node scripts/live-smoke.mjs keyboard guitar bass` checks deployed course counts, all four practice layouts and offline reload at phone/tablet/desktop widths. Pass exactly the IDs already expanded on the live deployment; add `sax` after its full course ships.
 
 The production preview is used by Playwright. Tests cover audio detection (including low bass, harmonics, silence and noise), progress/backup/streak/review logic, curriculum validity, lesson completion, themes and fonts, mocked microphone success/denial and sax transposition, audio controls, MIDI input, import/export, ear training, offline reload, and overflow at 390px, 768px and 1440px.
 Raster PWA icons are generated from the source SVG with `node scripts/generate-icons.mjs` (requires Playwright Chromium).
