@@ -4,6 +4,7 @@ import { CHORD_CONFIDENCE, chordNames, matchChroma, spectrumChroma, type ChordRe
 import { RhythmScoring, type RhythmInput } from './RhythmScoring';
 import { OnsetDetector, type BeatClock } from './rhythm';
 import { SongMode } from './SongMode';
+import { RecordCompare } from './RecordCompare';
 import { songs, type ReferenceScore } from './songs';
 import { chordShapes, Fretboard, Piano, SaxChart, Staff } from './Visuals';
 import type { Course, Lesson, PracticeResult, WeakKind } from './types';
@@ -34,6 +35,7 @@ export function Practice({ course, lesson, passedTempos = [], onSave, report }: 
   const beatClock = useRef<BeatClock | null>(null);
   const rhythmInput = useRef<RhythmInput>(() => {});
   const [stopSignal, setStopSignal] = useState(0);
+  const [songStopSignal, setSongStopSignal] = useState(0);
   const songReference = useRef<ReferenceScore>({ title: songs[course.id][0].title, tempo: 60, countIn: 4, events: songs[course.id][0].events, roots: songs[course.id][0].roots, transposition: course.id === 'sax' ? -9 : 0 });
   const [sessionStart, setSessionStart] = useState<number | null>(null);
   const [elapsed, setElapsed] = useState(0);
@@ -286,7 +288,8 @@ export function Practice({ course, lesson, passedTempos = [], onSave, report }: 
       : course.id === 'sax' ? <SaxChart target={target} play={play}/>
       : <Fretboard instrument={course.id} target={target} play={play} chord={chord}/>}
     <Staff notes={targets} bass={course.id === 'bass'} octaveShift={course.id === 'guitar' || course.id === 'bass' ? 1 : 0}/>
-    <SongMode course={course} lesson={lesson} stopSignal={stopSignal} reference={songReference} report={report} onStart={() => { setLoop(false); setMetronome(false); setBacking(false); audio.stop(); }}/>
+    <SongMode course={course} lesson={lesson} stopSignal={stopSignal + songStopSignal} reference={songReference} report={report} onStart={() => { setLoop(false); setMetronome(false); setBacking(false); audio.stop(); }}/>
+    <RecordCompare instrument={course.id} reference={songReference} stopSignal={stopSignal} report={report} onStart={() => { setSongStopSignal(value => value + 1); setLoop(false); setMetronome(false); setBacking(false); audio.stop(); }}/>
     {lesson && <section className="tool-card"><h3>Practise the tricky bits</h3>
       <p className="small">Wrong single notes from mic, MIDI or screen are saved as targeted reviews with this session. Mark chord clarity or rhythm difficulties yourself. {mistakeCount} difficulty report(s) this session.</p>
       <div className="button-row">{(['note','chord','rhythm'] as const).map(kind => <button key={kind} disabled={sessionStart === null} onClick={() => markMistake(kind, kind === 'note' ? noteName(target) : kind === 'chord' ? lesson.chord ?? `${lesson.title}: harmony` : `${lesson.title}: written rhythm`, kind === 'note' ? [target] : targets)}>Mark weak {kind}</button>)}</div>

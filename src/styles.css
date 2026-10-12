@@ -371,3 +371,5 @@ input[type="checkbox"],input[type="radio"] { min-width: 20px; height: 20px; acce
 .song-strip > .song-current { border-color: var(--cp-accent); background: var(--cp-accent-soft); }
 .song-strip > .song-next { border-style: dashed; border-color: var(--cp-border-strong); }
 .song-strip .staff-scroll svg { min-width: 0; width: 100%; }
+.record-compare { margin-block: 16px; }
+.record-compare audio { width: 100%; margin-block: 12px; }
