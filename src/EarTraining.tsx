@@ -27,7 +27,7 @@ export function EarTraining({ report, onMistake }: { report: (message: string) =
     {challenge && <><fieldset><legend>Which interval did you hear?</legend><div className="interval-options">{intervals.map((interval, index) => <button key={interval.name} disabled={choice === challenge.answer} aria-pressed={choice === index} onClick={() => {
       setChoice(index); if (index === challenge.answer) setCorrect(value => value + 1);
       else onMistake?.([challenge.root, challenge.root + intervals[challenge.answer].semitones], `Hear ${intervals[challenge.answer].name.toLowerCase()}`);
-    }}>{interval.name}</button>)}</div></fieldset>{choice !== null && <p className="tip" role="status">{choice === challenge.answer ? `Yes - ${intervals[choice].name.toLowerCase()}. ${noteName(challenge.root)} to ${noteName(challenge.root + intervals[choice].semitones)}. ${intervals[choice].hint}` : 'Not quite. Listen again, hum both notes, and try a different distance.'}</p>}</>}
+    }}>{interval.name}</button>)}</div></fieldset>{choice !== null && <p key={choice} className={`tip feedback ${choice === challenge.answer ? 'good' : 'bad'}`} role="status">{choice === challenge.answer ? `Yes - ${intervals[choice].name.toLowerCase()}. ${noteName(challenge.root)} to ${noteName(challenge.root + intervals[choice].semitones)}. ${intervals[choice].hint}` : 'Not quite. Listen again, hum both notes, and try a different distance.'}</p>}</>}
     <p className="small muted">{correct} interval(s) identified in this visit. Ear training is ungraded; lesson XP comes from the playing goal and knowledge check.</p>
   </section>;
 }

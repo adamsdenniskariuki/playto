@@ -25,10 +25,18 @@ import type { Course, Lesson, PracticeResult, Progress, WeakKind } from './types
 
 type Page = 'learn' | 'practice' | 'review' | 'progress' | 'settings';
 type InstallEvent = Event & { prompt: () => Promise<void>; userChoice: Promise<{ outcome: string }> };
-function Dialog({ title, children, close }: { title: string; children: React.ReactNode; close: () => void }) {
+function Dialog({ title, children, close, modal = true, className }: { title: string; children: React.ReactNode; close: () => void; modal?: boolean; className?: string }) {
   const ref = useRef<HTMLDialogElement>(null);
-  useEffect(() => { ref.current?.showModal(); return () => ref.current?.close(); }, []);
-  return <dialog ref={ref} onCancel={event => { event.preventDefault(); close(); }} aria-labelledby="dialog-title">
+  const closeRef = useRef(close);
+  closeRef.current = close;
+  useEffect(() => {
+    const dialog = ref.current;
+    if (modal) dialog?.showModal(); else dialog?.show();
+    const onKey = (event: KeyboardEvent) => { if (event.key === 'Escape') { event.preventDefault(); closeRef.current(); } };
+    if (!modal) document.addEventListener('keydown', onKey);
+    return () => { document.removeEventListener('keydown', onKey); dialog?.close(); };
+  }, [modal]);
+  return <dialog ref={ref} className={className} onCancel={event => { event.preventDefault(); close(); }} aria-labelledby="dialog-title">
     <div className="dialog-header"><h2 id="dialog-title">{title}</h2><button onClick={close} aria-label="Close dialog">×</button></div>{children}
   </dialog>;
 }
@@ -52,8 +60,8 @@ function LessonView({ course, lesson, completed, due, passedTempos, onMistake, o
     <Practice course={course} lesson={lesson} passedTempos={passedTempos} onSave={onSave} report={report}/>
     <EarTraining report={report} onMistake={(notes, label) => onMistake('note', notes.map(note => note + (course.id === 'sax' ? 9 : 0)), label)}/>
     <section className="panel"><h2>A quick check</h2><fieldset><legend>{lesson.quiz.question}</legend>{lesson.quiz.options.map((option, index) => <label className={`quiz-option ${answer === index ? 'selected' : ''}`} key={option}><input type="radio" name="quiz" checked={answer === index} onChange={() => { setAnswer(index); if (index !== lesson.quiz.answer) onMistake(lesson.focus === 'harmony' ? 'chord' : lesson.focus === 'rhythm' ? 'rhythm' : 'note'); }}/>{option}</label>)}</fieldset>
-      {answer !== null && <p role="status" className="tip">{correct ? 'Exactly. ' : 'Try again. '}{lesson.quiz.explanation}</p>}
-      {lesson.testQuestions?.map((quiz, question) => <fieldset key={question}><legend>{quiz.question}</legend>{quiz.options.map((option, index) => <label className="quiz-option" key={option}><input type="radio" name={`stage-quiz-${question}`} checked={testAnswers[question] === index} onChange={() => { setTestAnswers(current => ({ ...current, [question]: index })); if (index !== quiz.answer) onMistake('note'); }}/>{option}</label>)}{testAnswers[question] !== undefined && <p className="small" role="status">{testAnswers[question] === quiz.answer ? 'Correct. ' : 'Revisit this unit: '}{quiz.explanation}</p>}</fieldset>)}
+      {answer !== null && <p role="status" key={answer} className={`tip feedback ${correct ? 'good' : 'bad'}`}>{correct ? 'Exactly. ' : 'Try again. '}{lesson.quiz.explanation}</p>}
+      {lesson.testQuestions?.map((quiz, question) => <fieldset key={question}><legend>{quiz.question}</legend>{quiz.options.map((option, index) => <label className="quiz-option" key={option}><input type="radio" name={`stage-quiz-${question}`} checked={testAnswers[question] === index} onChange={() => { setTestAnswers(current => ({ ...current, [question]: index })); if (index !== quiz.answer) onMistake('note'); }}/>{option}</label>)}{testAnswers[question] !== undefined && <p key={testAnswers[question]} className={`small feedback ${testAnswers[question] === quiz.answer ? 'good' : 'bad'}`} role="status">{testAnswers[question] === quiz.answer ? 'Correct. ' : 'Revisit this unit: '}{quiz.explanation}</p>}</fieldset>)}
       {lesson.checks?.map((goal, index) => <label className="check" key={goal}><input type="checkbox" checked={Boolean(checks[index])} onChange={event => setChecks(current => ({ ...current, [index]: event.target.checked }))}/>{goal}</label>)}
       <label className="check"><input type="checkbox" checked={checked} onChange={event => setChecked(event.target.checked)}/>{lesson.assessment}</label>
       {!completed ? <><button className="primary" disabled={!passed} onClick={onComplete}>Complete lesson · +{lesson.kind === 'stage-test' ? 100 : lesson.kind === 'checkpoint' ? 75 : 50} XP</button><p className="small muted">Complete every check and tick your playing goals. Microphone use is optional.</p></>
@@ -168,7 +176,7 @@ function App() {
     <a className="skip-link" href="#main">Skip to content</a>
     <header className="site-header"><a className="brand" href="/" onClick={event => { event.preventDefault(); navigate('learn'); }}><span className="brand-icon">♪</span>playto<span className="brand-dot">.</span></a>
       <span className="header-tag">A little practice. A lot of music.</span>
-      <div className="header-stats"><span className="stat-chip" title="All instruments combined"><span aria-hidden="true" className="chip-icon">★</span><span>{progress.xp} XP</span></span><span className="stat-chip"><span aria-hidden="true" className="chip-icon">🔥</span><span>{streak} day streak</span></span><span className="level"><span>Level {level}</span><progress className="level-progress" max={250} value={progress.xp % 250} aria-label="Level progress"/></span></div>
+      <div className="header-stats"><span className="stat-chip" title="All instruments combined"><span aria-hidden="true" className="chip-icon">★</span><span key={progress.xp} className="xp-value">{progress.xp} XP</span></span><span className="stat-chip"><span aria-hidden="true" className="chip-icon">🔥</span><span>{streak} day streak</span></span><span className="level"><span>Level {level}</span><progress className="level-progress" max={250} value={progress.xp % 250} aria-label="Level progress"/></span></div>
     </header>
     <div className="app-layout">
       <aside className="sidebar"><div className="sidebar-top"><span className="eyebrow">YOUR MUSIC, YOUR PACE</span><nav aria-label="Main navigation">
@@ -237,7 +245,7 @@ function App() {
         <footer>Made for the joy of playing. <span>playto · no pressure, just progress</span></footer>
       </main>
     </div>
-    {tour && <Dialog title={['Welcome to Playto', 'Make it sound like you', 'Your progress, your pace'][tourStep]} close={endTour}><div className="tour-art"><InstrumentMark instrument={course.id}/></div><p>{['Pick an instrument. Tiny steps. Real music. Play a short lesson, and build a habit without accounts, ads, lives or leaderboards.', 'Hear the pitch pattern, use the interactive keys or fretboard, and try your own instrument. The microphone is optional and only turns on when you tap Connect microphone. Chords use your own honest assessment.', 'Save practice sessions to track time. Complete lessons to unlock your path and earn XP. Export a JSON backup in Settings, choose a comfortable font or theme, and return tomorrow for a spaced review.'][tourStep]}</p><div className="tour-footer"><span className="muted">Step {tourStep + 1} of 3</span><button onClick={endTour}>Skip tour</button><button className="primary" onClick={() => tourStep < 2 ? setTourStep(tourStep + 1) : endTour()}>{tourStep < 2 ? 'Next' : 'Let’s play'}</button></div></Dialog>}
+    {tour && <Dialog title={['Welcome to Playto', 'Make it sound like you', 'Your progress, your pace'][tourStep]} close={endTour} modal={false} className="coach-mark"><div className="tour-art"><InstrumentMark instrument={course.id}/></div><p>{['Pick an instrument. Tiny steps. Real music. Play a short lesson, and build a habit without accounts, ads, lives or leaderboards.', 'Hear the pitch pattern, use the interactive keys or fretboard, and try your own instrument. The microphone is optional and only turns on when you tap Connect microphone. Chords use your own honest assessment.', 'Save practice sessions to track time. Complete lessons to unlock your path and earn XP. Export a JSON backup in Settings, choose a comfortable font or theme, and return tomorrow for a spaced review.'][tourStep]}</p><div className="tour-footer"><span className="muted">Step {tourStep + 1} of 3</span><button onClick={endTour}>Skip tour</button><button className="primary" onClick={() => tourStep < 2 ? setTourStep(tourStep + 1) : endTour()}>{tourStep < 2 ? 'Next' : 'Let’s play'}</button></div></Dialog>}
     {confirmImport && <Dialog title="Replace device progress?" close={() => setConfirmImport(null)}><p>This backup contains {confirmImport.xp} XP. Import replaces all current progress and settings on this device. Export your current progress first if you want to keep both.</p><div className="button-row"><button onClick={() => setConfirmImport(null)}>Cancel</button><button className="primary" onClick={() => {
       try { localStorage.setItem(STORAGE_KEY, JSON.stringify(confirmImport)); setProgress(confirmImport); setStorageBlocked(false); setConfirmImport(null); setSelected(null); setTour(false); setMessage('Backup imported and saved successfully.'); }
       catch (error) { setMessage(`Import could not be saved: ${String(error)}. Your progress is unchanged.`); setConfirmImport(null); }

@@ -402,3 +402,21 @@ input[type="checkbox"],input[type="radio"] { min-width: 20px; height: 20px; acce
 .fretboard .keyboard-selected { outline: 2px dashed var(--cp-text); outline-offset: 2px; }
 .chord-strings.left-handed { flex-direction: row-reverse; }
 .loop-inputs { flex-wrap: wrap; }
+dialog.coach-mark { position: fixed; inset: auto 16px 16px auto; margin: 0; width: min(420px, calc(100% - 32px)); padding: 20px; z-index: 50; }
+dialog.coach-mark .tour-art { margin: 12px 0; padding: 12px; }
+dialog.coach-mark .tour-art svg { width: 56px; }
+dialog.coach-mark .tour-footer { margin-top: 16px; }
+@media (max-width: 800px) { dialog.coach-mark { inset: auto 16px 80px 16px; width: auto; max-height: calc(100dvh - 112px); overflow: auto; } }
+.feedback { border-left: 4px solid var(--cp-border-strong); padding-left: 12px; }
+.feedback.good { border-left-color: var(--cp-success, var(--cp-accent)); }
+.feedback.bad { border-left-color: var(--cp-danger, var(--cp-text-muted)); border-left-style: dashed; }
+@media (prefers-reduced-motion: no-preference) {
+  dialog.coach-mark[open] { animation: coach-in .28s ease-out; }
+  .feedback { animation: feedback-pulse .35s ease-out; }
+  .feedback.bad { animation: feedback-shake .32s ease-in-out; }
+  .xp-value { display: inline-block; animation: xp-pop .4s ease-out; }
+  @keyframes coach-in { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+  @keyframes feedback-pulse { 0% { opacity: .4; transform: scale(.98); } 100% { opacity: 1; transform: none; } }
+  @keyframes feedback-shake { 0%,100% { transform: none; } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+  @keyframes xp-pop { 0% { transform: scale(1); } 40% { transform: scale(1.18); } 100% { transform: scale(1); } }
+}
